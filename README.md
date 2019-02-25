@@ -3,7 +3,7 @@
 
 ## Utilisation de la maquette
 
-Maquette 
+Nom du routeur : FING
 
 Addresse de la maquette : 192.168.0.5
 
