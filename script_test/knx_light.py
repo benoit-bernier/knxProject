@@ -2,6 +2,7 @@
 import asyncio
 from xknx import XKNX
 from xknx.io import GatewayScanner, Tunnel
+from xknx.knx import PhysicalAddress
 from xknx.devices import Light
 
 async def main():
@@ -18,6 +19,8 @@ async def main():
         return
 
     gateway = gateways[0]
+    print(gateway)
+
     src_address = PhysicalAddress("15.15.249")
 
     #Connexion à la gateway
@@ -45,6 +48,15 @@ async def main():
     await light.set_on()
     await asyncio.sleep(2)
     await light.set_off()
+
+    #Accès à l'état de la lampe (à revoir mauvaise adresse 0/1/4)
+    #print(light.state)
+    #print(light.supports_dimming)
+    #print(light.brightness)
+
+
+    # Requesting current state via KNX GROUP WRITE
+    #await light.sync()
 
     # Couper la connexion
 
