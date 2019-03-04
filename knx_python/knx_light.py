@@ -42,12 +42,12 @@ async def main():
 
     # Allumer la LED
 
-    light = Light(xknx,
-                  name='HelloWorldLight',
-                  group_address_switch='0/1/1')
-    await light.set_on()
-    await asyncio.sleep(2)
-    await light.set_off()
+#    light = Light(xknx,
+#                  name='HelloWorldLight',
+#                  group_address_switch='0/1/1')
+#    await light.set_on()
+#    await asyncio.sleep(5)
+#    await light.set_off()
 
     #Accès à l'état de la lampe (à revoir mauvaise adresse 0/1/4)
     #print(light.state)
