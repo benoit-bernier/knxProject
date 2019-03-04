@@ -1,0 +1,15 @@
+{
+  "name": "knx_nodejs",
+  "version": "1.0.0",
+  "description": "KNX interactions",
+  "main": "index.js",
+  "dependencies": {
+    "knx": "^2.3.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Alexandre",
+  "license": "ISC"
+}
