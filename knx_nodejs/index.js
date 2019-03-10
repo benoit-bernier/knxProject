@@ -9,6 +9,9 @@ let connection = new knx.Connection({
     // wait for connection establishment before sending anything!
     connected: function() {
       let state = 0; // state for the chenillard
+      let speed = 1000; // default time between two commands
+      let speed_ratio = 1; // real speed = speed * speed_ratio (allow to increase or decrease the speed of the chenillard)
+
       console.log("Connected !");
 
       //lancement du chenillard
@@ -18,9 +21,21 @@ let connection = new knx.Connection({
         state = (state + 1) % 4;
       }, 2000);
 
-      //coupe le chenillard après 10 secondes
+      //coupe le chenillard après 20 secondes
       setTimeout(function() {
         clearInterval(mChenillard);
+      }, 20000);
+
+      //augmente la vitesse du chenillard après 10 secondes
+      setTimeout(function() {
+        state = 0;
+        speed_ratio = 0.5;
+        clearInterval(mChenillard);
+        mChenillard = setInterval(function() {
+          chenillard(state);
+          state = (state + 1) % 4;
+          console.log(speed_ratio);
+        }, speed * speed_ratio);
       }, 10000);
 
       //permet d'allumer les LED les unes après les autres
@@ -32,28 +47,28 @@ let connection = new knx.Connection({
             //ou coupe la LED précédente après 1 seconde
             setTimeout(function() {
               connection.write("0/0/1", 0);
-            }, 1000);
+            }, speed * speed_ratio);
             break;
           case 1:
             console.log("Lancé LED 2");
             connection.write("0/0/3", 1);
             setTimeout(function() {
               connection.write("0/0/2", 0);
-            }, 1000);
+            }, speed * speed_ratio);
             break;
           case 2:
             console.log("Lancé LED 3");
             connection.write("0/0/4", 1);
             setTimeout(function() {
               connection.write("0/0/3", 0);
-            }, 1000);
+            }, speed * speed_ratio);
             break;
           case 3:
             console.log("Lancé LED 0");
             connection.write("0/0/1", 1);
             setTimeout(function() {
               connection.write("0/0/4", 0);
-            }, 1000);
+            }, speed * speed_ratio);
             break;
           default:
             console.log("STOP chenillard");
