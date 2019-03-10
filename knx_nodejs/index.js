@@ -8,6 +8,7 @@ let connection = new knx.Connection({
   handlers: {
     // wait for connection establishment before sending anything!
     connected: function() {
+      // partie connexion
       let state = 0; // state for the chenillard
       let speed = 1000; // default time between two commands
       let speed_ratio = 1; // real speed = speed * speed_ratio (allow to increase or decrease the speed of the chenillard)
@@ -74,6 +75,7 @@ let connection = new knx.Connection({
             console.log("STOP chenillard");
         }
       }
+      // fin partie connexion
     },
     // get notified for all KNX events:
     event: function(evt, src, dest, value) {
