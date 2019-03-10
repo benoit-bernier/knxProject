@@ -8,23 +8,55 @@ let connection = new knx.Connection({
   handlers: {
     // wait for connection establishment before sending anything!
     connected: function() {
+      let state = 0; // state for the chenillard
       console.log("Connected !");
-      // Allumer la LED
-      connection.write("0/0/1", 1);
-      sleep();
-      connection.write("0/0/1", 1);
-      sleep();
-      connection.write("0/0/1", 1);
-      sleep();
-      // you can also issue a READ request and pass a callback to capture the response
-      connection.read("0/2/1", (src, responsevalue) => {
-        console.log("src : " + src + ", responsevalue" + responsevalue);
-      });
 
-      function sleep() {
-        setTimeout(function() {
-          console.log("Sleep over");
-        }, 1000);
+      //lancement du chenillard
+      //allume une LED avec l'état correspondant
+      let mChenillard = setInterval(function() {
+        chenillard(state);
+        state = (state + 1) % 4;
+      }, 2000);
+
+      //coupe le chenillard après 10 secondes
+      setTimeout(function() {
+        clearInterval(mChenillard);
+      }, 10000);
+
+      //permet d'allumer les LED les unes après les autres
+      function chenillard(state) {
+        switch (state) {
+          case 0:
+            console.log("Lancé LED 1");
+            connection.write("0/0/2", 1);
+            setTimeout(function() {
+              connection.write("0/0/1", 0);
+            }, 1000);
+            break;
+          case 1:
+            console.log("Lancé LED 2");
+            connection.write("0/0/3", 1);
+            setTimeout(function() {
+              connection.write("0/0/2", 0);
+            }, 1000);
+            break;
+          case 2:
+            console.log("Lancé LED 3");
+            connection.write("0/0/4", 1);
+            setTimeout(function() {
+              connection.write("0/0/3", 0);
+            }, 1000);
+            break;
+          case 3:
+            console.log("Lancé LED 0");
+            connection.write("0/0/1", 1);
+            setTimeout(function() {
+              connection.write("0/0/4", 0);
+            }, 1000);
+            break;
+          default:
+            console.log("STOP chenillard");
+        }
       }
     },
     // get notified for all KNX events:
