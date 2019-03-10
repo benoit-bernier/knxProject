@@ -29,6 +29,7 @@ let connection = new knx.Connection({
           case 0:
             console.log("Lancé LED 1");
             connection.write("0/0/2", 1);
+            //ou coupe la LED précédente après 1 seconde
             setTimeout(function() {
               connection.write("0/0/1", 0);
             }, 1000);
