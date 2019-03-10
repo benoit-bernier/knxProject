@@ -9,38 +9,38 @@ let connection = new knx.Connection({
     // wait for connection establishment before sending anything!
     connected: function() {
       // partie connexion
-      let state = 0; // state for the chenillard
+      let state = 0; // state for the chenillar
       let speed = 1000; // default time between two commands
-      let speed_ratio = 1; // real speed = speed * speed_ratio (allow to increase or decrease the speed of the chenillard)
+      let speed_ratio = 1; // real speed = speed * speed_ratio (allow to increase or decrease the speed of the chenillar)
 
       console.log("Connected !");
 
-      //lancement du chenillard
+      //lancement du chenillar
       //allume une LED avec l'état correspondant
-      let mChenillard = setInterval(function() {
-        chenillard(state);
+      let mChenillar = setInterval(function() {
+        chenillar(state);
         state = (state + 1) % 4;
       }, 2000);
 
-      //coupe le chenillard après 20 secondes
+      //coupe le chenillar après 20 secondes
       setTimeout(function() {
-        clearInterval(mChenillard);
+        clearInterval(mChenillar);
       }, 20000);
 
-      //augmente la vitesse du chenillard après 10 secondes
+      //augmente la vitesse du chenillar après 10 secondes
       setTimeout(function() {
         state = 0;
         speed_ratio = 0.5;
-        clearInterval(mChenillard);
-        mChenillard = setInterval(function() {
-          chenillard(state);
+        clearInterval(mChenillar);
+        mChenillar = setInterval(function() {
+          chenillar(state);
           state = (state + 1) % 4;
           console.log(speed_ratio);
         }, speed * speed_ratio);
       }, 10000);
 
       //permet d'allumer les LED les unes après les autres
-      function chenillard(state) {
+      function chenillar(state) {
         switch (state) {
           case 0:
             console.log("Lancé LED 1");
@@ -72,7 +72,7 @@ let connection = new knx.Connection({
             }, speed * speed_ratio);
             break;
           default:
-            console.log("STOP chenillard");
+            console.log("STOP chenillar");
         }
       }
       // fin partie connexion
