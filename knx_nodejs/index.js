@@ -7,7 +7,7 @@ let direction = 1; //sens du chenillard
 let mChenillard = ""; //instance du chenillard
 
 function chenillard(state) {
-  switch (state) {
+  switch (Math.abs(state)) {
     case 0:
       //console.log("Lancé LED 1");
       connection.write("0/1/1", 1);
@@ -123,7 +123,7 @@ let connection = new knx.Connection({
           if (mChenillard == "") {
             mChenillard = setInterval(function() {
               chenillard(state);
-              state = Math.abs(state + direction) % 4;
+              state = (state + direction) % 4;
             }, speed * speed_ratio);
           } else {
             mChenillard = "";
