@@ -58,13 +58,40 @@ let connection = new knx.Connection({
         state = Math.abs(state + direction) % 4;
       }, speed * speed_ratio);
 
+      function chenillard(state) {
+        switch (state) {
+          case 0:
+            //console.log("Lancé LED 1");
+            connection.write("0/1/1", 1);
+            connection.write("0/1/4", 0);
+            console.log("Vitesse actuelle : " + speed * speed_ratio);
+            break;
+          case 1:
+            //console.log("Lancé LED 2");
+            connection.write("0/1/2", 1);
+            connection.write("0/1/1", 0);
+            break;
+          case 2:
+            //console.log("Lancé LED 3");
+            connection.write("0/1/3", 1);
+            connection.write("0/1/2", 0);
+            break;
+          case 3:
+            //console.log("Lancé LED 0");
+            connection.write("0/1/4", 1);
+            connection.write("0/1/3", 0);
+            break;
+          default:
+            console.log("STOP chenillard");
+        }
+      }
       // fin partie connexion
     },
     // get notified for all KNX events:
     event: function(evt, src, dest, value) {
       switch (dest) {
         case "0/3/1":
-          if (speed_ratio <= 1) {
+          if (speed_ratio < 1) {
             console.log("Impossible d'accélérer.");
           } else {
             //Accelere
@@ -78,7 +105,7 @@ let connection = new knx.Connection({
           }
           break;
         case "0/3/2":
-          if (speed_ratio >= 5) {
+          if (speed_ratio > 5) {
             console.log("Impossible de ralentir.");
           } else {
             //Ralenti
