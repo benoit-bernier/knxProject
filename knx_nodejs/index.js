@@ -1,10 +1,10 @@
 const knx = require("knx");
 let state = 0; // state for the chenillard
 let speed = 500; // default time between two commands
-let speed_ratio = 1.5; // real speed = speed * speed_ratio (allow to increase or decrease the speed of the chenillar)
+let speed_ratio = 1.5; // real speed = speed * speed_ratio (allow to increase or decrease the speed of the chenillard)
 let direction = 1; //sens du chenillard
 
-let mChenillard = ""; //instance du chenillard
+let mchenillard = ""; //instance du chenillard
 
 function chenillard(state) {
   switch (Math.abs(state)) {
@@ -43,19 +43,14 @@ let connection = new knx.Connection({
     // wait for connection establishment before sending anything!
     connected: function() {
       // partie connexion
-      /*
-      let state = 0; // state for the chenillar
-      let speed = 500; // default time between two commands
-      let speed_ratio = 1.5; // real speed = speed * speed_ratio (allow to increase or decrease the speed of the chenillar)
-        */
       console.log("Connected !");
 
-      //lancement du chenillar
-      //allume une LED avec l'état correspondant
+      //lancement du chenillard
 
-      mChenillard = setInterval(function() {
+      mchenillard = setInterval(function() {
         chenillard(state);
-        state = Math.abs(state + direction) % 4;
+        console.log("State = " + state);
+        state = (state + direction) % 4;
       }, speed * speed_ratio);
 
       function chenillard(state) {
@@ -95,10 +90,10 @@ let connection = new knx.Connection({
             console.log("Impossible d'accélérer.");
           } else {
             //Accelere
-            clearInterval(mChenillard);
-            mChenillard = setInterval(function() {
+            clearInterval(mchenillard);
+            mchenillard = setInterval(function() {
               chenillard(state);
-              state = Math.abs(state + direction) % 4;
+              state = (state + direction) % 4;
             }, speed * speed_ratio);
             speed_ratio -= 1;
             console.log("La vitesse est de :" + speed_ratio);
@@ -110,29 +105,34 @@ let connection = new knx.Connection({
           } else {
             //Ralenti
             speed_ratio += 1;
-            clearInterval(mChenillard);
-            mChenillard = setInterval(function() {
+            clearInterval(mchenillard);
+            mchenillard = setInterval(function() {
               chenillard(state);
-              state = Math.abs(state + direction) % 4;
+              state = (state + direction) % 4;
             }, speed * speed_ratio);
             console.log("La vitesse est de :" + speed_ratio);
           }
           //Ralenti
           break;
         case "0/3/3":
-          if (mChenillard == "") {
-            mChenillard = setInterval(function() {
+          if (mchenillard == "") {
+            mchenillard = setInterval(function() {
               chenillard(state);
               state = (state + direction) % 4;
             }, speed * speed_ratio);
           } else {
-            clearInterval(mChenillard);
-            mChenillard = "";
+            clearInterval(mchenillard);
+            mchenillard = "";
           }
           break;
         case "0/3/4":
           console.log("Changement de sens du chenillard");
           direction *= -1;
+          clearInterval(mchenillard);
+          mchenillard = setInterval(function() {
+            chenillard(state);
+            state = ((state + direction) % 4) + 3;
+          }, speed * speed_ratio);
           break;
 
         default:
