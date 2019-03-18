@@ -2,7 +2,7 @@ const knx = require("knx");
 
 let connection = new knx.Connection({
   // ip address and port of the KNX router or interface
-  ipAddr: "192.168.0.5",
+  ipAddr: "192.168.0.6",
   port: 3671,
   minimumDelay: 50,
   handlers: {
@@ -10,7 +10,7 @@ let connection = new knx.Connection({
     connected: function () {
       // partie connexion
       let state = 0; // state for the chenillar
-      let speed = 1000; // default time between two commands
+      let speed = 500; // default time between two commands
       let speed_ratio = 1.5; // real speed = speed * speed_ratio (allow to increase or decrease the speed of the chenillar)
 
       console.log("Connected !");
@@ -26,7 +26,7 @@ let connection = new knx.Connection({
 
 
       //permet d'allumer les LED les unes après les autres
-      function chenillar(state) {
+      function chenillard(state) {
         switch (state) {
           case 0:
             console.log("Lancé LED 1");
