@@ -2,7 +2,10 @@ const knx = require("knx");
 let state = 0; // state for the chenillard
 let speed = 500; // default time between two commands
 let speed_ratio = 1.5; // real speed = speed * speed_ratio (allow to increase or decrease the speed of the chenillar)
-let direction = 1;
+let direction = 1; //sens du chenillard
+
+let mChenillard = ""; //instance du chenillard
+
 let connection = new knx.Connection({
   // ip address and port of the KNX router or interface
   ipAddr: "192.168.0.5",
@@ -22,7 +25,7 @@ let connection = new knx.Connection({
       //lancement du chenillar
       //allume une LED avec l'état correspondant
 
-      let mChenillard = setInterval(function() {
+      mChenillard = setInterval(function() {
         chenillard(state);
         state = Math.abs(state + direction) % 4;
       }, speed * speed_ratio);
@@ -31,22 +34,23 @@ let connection = new knx.Connection({
       function chenillard(state) {
         switch (state) {
           case 0:
-            console.log("Lancé LED 1");
+            //console.log("Lancé LED 1");
             connection.write("0/1/1", 1);
             connection.write("0/1/4", 0);
+            console.log("Vitesse actuelle : " + speed * speed_ratio);
             break;
           case 1:
-            console.log("Lancé LED 2");
+            //console.log("Lancé LED 2");
             connection.write("0/1/2", 1);
             connection.write("0/1/1", 0);
             break;
           case 2:
-            console.log("Lancé LED 3");
+            //console.log("Lancé LED 3");
             connection.write("0/1/3", 1);
             connection.write("0/1/2", 0);
             break;
           case 3:
-            console.log("Lancé LED 0");
+            //console.log("Lancé LED 0");
             connection.write("0/1/4", 1);
             connection.write("0/1/3", 0);
             break;
@@ -54,28 +58,6 @@ let connection = new knx.Connection({
             console.log("STOP chenillard");
         }
       }
-      setTimeout(function() {
-        //state = 0;
-        speed_ratio = 2;
-        clearInterval(mChenillard);
-        mChenillard = setInterval(function() {
-          chenillard(state);
-          state = (state + 1) % 4;
-          console.log(speed_ratio);
-        }, speed * speed_ratio);
-      }, 10000);
-
-      setTimeout(function() {
-        //state = 0;
-        speed_ratio = 2.5;
-        clearInterval(mChenillard);
-        mChenillard = setInterval(function() {
-          chenillard(state);
-          state = (state + 1) % 4;
-          console.log(speed_ratio);
-        }, speed * speed_ratio);
-      }, 20000);
-
       // fin partie connexion
     },
     // get notified for all KNX events:
@@ -86,26 +68,32 @@ let connection = new knx.Connection({
             console.log("Impossible d'accélérer.");
           } else {
             //Accelere
-            speed_ratio -= 0.1;
+            speed_ratio -= 1;
             console.log("La vitesse est de :" + speed_ratio);
           }
           break;
         case "0/3/2":
-          if (speed_ratio <= 1) {
+          if (speed_ratio >= 5) {
             console.log("Impossible de ralentir.");
           } else {
             //Ralenti
-            speed_ratio += 0.1;
+            speed_ratio += 1;
             console.log("La vitesse est de :" + speed_ratio);
           }
           //Ralenti
           break;
         case "0/3/3":
-          state = 0;
-          //redemarre
+          if (mChenillard == "") {
+            mChenillard = setInterval(function() {
+              chenillard(state);
+              state = Math.abs(state + direction) % 4;
+            }, speed * speed_ratio);
+          } else {
+            mChenillard = "";
+          }
           break;
         case "0/3/4":
-          //change de sens
+          console.log("Changement de sens du chenillard");
           direction *= -1;
           break;
 
@@ -127,31 +115,3 @@ let connection = new knx.Connection({
     }
   }
 });
-
-/*
-function chenillard() {
-  while (true) {
-    connection.write("0/1/1", 1);
-    connection.write("0/1/2", 0);
-    connection.write("0/1/3", 0);
-    connection.write("0/1/4", 0);
-    sleep();
-    connection.write("0/1/1", 0);
-    connection.write("0/1/2", 1);
-    connection.write("0/1/3", 0);
-    connection.write("0/1/4", 0);
-    sleep();
-    connection.write("0/1/1", 0);
-    connection.write("0/1/2", 0);
-    connection.write("0/1/3", 1);
-    connection.write("0/1/4", 0);
-    sleep();
-    connection.write("0/1/1", 0);
-    connection.write("0/1/2", 0);
-    connection.write("0/1/3", 0);
-    connection.write("0/1/4", 1);
-    sleep();
-
-  }
-}
-*/
