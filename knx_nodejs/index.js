@@ -6,6 +6,34 @@ let direction = 1; //sens du chenillard
 
 let mChenillard = ""; //instance du chenillard
 
+function chenillard(state) {
+  switch (state) {
+    case 0:
+      //console.log("Lancé LED 1");
+      connection.write("0/1/1", 1);
+      connection.write("0/1/4", 0);
+      console.log("Vitesse actuelle : " + speed * speed_ratio);
+      break;
+    case 1:
+      //console.log("Lancé LED 2");
+      connection.write("0/1/2", 1);
+      connection.write("0/1/1", 0);
+      break;
+    case 2:
+      //console.log("Lancé LED 3");
+      connection.write("0/1/3", 1);
+      connection.write("0/1/2", 0);
+      break;
+    case 3:
+      //console.log("Lancé LED 0");
+      connection.write("0/1/4", 1);
+      connection.write("0/1/3", 0);
+      break;
+    default:
+      console.log("STOP chenillard");
+  }
+}
+
 let connection = new knx.Connection({
   // ip address and port of the KNX router or interface
   ipAddr: "192.168.0.5",
@@ -30,34 +58,6 @@ let connection = new knx.Connection({
         state = Math.abs(state + direction) % 4;
       }, speed * speed_ratio);
 
-      //permet d'allumer les LED les unes après les autres
-      function chenillard(state) {
-        switch (state) {
-          case 0:
-            //console.log("Lancé LED 1");
-            connection.write("0/1/1", 1);
-            connection.write("0/1/4", 0);
-            console.log("Vitesse actuelle : " + speed * speed_ratio);
-            break;
-          case 1:
-            //console.log("Lancé LED 2");
-            connection.write("0/1/2", 1);
-            connection.write("0/1/1", 0);
-            break;
-          case 2:
-            //console.log("Lancé LED 3");
-            connection.write("0/1/3", 1);
-            connection.write("0/1/2", 0);
-            break;
-          case 3:
-            //console.log("Lancé LED 0");
-            connection.write("0/1/4", 1);
-            connection.write("0/1/3", 0);
-            break;
-          default:
-            console.log("STOP chenillard");
-        }
-      }
       // fin partie connexion
     },
     // get notified for all KNX events:
@@ -68,6 +68,11 @@ let connection = new knx.Connection({
             console.log("Impossible d'accélérer.");
           } else {
             //Accelere
+            clearInterval(mChenillard);
+            mChenillard = setInterval(function() {
+              chenillard(state);
+              state = Math.abs(state + direction) % 4;
+            }, speed * speed_ratio);
             speed_ratio -= 1;
             console.log("La vitesse est de :" + speed_ratio);
           }
@@ -78,6 +83,11 @@ let connection = new knx.Connection({
           } else {
             //Ralenti
             speed_ratio += 1;
+            clearInterval(mChenillard);
+            mChenillard = setInterval(function() {
+              chenillard(state);
+              state = Math.abs(state + direction) % 4;
+            }, speed * speed_ratio);
             console.log("La vitesse est de :" + speed_ratio);
           }
           //Ralenti
