@@ -102,6 +102,7 @@ let connection = new knx.Connection({
   }
 });
 
+/*
 function chenillard() {
   while (true) {
     connection.write("0/1/1", 1);
@@ -127,3 +128,4 @@ function chenillard() {
 
   }
 }
+*/
