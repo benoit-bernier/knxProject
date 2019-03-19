@@ -31,6 +31,7 @@ let connection = new knx.Connection({
         state = (state + 1) % 4;
       }, speed * speed_ratio);
 
+
       function chenillard(state) {
         connection.write("0/1/" + schema[(state + 1) % 4] + 1, 1);
         connection.write("0/1/" + schema[state % 4] + 1, 0);
@@ -92,6 +93,7 @@ let connection = new knx.Connection({
           break;
 
         default:
+        */
       }
       /*
       console.log(
