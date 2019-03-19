@@ -7,8 +7,8 @@ let schema = [0, 1, 2, 3]; // schéma allumage des LED
 let mchenillard = ""; //instance du chenillard
 
 function chenillard(state) {
-  connection.write("0/1/" + schema[(state + 1) % 4] + 1, 1);
-  connection.write("0/1/" + schema[state % 4] + 1, 0);
+  connection.write("0/1/" + (schema[(state + 1) % 4] + 1), 1);
+  connection.write("0/1/" + (schema[state % 4] + 1), 0);
   console.log("Vitesse actuelle : " + speed * speed_ratio);
 }
 
