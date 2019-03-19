@@ -2,13 +2,6 @@ let state = 0;
 let speed = 1000;
 let speed_ratio = 1.5;
 
-console.log((0 * -1 + 4) % 4);
-console.log((1 * -1 + 4) % 4);
-console.log((2 * -1 + 4) % 4);
-console.log((3 * -1 + 4) % 4);
-console.log((4 * -1 + 4) % 4);
-console.log(((5 * -1) % 4) + 4);
-
 let mChenillard = setInterval(function() {
   chenillard(state);
   state = (state + 1) % 4;
