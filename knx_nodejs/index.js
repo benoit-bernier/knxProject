@@ -22,20 +22,6 @@ let connection = new knx.Connection({
     connected: function() {
       // partie connexion
       console.log("Connected !");
-
-      //lancement du chenillard
-
-      mchenillard = setInterval(function() {
-        chenillard(state);
-        console.log("State = " + state);
-        state = (state + 1) % 4;
-      }, speed * speed_ratio);
-
-      function chenillard(state) {
-        connection.write("0/1/" + (schema[(state + 1) % 4] + 1), 1);
-        connection.write("0/1/" + (schema[state % 4] + 1), 0);
-        console.log("Vitesse actuelle : " + speed * speed_ratio);
-      }
       // fin partie connexion
     },
     // get notified for all KNX events:
