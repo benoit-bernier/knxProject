@@ -55,50 +55,52 @@ let connection = new knx.Connection({
         state = (state + direction) % 4;
       }, speed * speed_ratio);
 
-      function chenillard(state) {
-        switch (Math.abs(state)) {
-          case 0:
-            //ralenti
-            // get infos chenillard précédent
-            // lance nouveau chenillard avec des paramètres modifiés
-            let chenillard = new chenillard(
-              ancien.tableau,
-              ancien.intervalle++,
-              ancien.state++
-            );
-            chenillard.start();
-            break;
-          case 1:
-            //accelere
+    
+    // get notified for all KNX events:
+    event: function(evt, src, dest, value) {
+      switch (dest) {
+        case "0/3/1":
+          //ralenti
+          // get infos chenillard précédent
+          // lance nouveau chenillard avec des paramètres modifiés
+          let chenillard = new chenillard(
+            ancien.tableau,
+            ancien.intervalle++,
+            ancien.state++
+          );
+          chenillard.start();
+          break;
+        case "0/3/2":
+          //accelere
+          if (ancien.intervalle !== 0){
             let chenillard = new chenillard(
               ancien.tableau,
               ancien.intervalle--,
               ancien.state++
             );
             chenillard.start();
-            break;
-          case 2:
-            //play/pause
+          }else{
+            console.log("impossible d'accélerer")
+          }
+          break;
+        case "0/3/4":
+          //play/pause
 
-            break;
-          case 3:
-            //reverse
-            let chenillard = new chenillard(
-              ancien.tableau.reverse(),
-              ancien.intervalle,
-              ancien.state++
-            );
-            chenillard.start();
-            break;
-          default:
-            console.log("STOP chenillard");
+          break;
+        case "0/3/4":
+          //reverse
+          let chenillard = new chenillard(
+            ancien.tableau.reverse(),
+            ancien.intervalle,
+            ancien.state++
+          );
+          chenillard.start();
+          break;
+        default:
+          console.log("STOP chenillard");
         }
-      }
-      // fin partie connexion
-    },
-    // get notified for all KNX events:
-    event: function(evt, src, dest, value) {
-      switch (dest) {
+
+        /*
         case "0/3/1":
           if (speed_ratio < 1) {
             console.log("Impossible d'accélérer.");
@@ -150,6 +152,7 @@ let connection = new knx.Connection({
           break;
 
         default:
+        */
       }
       /*
       console.log(

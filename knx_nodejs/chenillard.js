@@ -1,9 +1,10 @@
 class chenillard {
-  const minimumDelay=500;
-  constructor(tableau, intervalle, state) {
+  static minimumDelay = 500;
+  constructor(tableau, intervalle, state, connection) {
     this.tableau = tableau;
     this.intervalle = intervalle;
     this.state = state;
+    this.connection = connection;
   }
   get tableau() {
     return this.tableau;
@@ -24,16 +25,18 @@ class chenillard {
     this.intervalle = intervalle;
   }
 
-  stop() {
+  pause() {
     console.log("chenillard arrêté");
   }
-  start(){
+
+  start() {
     setInterval(function() {
       chenillard(state);
       console.log("State = " + state);
       state = (state + direction) % 4;
-    }, minimumDelay+this.intervalle);
+    }, minimumDelay + this.intervalle);
   }
+
   defile() {
     console.log("chenillard démarré");
     switch (Math.abs(state)) {
