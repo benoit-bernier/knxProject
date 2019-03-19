@@ -1,7 +1,7 @@
 const knx = require("knx");
 let state = 0; // state for the chenillard
-let speed = 500; // default time between two commands
-let speed_ratio = 100; // real speed = speed * speed_ratio (allow to increase or decrease the speed of the chenillard)
+var speed = 500; // default time between two commands
+var speed_ratio = 100; // real speed = speed * speed_ratio (allow to increase or decrease the speed of the chenillard)
 let schema = [0, 1, 2, 3]; // schéma allumage des LED
 
 let mchenillard = ""; //instance du chenillard
@@ -9,7 +9,7 @@ let mchenillard = ""; //instance du chenillard
 function chenillard(state) {
   connection.write("0/1/" + (schema[(state + 1) % 4] + 1), 1);
   connection.write("0/1/" + (schema[state % 4] + 1), 0);
-  console.log("Vitesse actuelle : " + speed + speed_ratio);
+  console.log("Vitesse actuelle : " + speed_ratio);
 }
 
 let connection = new knx.Connection({
@@ -42,7 +42,7 @@ let connection = new knx.Connection({
           }
           break;
         case "0/3/2":
-          if (speed_ratio > 5) {
+          if (speed_ratio > 5000) {
             console.log("Impossible de ralentir.");
           } else {
             //Ralenti
