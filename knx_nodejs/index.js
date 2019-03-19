@@ -2,7 +2,7 @@ const knx = require("knx");
 let state = 0; // state for the chenillard
 let speed = 500; // default time between two commands
 let speed_ratio = 1.5; // real speed = speed * speed_ratio (allow to increase or decrease the speed of the chenillard)
-let schema = [0, 1, 2, 3];
+let schema = [0, 1, 2, 3]; // schéma allumage des LED
 
 let mchenillard = ""; //instance du chenillard
 
@@ -28,8 +28,7 @@ let connection = new knx.Connection({
       mchenillard = setInterval(function() {
         chenillard(state);
         console.log("State = " + state);
-        state = state++ % 4;
-        console.log("State after = " + state);
+        state = (state + 1) % 4;
       }, speed * speed_ratio);
 
       function chenillard(state) {
@@ -75,7 +74,7 @@ let connection = new knx.Connection({
           if (mchenillard == "") {
             mchenillard = setInterval(function() {
               chenillard(state);
-              state = state++ % 4;
+              state = (state + 1) % 4;
             }, speed * speed_ratio);
           } else {
             clearInterval(mchenillard);
@@ -88,7 +87,7 @@ let connection = new knx.Connection({
           clearInterval(mchenillard);
           mchenillard = setInterval(function() {
             chenillard(state);
-            state = (state++ % 4) + 3;
+            state = ((state + 1) % 4) + 3;
           }, speed * speed_ratio);
           break;
 

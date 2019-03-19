@@ -9,7 +9,7 @@ let mChenillard = setInterval(function() {
 }, speed * speed_ratio);
 
 function chenillard(state) {
-  //console.log(schema[(state + 1) % 4] + 1);
+  console.log(schema[(state + 1) % 4] + 1);
   console.log(schema[state % 4] + 1);
   //console.log("Vitesse actuelle : " + speed * speed_ratio);
 }
