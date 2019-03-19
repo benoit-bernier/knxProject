@@ -3,6 +3,8 @@ let state = 0; // state for the chenillard
 let speed = 500; // default time between two commands
 let speed_ratio = 1.5; // real speed = speed * speed_ratio (allow to increase or decrease the speed of the chenillard)
 let direction = 1; //sens du chenillard
+let motif1 = [1, 2, 3, 4];
+let motif2 = [1, 3, 2, 4];
 
 let mchenillard = ""; //instance du chenillard
 
@@ -56,25 +58,37 @@ let connection = new knx.Connection({
       function chenillard(state) {
         switch (Math.abs(state)) {
           case 0:
-            //console.log("Lancé LED 1");
-            connection.write("0/1/1", 1);
-            connection.write("0/1/4", 0);
-            console.log("Vitesse actuelle : " + speed * speed_ratio);
+            //ralenti
+            // get infos chenillard précédent
+            // lance nouveau chenillard avec des paramètres modifiés
+            let chenillard = new chenillard(
+              ancien.tableau,
+              ancien.intervalle++,
+              ancien.state++
+            );
+            chenillard.start();
             break;
           case 1:
-            //console.log("Lancé LED 2");
-            connection.write("0/1/2", 1);
-            connection.write("0/1/1", 0);
+            //accelere
+            let chenillard = new chenillard(
+              ancien.tableau,
+              ancien.intervalle--,
+              ancien.state++
+            );
+            chenillard.start();
             break;
           case 2:
-            //console.log("Lancé LED 3");
-            connection.write("0/1/3", 1);
-            connection.write("0/1/2", 0);
+            //play/pause
+
             break;
           case 3:
-            //console.log("Lancé LED 0");
-            connection.write("0/1/4", 1);
-            connection.write("0/1/3", 0);
+            //reverse
+            let chenillard = new chenillard(
+              ancien.tableau.reverse(),
+              ancien.intervalle,
+              ancien.state++
+            );
+            chenillard.start();
             break;
           default:
             console.log("STOP chenillard");
