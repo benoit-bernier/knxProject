@@ -32,8 +32,8 @@ let connection = new knx.Connection({
       }, speed * speed_ratio);
 
       function chenillard(state) {
-        connection.write("0/1/" + schema[(state + 1) % 4] + 1, 1);
-        connection.write("0/1/" + schema[state % 4] + 1, 0);
+        connection.write("0/1/" + (schema[(state + 1) % 4] + 1), 1);
+        connection.write("0/1/" + (schema[state % 4] + 1), 0);
         console.log("Vitesse actuelle : " + speed * speed_ratio);
       }
       // fin partie connexion
@@ -49,7 +49,7 @@ let connection = new knx.Connection({
             clearInterval(mchenillard);
             mchenillard = setInterval(function() {
               chenillard(state);
-              state = state++ % 4;
+              state = (state + 1) % 4;
             }, speed * speed_ratio);
             speed_ratio -= 1;
             console.log("La vitesse est de :" + speed_ratio);
@@ -64,7 +64,7 @@ let connection = new knx.Connection({
             clearInterval(mchenillard);
             mchenillard = setInterval(function() {
               chenillard(state);
-              state = state++ % 4;
+              state = (state + 1) % 4;
             }, speed * speed_ratio);
             console.log("La vitesse est de :" + speed_ratio);
           }
@@ -86,10 +86,11 @@ let connection = new knx.Connection({
         case "0/3/4":
           console.log("Changement de sens du chenillard");
           schema.reverse();
+          console.log(schema);
           clearInterval(mchenillard);
           mchenillard = setInterval(function() {
             chenillard(state);
-            state = ((state + 1) % 4) + 3;
+            state = (state + 1) % 4;
           }, speed * speed_ratio);
           break;
 
