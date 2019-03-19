@@ -10,9 +10,8 @@ app.get("/", function(req, res) {
 });
 
 app.post("/test", function(request, response) {
-  console.log(request.body);
+  //console.log(request.body);
   response.send(request.body);
-  console.log(request.body.cmd);
   switch (request.body.cmd) {
     case "UP":
       console.log("Accèlération");
