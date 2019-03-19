@@ -75,8 +75,10 @@ let connection = new knx.Connection({
             mchenillard = setInterval(function() {
               chenillard(state);
               state = (state + 1) % 4;
+              console.log("Lancement du chenillard");
             }, speed * speed_ratio);
           } else {
+            console.log("Stop du chenillard");
             clearInterval(mchenillard);
             mchenillard = "";
           }
