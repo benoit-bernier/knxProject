@@ -10,8 +10,25 @@ app.get("/", function(req, res) {
 });
 
 app.post("/test", function(request, response) {
-  console.log(request.body); // your JSON
-  response.send(request.body); // echo the result back
+  console.log(request.body);
+  response.send(request.body);
+  console.log(request.body.cmd);
+  switch (request.body.cmd) {
+    case "UP":
+      console.log("Accèlération");
+      break;
+    case "DOWN":
+      console.log("Ralentissement");
+      break;
+    case "ONOFF":
+      console.log("Commande ON / OFF");
+      break;
+    case "REVERSE":
+      console.log("Changement de sens");
+      break;
+    default:
+      console.log("Commande non supportée");
+  }
 });
 
 app.use("/javascript", express.static(__dirname + "/javascript"));

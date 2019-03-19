@@ -61,7 +61,7 @@ function postREVERSE() {
   };
 
   let myObj = {
-    cmd: "reverse"
+    cmd: "REVERSE"
   };
   let myJSON = JSON.stringify(myObj);
   xhr.send(myJSON.toString());
