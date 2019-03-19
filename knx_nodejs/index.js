@@ -2,8 +2,7 @@ const knx = require("knx");
 let state = 0; // state for the chenillard
 let speed = 500; // default time between two commands
 let speed_ratio = 1.5; // real speed = speed * speed_ratio (allow to increase or decrease the speed of the chenillard)
-let schema = [0, 1, 2, 3]; // schéma allumage des LED
-
+let schema = [0, 1, 2, 3]; // schéma allumage des LED par défaut
 let mchenillard = ""; //instance du chenillard
 
 function chenillard(state) {
