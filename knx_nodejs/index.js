@@ -2,36 +2,14 @@ const knx = require("knx");
 let state = 0; // state for the chenillard
 let speed = 500; // default time between two commands
 let speed_ratio = 1.5; // real speed = speed * speed_ratio (allow to increase or decrease the speed of the chenillard)
-let direction = 1; //sens du chenillard
+let schema = [0, 1, 2, 3];
 
 let mchenillard = ""; //instance du chenillard
 
 function chenillard(state) {
-  switch (Math.abs(state)) {
-    case 0:
-      //console.log("Lancé LED 1");
-      connection.write("0/1/1", 1);
-      connection.write("0/1/4", 0);
-      console.log("Vitesse actuelle : " + speed * speed_ratio);
-      break;
-    case 1:
-      //console.log("Lancé LED 2");
-      connection.write("0/1/2", 1);
-      connection.write("0/1/1", 0);
-      break;
-    case 2:
-      //console.log("Lancé LED 3");
-      connection.write("0/1/3", 1);
-      connection.write("0/1/2", 0);
-      break;
-    case 3:
-      //console.log("Lancé LED 0");
-      connection.write("0/1/4", 1);
-      connection.write("0/1/3", 0);
-      break;
-    default:
-      console.log("STOP chenillard");
-  }
+  connection.write("0/1/" + schema[(state + 1) % 4] + 1, 1);
+  connection.write("0/1/" + schema[state % 4] + 1, 0);
+  console.log("Vitesse actuelle : " + speed * speed_ratio);
 }
 
 let connection = new knx.Connection({
@@ -50,35 +28,13 @@ let connection = new knx.Connection({
       mchenillard = setInterval(function() {
         chenillard(state);
         console.log("State = " + state);
-        state = (state + direction) % 4;
+        state = state++ % 4;
       }, speed * speed_ratio);
 
       function chenillard(state) {
-        switch (Math.abs(state)) {
-          case 0:
-            //console.log("Lancé LED 1");
-            connection.write("0/1/1", 1);
-            connection.write("0/1/4", 0);
-            console.log("Vitesse actuelle : " + speed * speed_ratio);
-            break;
-          case 1:
-            //console.log("Lancé LED 2");
-            connection.write("0/1/2", 1);
-            connection.write("0/1/1", 0);
-            break;
-          case 2:
-            //console.log("Lancé LED 3");
-            connection.write("0/1/3", 1);
-            connection.write("0/1/2", 0);
-            break;
-          case 3:
-            //console.log("Lancé LED 0");
-            connection.write("0/1/4", 1);
-            connection.write("0/1/3", 0);
-            break;
-          default:
-            console.log("STOP chenillard");
-        }
+        connection.write("0/1/" + schema[(state + 1) % 4] + 1, 1);
+        connection.write("0/1/" + schema[state % 4] + 1, 0);
+        console.log("Vitesse actuelle : " + speed * speed_ratio);
       }
       // fin partie connexion
     },
@@ -93,7 +49,7 @@ let connection = new knx.Connection({
             clearInterval(mchenillard);
             mchenillard = setInterval(function() {
               chenillard(state);
-              state = (state + direction) % 4;
+              state = state++ % 4;
             }, speed * speed_ratio);
             speed_ratio -= 1;
             console.log("La vitesse est de :" + speed_ratio);
@@ -108,7 +64,7 @@ let connection = new knx.Connection({
             clearInterval(mchenillard);
             mchenillard = setInterval(function() {
               chenillard(state);
-              state = (state + direction) % 4;
+              state = state++ % 4;
             }, speed * speed_ratio);
             console.log("La vitesse est de :" + speed_ratio);
           }
@@ -118,7 +74,7 @@ let connection = new knx.Connection({
           if (mchenillard == "") {
             mchenillard = setInterval(function() {
               chenillard(state);
-              state = (state + direction) % 4;
+              state = state++ % 4;
             }, speed * speed_ratio);
           } else {
             clearInterval(mchenillard);
@@ -127,11 +83,11 @@ let connection = new knx.Connection({
           break;
         case "0/3/4":
           console.log("Changement de sens du chenillard");
-          direction *= -1;
+          schema.reverse();
           clearInterval(mchenillard);
           mchenillard = setInterval(function() {
             chenillard(state);
-            state = ((state + direction) % 4) + 3;
+            state = (state++ % 4) + 3;
           }, speed * speed_ratio);
           break;
 
