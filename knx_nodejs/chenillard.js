@@ -18,7 +18,7 @@ function chenillard(state) {
 
 /*
 setTimeout(function() {
-  clearInterval(mChenillard);
+  xlearInterval(mChenillard);
 }, 30000);
 */
 

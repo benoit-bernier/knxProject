@@ -2,67 +2,63 @@ function testAlert() {
   window.alert("Test");
 }
 
-function postUP() {
-  let xhr = new XMLHttpRequest();
-  xhr.open("POST", "http://localhost:3000/test", true);
-  xhr.setRequestHeader("Content-Type", "application/json");
-  xhr.onreadystatechange = function() {
-    if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
-      console.log(this.responseText);
-    }
-  };
+let socket = io.connect("http://localhost:3000");
 
+function connect() {
+  let myObj = {
+    cmd: "CONNECT"
+  };
+  let myJSON = JSON.stringify(myObj);
+  socket.emit("events", myJSON);
+}
+
+function disconnect() {
+  let myObj = {
+    cmd: "DISCONNECT"
+  };
+  let myJSON = JSON.stringify(myObj);
+  socket.emit("events", myJSON);
+}
+function postUP() {
   let myObj = {
     cmd: "UP"
   };
   let myJSON = JSON.stringify(myObj);
-  xhr.send(myJSON.toString());
+  socket.emit("events", myJSON);
 }
 function postDOWN() {
-  let xhr = new XMLHttpRequest();
-  xhr.open("POST", "http://localhost:3000/test", true);
-  xhr.setRequestHeader("Content-Type", "application/json");
-  xhr.onreadystatechange = function() {
-    if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
-      console.log(this.responseText);
-    }
-  };
-
   let myObj = {
     cmd: "DOWN"
   };
   let myJSON = JSON.stringify(myObj);
-  xhr.send(myJSON.toString());
+  socket.emit("events", myJSON);
 }
 function postONOFF() {
-  let xhr = new XMLHttpRequest();
-  xhr.open("POST", "http://localhost:3000/test", true);
-  xhr.setRequestHeader("Content-Type", "application/json");
-  xhr.onreadystatechange = function() {
-    if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
-      console.log(this.responseText);
-    }
-  };
-
   let myObj = {
     cmd: "ONOFF"
   };
   let myJSON = JSON.stringify(myObj);
-  xhr.send(myJSON.toString());
+  socket.emit("events", myJSON);
 }
 function postREVERSE() {
-  let xhr = new XMLHttpRequest();
-  xhr.open("POST", "http://localhost:3000/test", true);
-  xhr.setRequestHeader("Content-Type", "application/json");
-  xhr.onreadystatechange = function() {
-    if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
-      console.log(this.responseText);
-    }
-  };
-
   let myObj = {
     cmd: "REVERSE"
   };
   let myJSON = JSON.stringify(myObj);
-  xhr.send(myJSON.toString());
+  socket.emit("events", myJSON);
+}
+function postSCHEMA() {
+  let myObj = {
+    cmd: "SCHEMA",
+    data: [2, 1, 3, 4]
+  };
+  let myJSON = JSON.stringify(myObj);
+  socket.emit("events", myJSON);
+}
+function postRESET() {
+  let myObj = {
+    cmd: "RESET"
+  };
+  let myJSON = JSON.stringify(myObj);
+  socket.emit("events", myJSON);
 }

@@ -2,16 +2,25 @@
 <html lang="fr" dir="ltr">
   <head>
     <meta charset="utf-8" />
+    <script src="/socketio/socket.io.js" charset="utf-8"></script>
     <script src="javascript/script.js"></script>
     <link rel="stylesheet" href="css/styles.css" />
     <title>Accueil</title>
   </head>
   <body>
-    <h1>Hello world !</h1>
+    <h1>Panneau de contrôle</h1>
     <button type="button" name="button" onclick="testAlert()">Test !</button>
+    <button type="button" name="button" onclick="connect()">Connect</button>
+    <button type="button" name="button" onclick="disconnect()">
+      Disconnect
+    </button>
     <button type="button" name="button" onclick="postUP()">Accélère</button>
     <button type="button" name="button" onclick="postDOWN()">Ralenti</button>
     <button type="button" name="button" onclick="postONOFF()">ON/OFF</button>
     <button type="button" name="button" onclick="postREVERSE()">Reverse</button>
+    <button type="button" name="button" onclick="postSCHEMA()">
+      Change schéma
+    </button>
+    <button type="button" name="button" onclick="postRESET()">Reset</button>
   </body>
 </html>
