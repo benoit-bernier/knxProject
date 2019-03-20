@@ -11,13 +11,13 @@ const io = so.listen(httpServer);
 let ip_maquette = "192.168.0.5";
 let port_maquette = 3671;
 
-let connection = "";
 let connected = false;
+let connection = "";
+let mchenillard = ""; //instance du chenillard
 let state = 0; // state for the chenillard
 let speed = 500; // default time between two commands
 let speed_ratio = 100; // real speed = speed + speed_ratio (allow to increase or decrease the speed of the chenillard)
 let schema = [0, 1, 2, 3]; // schéma allumage des LED par défaut
-let mchenillard = ""; //instance du chenillard
 
 init();
 
@@ -26,6 +26,7 @@ function init() {
   speed = 500;
   speed_ratio = 100;
   schema = [0, 1, 2, 3];
+  clearInterval(mchenillard);
   mchenillard = "";
   connection = new knx.Connection({
     // ip address and port of the KNX router or interface
@@ -144,6 +145,10 @@ io.on("connection", function(socket) {
       case "DISCONNECT":
         if (connected == true) {
           connection.Disconnect();
+          clearInterval(mchenillard);
+          mchenillard = "";
+          connection = "";
+          connected = false;
         } else {
           console.log("Pas de maquette appareillée.");
         }
@@ -161,7 +166,7 @@ io.on("connection", function(socket) {
               state = (state + 1) % 4;
             }, speed + speed_ratio);
             speed_ratio -= 100;
-            console.log("La vitesse est de :" + speed_ratio);
+            console.log("La vitesse est de : " + speed_ratio);
           }
         } else {
           console.log("Non connecté à la maquette");
@@ -180,7 +185,7 @@ io.on("connection", function(socket) {
               chenillard(state);
               state = (state + 1) % 4;
             }, speed + speed_ratio);
-            console.log("La vitesse est de :" + speed_ratio);
+            console.log("La vitesse est de : " + speed_ratio);
           }
         } else {
           console.log("Non connecté à la maquette");
