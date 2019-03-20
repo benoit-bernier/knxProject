@@ -8,6 +8,9 @@ const app = express();
 const httpServer = http.createServer(app);
 const io = so.listen(httpServer);
 
+let ip_maquette = "192.168.0.5";
+let port_maquette = 3671;
+
 let connection = "";
 let connected = false;
 let state = 0; // state for the chenillard
@@ -38,8 +41,8 @@ app.get("/", function(req, res) {
 
 connection = new knx.Connection({
   // ip address and port of the KNX router or interface
-  ipAddr: "192.168.0.5",
-  port: 3671,
+  ipAddr: ip_maquette,
+  port: port_maquette,
   minimumDelay: 50,
   handlers: {
     // wait for connection establishment before sending anything!
@@ -61,16 +64,16 @@ connection = new knx.Connection({
               chenillard(state);
               state = (state + 1) % 4;
             }, speed + speed_ratio);
-            speed_ratio -= 1;
+            speed_ratio -= 100;
             console.log("La vitesse est de :" + speed_ratio);
           }
           break;
         case "0/3/2":
-          if (speed_ratio > 5000) {
+          if (speed_ratio > 100000) {
             console.log("Impossible de ralentir.");
           } else {
             //Ralenti
-            speed_ratio += 1;
+            speed_ratio += 100;
             clearInterval(mchenillard);
             mchenillard = setInterval(function() {
               chenillard(state);
@@ -126,6 +129,7 @@ connection = new knx.Connection({
 io.on("connection", function(socket) {
   socket.on("events", function(data) {
     console.log(data);
+    console.log(connected);
     let input = JSON.parse(data);
     switch (input.cmd) {
       case "CONNECT":
@@ -221,13 +225,16 @@ io.on("connection", function(socket) {
         }
         break;
       case "DISCONNECT":
-        connection.Disconnect();
-        connected = false;
+        if (connected == true) {
+          connection.Disconnect();
+        } else {
+          console.log("Pas de maquette appareillée.");
+        }
         break;
       case "UP":
         console.log("Accélération");
         if (connected) {
-          if (speed_ratio < 1) {
+          if (speed_ratio === 0) {
             console.log("Impossible d'accélérer.");
           } else {
             //Accelere
@@ -236,7 +243,7 @@ io.on("connection", function(socket) {
               chenillard(state);
               state = (state + 1) % 4;
             }, speed + speed_ratio);
-            speed_ratio -= 1;
+            speed_ratio -= 100;
             console.log("La vitesse est de :" + speed_ratio);
           }
         } else {
@@ -246,11 +253,11 @@ io.on("connection", function(socket) {
       case "DOWN":
         console.log("Ralentissement");
         if (connected) {
-          if (speed_ratio > 5) {
+          if (speed_ratio > 100000) {
             console.log("Impossible de ralentir.");
           } else {
             //Ralenti
-            speed_ratio += 1;
+            speed_ratio += 100;
             clearInterval(mchenillard);
             mchenillard = setInterval(function() {
               chenillard(state);
