@@ -49,6 +49,7 @@ connection = new knx.Connection({
     connected: function() {
       // partie connexion
       console.log("Connected !");
+      connected = true;
       // fin partie connexion
     },
     // get notified for all KNX events:
