@@ -39,7 +39,13 @@ https://github.com/XKNX/xknx/blob/master/examples/example_light_state.py
 
 ### Client applicatif
 
-- Client web + webview toute bête ? (corova etc ?)
+- Client web + webview toute bête ? (cordova etc ?)
+- application hybride
+  - cordova
+  - polymer
+  - angular
+  - vue
+  - react
 - appli pseudo native ?
   - Flutter
   - Xamarin
@@ -51,3 +57,9 @@ https://github.com/XKNX/xknx/blob/master/examples/example_light_state.py
   - Swift
 
 ## Fonctionnalités additionnelles
+
+- Mastermind
+- Dimming
+- Interactions avec envt :
+  - luminosité ambiante
+  - niveau sonore ?
