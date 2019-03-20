@@ -70,5 +70,12 @@ Nous developpons une application en Flutter.
 
 ## Documentation :
 
-https://flutter.dev/docs/get-started/flutter-for/android-devs
-https://flutter.dev/docs/get-started/install/windows
+https://flutter.dev/docs/get-started/flutter-for/android-devs
+
+
+https://flutter.dev/docs/get-started/flutter-for/a
+
+https://flutter.dev/docs/get-started/flutter-for/android-devs#how-do-i-lay-out-my-widgets-where-is-my-xml-layout-file
+https://flutter.dev/docs/get-started/flutter-for/android-devs#how-do-i-add-or-remove-a-component-from-my-layout
+httphttps://flutter.dev/docs/get-started/flutter-for/android-devs#where-do-i-store-strings-how-do-i-handle-localization
+https://flutter.dev/docs/get-started/flutter-for/android-devs#how-do-i-add-an-onclick-listener-to-a-widget-in-flutter
