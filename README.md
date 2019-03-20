@@ -63,3 +63,12 @@ https://github.com/XKNX/xknx/blob/master/examples/example_light_state.py
 - Interactions avec envt :
   - luminosité ambiante
   - niveau sonore ?
+
+# Choix Client :
+
+Nous developpons une application en Flutter.
+
+## Documentation :
+
+https://flutter.dev/docs/get-started/flutter-for/android-devs
+https://flutter.dev/docs/get-started/install/windows
