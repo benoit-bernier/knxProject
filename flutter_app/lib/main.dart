@@ -25,7 +25,9 @@ class MyApp extends StatelessWidget {
         body: Center(child:
         Column(
           children: <Widget>[
-            Text('Deliver features faster'),
+            Text('Deliver features faster',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+            ),
             ButtonBar(
               alignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
@@ -100,5 +102,62 @@ class _FavoriteWidgetState extends State<FavoriteWidget>{
         _isConnected = true;
       }
     });
+  }
+}
+
+class _ReorderableList extends StatefulWidget{
+  @override
+  State<StatefulWidget> createState(){
+    return __ReorderableListState();
+  }
+}
+class _ListItem{
+  _ListItem(this.value, this.checked);
+  final int value;
+  bool checked;
+}
+
+class __ReorderableListState extends State<_ReorderableList>{
+  bool _reverseSort = false;
+  static final _items = <int>[1,2,3,4].map((item) => _ListItem(item, false)).toList();
+
+  void _onReorder (int oldIndex, int newIndex){
+    setState((){
+      if (newIndex>oldIndex){
+        newIndex--;
+      }
+      final _ListItem item = _items.removeAt(oldIndex);
+      _items.insert(newIndex, item);
+    });
+  }
+
+  void _onSort(){
+    setState(() {
+      _reverseSort = !_reverseSort;
+      _items.sort((_ListItem a, _ListItem b) => _reverseSort
+          ? b.value.compareTo(a.value)
+          : a.value.compareTo(b.value));
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final _listTiles = _items
+        .map((item) => CheckboxListTile(
+      key:Key(item.value.toString()),
+      value:item.checked ?? false,
+      onChanged: (bool newValue) {
+        setState(() => item.checked = newValue);
+        },
+      title:Text("Ampoule numéro ${item.value}"),
+      isThreeLine: true,
+      subtitle: Text("Item ${item.value}, checked=${item.checked}"),
+      secondary: Icon(Icons.drag_handle),
+    );
+    //TODO: resolve problem on ReordeableListView
+    return ReordeableListView(
+        onReorder: _onReorder,
+      children: _listTiles,
+    );
   }
 }
