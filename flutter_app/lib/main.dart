@@ -153,10 +153,11 @@ class __ReorderableListState extends State<_ReorderableList>{
       isThreeLine: true,
       subtitle: Text("Item ${item.value}, checked=${item.checked}"),
       secondary: Icon(Icons.drag_handle),
-    );
+    )
     //TODO: resolve problem on ReordeableListView
+    );
     return ReordeableListView(
-        onReorder: _onReorder,
+      onReorder: _onReorder,
       children: _listTiles,
     );
   }
