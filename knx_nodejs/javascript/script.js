@@ -55,10 +55,32 @@ function postSCHEMA() {
   let myJSON = JSON.stringify(myObj);
   socket.emit("events", myJSON);
 }
-function postRESET() {
+function postInitMastermind() {
+  let myObj = {
+    cmd: "INIT"
+  };
+  let myJSON = JSON.stringify(myObj);
+  socket.emit("mastermind", myJSON);
+}
+function postResetMastermind(tab) {
   let myObj = {
     cmd: "RESET"
   };
   let myJSON = JSON.stringify(myObj);
-  socket.emit("events", myJSON);
+  socket.emit("mastermind", myJSON);
+}
+function postVerifyMastermind(tab) {
+  let myObj = {
+    cmd: "VERIFY",
+    data: tab
+  };
+  let myJSON = JSON.stringify(myObj);
+  socket.emit("mastermind", myJSON);
+}
+function postStopMastermind() {
+  let myObj = {
+    cmd: "STOP"
+  };
+  let myJSON = JSON.stringify(myObj);
+  socket.emit("mastermind", myJSON);
 }

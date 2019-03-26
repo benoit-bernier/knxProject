@@ -7,17 +7,21 @@ const so = require("socket.io");
 const app = express();
 const httpServer = http.createServer(app);
 const io = so.listen(httpServer);
+const port_server = 3000;
 
 let ip_maquette = "192.168.0.5";
 let port_maquette = 3671;
 
-let connected = false;
-let connection = "";
+let connected = false; //connecté à la maquette
+let connection = ""; //contient la socket de connexion KNX
 let mchenillard = ""; //instance du chenillard
 let state = 0; // state for the chenillard
 let speed = 500; // default time between two commands
 let speed_ratio = 100; // real speed = speed + speed_ratio (allow to increase or decrease the speed of the chenillard)
 let schema = [0, 1, 2, 3]; // schéma allumage des LED par défaut
+
+let mode = ""; //mode de la maquette
+let reference = ""; //reférence / modèle du jeu
 
 init();
 
@@ -26,6 +30,8 @@ function init() {
   speed = 500;
   speed_ratio = 100;
   schema = [0, 1, 2, 3];
+  mode = "";
+  reference = "";
   clearInterval(mchenillard);
   mchenillard = "";
   connection = new knx.Connection({
@@ -45,6 +51,7 @@ function init() {
       event: function(evt, src, dest, value) {
         switch (dest) {
           case "0/3/1":
+            mode = "";
             if (speed_ratio === 0) {
               console.log("Impossible d'accélérer.");
             } else {
@@ -59,6 +66,7 @@ function init() {
             }
             break;
           case "0/3/2":
+            mode = "";
             if (speed_ratio > 100000) {
               console.log("Impossible de ralentir.");
             } else {
@@ -74,6 +82,7 @@ function init() {
             //Ralenti
             break;
           case "0/3/3":
+            mode = "";
             if (mchenillard == "") {
               mchenillard = setInterval(function() {
                 chenillard(state);
@@ -87,6 +96,7 @@ function init() {
             }
             break;
           case "0/3/4":
+            mode = "";
             console.log("Changement de sens du chenillard");
             schema.reverse();
             console.log(schema);
@@ -123,6 +133,46 @@ function chenillard(state) {
   console.log("Vitesse actuelle : " + speed_ratio);
 }
 
+function blink(position, time) {
+  if (time < 500) {
+    console.log("Erreur lors du blick : temps minimal non respecté.");
+    return;
+  }
+
+  console.log("Blink ON LED " + position + " : " + time + "ms");
+  //connection.write("0/1/" + position);
+  setTimeout(function() {
+    console.log("Blink OFF LED " + position);
+    //connection.write("0/1/" + position);
+  }, time);
+}
+
+function shuffle_tab(tab, iteration) {
+  for (i = 0; i < iteration; i++) {
+    j = Math.floor(Math.random() * tab.length);
+    k = Math.floor(Math.random() * tab.length);
+    tmp = tab[j];
+    tab[j] = tab[k];
+    tab[k] = tmp;
+  }
+  return tab;
+}
+
+function verify_mastermind(tab, reference) {
+  return new Promise(function(resolve, reject) {
+    let result = [0, 0, 0, 0];
+    for (i in tab) {
+      if (tab[i] == reference[i]) {
+        blink(i, 2000);
+        result[i] = 1;
+      } else {
+        blink(i, 500);
+      }
+    }
+    resolve(result);
+  });
+}
+
 app.use(bodyParser.json());
 
 app.get("/", function(req, res) {
@@ -155,7 +205,7 @@ io.on("connection", function(socket) {
         break;
       case "UP":
         console.log("Accélération");
-        if (connected) {
+        if (connected && mode == "") {
           if (speed_ratio === 0) {
             console.log("Impossible d'accélérer.");
           } else {
@@ -169,12 +219,16 @@ io.on("connection", function(socket) {
             console.log("La vitesse est de : " + speed_ratio);
           }
         } else {
-          console.log("Non connecté à la maquette");
+          if (!connected) {
+            console.log("Non connecté à la maquette");
+          } else {
+            console.log("Maquette en mode jeu : " + mode);
+          }
         }
         break;
       case "DOWN":
         console.log("Ralentissement");
-        if (connected) {
+        if (connected && mode == "") {
           if (speed_ratio > 100000) {
             console.log("Impossible de ralentir.");
           } else {
@@ -188,12 +242,16 @@ io.on("connection", function(socket) {
             console.log("La vitesse est de : " + speed_ratio);
           }
         } else {
-          console.log("Non connecté à la maquette");
+          if (!connected) {
+            console.log("Non connecté à la maquette");
+          } else {
+            console.log("Maquette en mode jeu : " + mode);
+          }
         }
         break;
       case "ONOFF":
         console.log("Commande ON / OFF");
-        if (connected) {
+        if (connected && mode == "") {
           if (mchenillard == "") {
             mchenillard = setInterval(function() {
               chenillard(state);
@@ -206,12 +264,16 @@ io.on("connection", function(socket) {
             mchenillard = "";
           }
         } else {
-          console.log("Non connecté à la maquette");
+          if (!connected) {
+            console.log("Non connecté à la maquette");
+          } else {
+            console.log("Maquette en mode jeu : " + mode);
+          }
         }
         break;
       case "REVERSE":
         console.log("Changement de sens du chenillard");
-        if (connected) {
+        if (connected && mode == "") {
           schema.reverse();
           console.log(schema);
           clearInterval(mchenillard);
@@ -220,12 +282,16 @@ io.on("connection", function(socket) {
             state = (state + 1) % 4;
           }, speed + speed_ratio);
         } else {
-          console.log("Non connecté à la maquette");
+          if (!connected) {
+            console.log("Non connecté à la maquette");
+          } else {
+            console.log("Maquette en mode jeu : " + mode);
+          }
         }
         break;
       case "SCHEMA":
         console.log("Changement du shéma du chenillard :" + input.data);
-        if (connected) {
+        if (connected && mode == "") {
           schema = input.data;
           clearInterval(mchenillard);
           mchenillard = setInterval(function() {
@@ -233,7 +299,11 @@ io.on("connection", function(socket) {
             state = (state + 1) % 4;
           }, speed + speed_ratio);
         } else {
-          console.log("Non connecté à la maquette");
+          if (!connected) {
+            console.log("Non connecté à la maquette");
+          } else {
+            console.log("Maquette en mode jeu : " + mode);
+          }
         }
         break;
       case "RESET":
@@ -248,6 +318,51 @@ io.on("connection", function(socket) {
         console.log("Commande non supportée");
     }
   });
+  socket.on("mastermind", function(data) {
+    console.log(data);
+    console.log(connected);
+    mode = "mastermind";
+    if (!connected) {
+      let input = JSON.parse(data);
+      switch (input.cmd) {
+        case "INIT":
+          if (reference === "") {
+            mode = "mastermind";
+            console.log("Initialisation du mastermind..");
+            reference = shuffle_tab([0, 1, 2, 3], 30);
+            console.log("Schéma du tableau : " + reference);
+          } else {
+            console.log("Le jeu est déjà lancé..");
+          }
+          break;
+        case "VERIFY":
+          if (mode === "mastermind" && reference != "") {
+            result = verify_mastermind(input.data, reference);
+            result.then(function(value) {
+              console.log(value);
+            });
+          } else {
+            console.log(
+              "Erreur lors de la vérification : jeu non lancé ou pas initialisé"
+            );
+          }
+          break;
+        case "STOP":
+          console.log(
+            "Le jeu " +
+              mode +
+              " vient d'être stoppé. Retour au mode par défaut."
+          );
+          mode = "";
+          reference = "";
+          break;
+        default:
+          console.log("Commande non supportée");
+      }
+    } else {
+      console.log("Erreur lors du lancement du jeu : maquette non connectée.");
+    }
+  });
 });
 
 app.use("/javascript", express.static(__dirname + "/javascript"));
@@ -257,6 +372,6 @@ app.use(
   express.static(__dirname + "/node_modules/socket.io-client/dist")
 );
 
-console.log("Lancement du serveur : http://localhost:3000/");
+console.log("Lancement du serveur : http://localhost:" + port_server + "/");
 
-httpServer.listen(3000);
+httpServer.listen(port_server);
