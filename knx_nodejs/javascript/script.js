@@ -178,6 +178,11 @@ socket.on("game", function(data) {
         if (input.data[i] == 0) {
           clear = false;
           str = "Résultat Mastermind : " + input.data;
+          let mButton = document.getElementById("LED_" + i + "_user");
+          mButton.style.backgroundColor = "red";
+        } else {
+          let mButton = document.getElementById("LED_" + i + "_user");
+          mButton.style.backgroundColor = "green";
         }
       }
       if (clear) {
