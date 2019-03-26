@@ -2,30 +2,41 @@ import 'package:flutter/material.dart';
 // Uncomment lines 7 and 10 to view the visual layout at runtime.
 // import 'package:flutter/rendering.dart' show debugPaintSizeEnabled;
 import 'package:flutter/rendering.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
+import 'package:web_socket_channel/io.dart';
 
 void main() {
-  //debugPaintSizeEnabled = true;
   runApp(MyApp());
 }
+
+bool isConnected = true;
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    Color color = Theme.of(context).primaryColor;
+    //Color color = Theme.of(context).primaryColor;
+    var channel = IOWebSocketChannel.connect('ws://echo.websocket.org');
+    channel.sink.add('Hello!');
 
-    return MaterialApp(
-      title: 'Flutter layout demo',
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text("Chenillard App"),
-          actions: <Widget>[
-            FavoriteWidget(),
-          ],
-        ),
-        body: Center(child:
-        Column(
+    final _kTabPages = <Widget>[
+      Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text('Deliver features faster',
+
+            PlayPauseWidget(channel :channel,),
+            Text(
+              'Choisis la durée :',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+            ),
+            SliderWidget(channel: channel,),
+            Text(
+              'Sens de défilement',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+            ),
+            OrderWidget(channel: channel,),
+            Text(
+              'Autre',
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
             ),
             ButtonBar(
@@ -40,43 +51,88 @@ class MyApp extends StatelessWidget {
                 RaisedButton(
                     onPressed: () {},
                     child: Text('Ralenti'),
-                    padding: EdgeInsets.only(left: 10.0, right: 10.0)
-                ),
+                    padding: EdgeInsets.only(left: 10.0, right: 10.0)),
               ],
             ),
-
-            Text('Craft beautiful UIs'),
-            ButtonBar(
-              alignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
-                RaisedButton(
-                  onPressed: () {},
-                  color: Colors.pink,
-                  child: Text('Accélère'),
-                  padding: EdgeInsets.only(left: 10.0, right: 10.0),
-                ),
-                RaisedButton(
-                    onPressed: () {},
-                    child: Text('Ralenti'),
-                    padding: EdgeInsets.only(left: 10.0, right: 10.0)
-                ),
-              ],
-            ),
+            // ignore: unnecessary_brace_in_string_interps
           ],
         ),
+      ),
+      Center(
+        child: Icon(
+          Icons.lightbulb_outline,
+          size: 64.0,
+          color: Colors.pink,
         ),
+      ),
+      Center(
+        child: Icon(
+          Icons.videogame_asset,
+          size: 64.0,
+          color: Colors.pink,
         ),
-      );
+      ),
+      Center(
+        child: Icon(
+          Icons.settings,
+          size: 64.0,
+          color: Colors.pink,
+        ),
+      ),
+    ];
+
+    final _kTabs = <Tab>[
+      Tab(
+        icon: Icon(Icons.home),
+        text: "Chenillard",
+      ),
+      Tab(
+        icon: Icon(Icons.lightbulb_outline),
+        text: "Ampoules",
+      ),
+      Tab(
+        icon: Icon(Icons.videogame_asset),
+        text: "Jeux",
+      ),
+      Tab(
+        icon: Icon(Icons.settings),
+        text: "Réglages",
+      ),
+    ];
+
+    return MaterialApp(
+      title: 'Flutter layout demo',
+      theme: new ThemeData(
+        primarySwatch: Colors.pink,
+      ),
+      //color: Colors.pink,
+      home: DefaultTabController(
+        length: _kTabs.length,
+        child: Scaffold(
+            appBar: AppBar(
+              backgroundColor: Colors.pink,
+              title: Text("Chenillard App"),
+              actions: <Widget>[
+                ConnectionWidget(),
+              ],
+              bottom: TabBar(tabs: _kTabs),
+            ),
+            body: TabBarView(children: _kTabPages)),
+      ),
+    );
   }
 }
 
-class FavoriteWidget extends StatefulWidget{
+class ConnectionWidget extends StatefulWidget {
+  final WebSocketChannel channel;
+
+  ConnectionWidget({Key key, @required this.channel})
+      : super(key: key);
   @override
-  _FavoriteWidgetState createState() => _FavoriteWidgetState();
+  _ConnectionWidgetState createState() => _ConnectionWidgetState();
 }
 
-class _FavoriteWidgetState extends State<FavoriteWidget>{
-  bool _isConnected = true;
+class _ConnectionWidgetState extends State<ConnectionWidget> {
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -85,82 +141,129 @@ class _FavoriteWidgetState extends State<FavoriteWidget>{
         Container(
           padding: EdgeInsets.all(0),
           child: IconButton(
-            icon: (_isConnected ? Icon(Icons.file_upload) : Icon(Icons.file_download)),
-            color: Colors.red[500],
-            onPressed: _toggleFavorite,
+            icon: (isConnected ? Icon(Icons.link) : Icon(Icons.link_off)),
+            color: Colors.white,
+            onPressed: _toggleConnection,
           ),
         ),
       ],
     );
   }
 
-  void _toggleFavorite() {
+  void _toggleConnection() {
+    print(isConnected);
     setState(() {
-      if (_isConnected) {
-        _isConnected = false;
-      } else {
-        _isConnected = true;
-      }
+      isConnected = !isConnected;
     });
+    widget.channel.sink.add(isConnected?"Connect":"Disconnect");
+    //TODO: Initialiser ou tuer la connexion
   }
 }
 
-class _ReorderableList extends StatefulWidget{
+class SliderWidget extends StatefulWidget {
+  final WebSocketChannel channel;
+
+  SliderWidget({Key key, @required this.channel})
+      : super(key: key);
   @override
-  State<StatefulWidget> createState(){
-    return __ReorderableListState();
-  }
-}
-class _ListItem{
-  _ListItem(this.value, this.checked);
-  final int value;
-  bool checked;
+  State<StatefulWidget> createState() => _SliderWidgetState();
 }
 
-class __ReorderableListState extends State<_ReorderableList>{
-  bool _reverseSort = false;
-  static final _items = <int>[1,2,3,4].map((item) => _ListItem(item, false)).toList();
-
-  void _onReorder (int oldIndex, int newIndex){
-    setState((){
-      if (newIndex>oldIndex){
-        newIndex--;
-      }
-      final _ListItem item = _items.removeAt(oldIndex);
-      _items.insert(newIndex, item);
-    });
-  }
-
-  void _onSort(){
-    setState(() {
-      _reverseSort = !_reverseSort;
-      _items.sort((_ListItem a, _ListItem b) => _reverseSort
-          ? b.value.compareTo(a.value)
-          : a.value.compareTo(b.value));
-    });
-  }
-
+class _SliderWidgetState extends State<SliderWidget> {
+  double _value = 500.0;
   @override
   Widget build(BuildContext context) {
-    final _listTiles = _items
-        .map((item) => CheckboxListTile(
-      key:Key(item.value.toString()),
-      value:item.checked ?? false,
-      onChanged: (bool newValue) {
-        setState(() => item.checked = newValue);
-        },
-      title:Text("Ampoule numéro ${item.value}"),
-      isThreeLine: true,
-      subtitle: Text("Item ${item.value}, checked=${item.checked}"),
-      secondary: Icon(Icons.drag_handle),
-    )
-    //TODO: resolve problem on ReordeableListView
-    );
-    return ReordeableListView(
-      onReorder: _onReorder,
-      children: _listTiles,
+    return Slider(
+      activeColor: Colors.pink,
+      value: _value,
+      min: 0.0,
+      max: 5000.0,
+      divisions: 10,
+      label: '${_value.round() / 1000}',
+      onChanged: (double value) {
+        setState(() => _value = value);
+        widget.channel.sink.add(_value.toString());
+        //TODO: send _value to server
+      },
     );
   }
-
-  Widget ReordeableListView({void Function(int oldIndex, int newIndex) onReorder, Iterable<CheckboxListTile> children}) {}
 }
+
+class OrderWidget extends StatefulWidget {
+  final WebSocketChannel channel;
+
+  OrderWidget({Key key, @required this.channel})
+      : super(key: key);
+  @override
+  State<StatefulWidget> createState() => _OrderWidgetState();
+}
+
+class _OrderWidgetState extends State<OrderWidget> {
+  var _defaultArray = <int>[1, 2, 3, 4];
+  @override
+  Widget build(BuildContext context) {
+    return Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+      Text(
+        "$_defaultArray",
+        style: TextStyle(fontSize: 24, color: Colors.pink),
+      ),
+      IconButton(
+        onPressed: () {
+          setState(() {
+            _defaultArray = _defaultArray.reversed.toList();
+          });
+          //TODO: Send new array to server
+          widget.channel.sink.add(_defaultArray.toString());
+        },
+        color: Colors.pink,
+        icon: Icon(Icons.autorenew),
+        tooltip: "Inverser le tableau",
+        //padding: EdgeInsets.only(left: 10.0, right: 10.0),
+      ),
+    ]);
+  }
+}
+
+class PlayPauseWidget extends StatefulWidget {
+  final WebSocketChannel channel;
+
+  PlayPauseWidget({Key key, @required this.channel})
+      : super(key: key);
+  @override
+  State<StatefulWidget> createState() => _PlayPauseWidgetState();
+}
+
+class _PlayPauseWidgetState extends State<PlayPauseWidget> {
+  bool _isPlaying = false;
+  @override
+  Widget build(BuildContext context) {
+    return Column(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+      StreamBuilder(
+        stream: widget.channel.stream,
+        builder: (context, snapshot) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 24.0),
+            child: Text(snapshot.hasData ? '${snapshot.data}' : ''),
+          );
+        },
+      ),
+      Text(
+        "Le chenillard est en route : $_isPlaying",
+        style: TextStyle(fontSize: 24, color: Colors.pink),
+      ),
+      IconButton(
+        iconSize: 64.0,
+        onPressed: () {
+          setState(() {
+            _isPlaying = !_isPlaying;
+          });
+          //TODO: Launch chenillard
+          widget.channel.sink.add(_isPlaying?"Play":"Pause");
+        },
+        color: Colors.pink,
+        icon: Icon(_isPlaying?Icons.play_circle_filled:Icons.pause_circle_filled),
+      ),
+    ]);
+  }
+}
+
