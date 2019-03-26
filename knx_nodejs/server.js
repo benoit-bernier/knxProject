@@ -50,7 +50,7 @@ function init() {
           data: "Serveur connecté à la maquette"
         };
         let myJSON = JSON.stringify(myObj);
-        io.sockets.emit("default_mode", response);
+        io.sockets.emit("default_mode", myJSON);
         // fin partie connexion
       },
       // get notified for all KNX events:
@@ -112,7 +112,38 @@ function init() {
               state = (state + 1) % 4;
             }, speed + speed_ratio);
             break;
-
+          case "0/2/1":
+            let myObj = {
+              cmd: "state_led_1",
+              data: value
+            };
+            let myJSON = JSON.stringify(myObj);
+            io.sockets.emit("state_led", myJSON);
+            break;
+          case "0/2/2":
+            let myObj = {
+              cmd: "state_led_2",
+              data: value
+            };
+            let myJSON = JSON.stringify(myObj);
+            io.sockets.emit("state_led", myJSON);
+            break;
+          case "0/2/3":
+            let myObj = {
+              cmd: "state_led_3",
+              data: value
+            };
+            let myJSON = JSON.stringify(myObj);
+            io.sockets.emit("state_led", myJSON);
+            break;
+          case "0/2/4":
+            let myObj = {
+              cmd: "state_led_4",
+              data: value
+            };
+            let myJSON = JSON.stringify(myObj);
+            io.sockets.emit("state_led", myJSON);
+            break;
           default:
         }
         /*

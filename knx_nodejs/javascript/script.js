@@ -151,10 +151,24 @@ socket.on("default_mode", function(data) {
   document.getElementById("message").innerHTML = str;
 });
 
-socket.on("state", function(data) {
+socket.on("state_led", function(data) {
   let input = JSON.parse(data);
   switch (input.cmd) {
-    case "state_led":
+    case "state_led_1":
+      let mButton = document.getElementById("LED_0");
+      if (input.data == 0) {
+        mButton.style.backgroundColor = "red";
+      } else {
+        mButton.style.backgroundColor = "green";
+      }
+      break;
+    case "state_led_2":
+      str = input.data;
+      break;
+    case "state_led_3":
+      str = input.data;
+      break;
+    case "state_led_4":
       str = input.data;
       break;
     default:
