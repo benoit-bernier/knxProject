@@ -84,3 +84,42 @@ function postStopMastermind() {
   let myJSON = JSON.stringify(myObj);
   socket.emit("mastermind", myJSON);
 }
+
+socket.on("default_mode", function(data) {
+  let input = JSON.parse(data);
+  switch (input.cmd) {
+    case "default_message":
+      console.log(input.data);
+      break;
+    default:
+      console.log("Command not supported..");
+  }
+});
+
+socket.on("state", function(data) {
+  let input = JSON.parse(data);
+  switch (input.cmd) {
+    case "state_led":
+      console.log(input.data);
+      break;
+    default:
+      console.log("Command not supported..");
+  }
+});
+
+socket.on("game", function(data) {
+  let input = JSON.parse(data);
+  switch (input.cmd) {
+    case "default_message":
+      console.log(input.data);
+      break;
+    case "init_matermind":
+      console.log("Lancement / Reset du Mastermind : " + input.data);
+      break;
+    case "verify_matermind":
+      console.log("Résultat Mastermind : " + input.data);
+      break;
+    default:
+      console.log("Command not supported..");
+  }
+});

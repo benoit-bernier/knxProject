@@ -173,6 +173,15 @@ function verify_mastermind(tab, reference) {
   });
 }
 
+function send_message_client(socket, cmd, data, canal) {
+  let myObj = {
+    cmd: cmd,
+    data: data
+  };
+  let myJSON = JSON.stringify(myObj);
+  socket.emit(canal, myJSON);
+}
+
 app.use(bodyParser.json());
 
 app.get("/", function(req, res) {
@@ -188,7 +197,19 @@ io.on("connection", function(socket) {
       case "CONNECT":
         if (!connected) {
           init();
+          send_message_client(
+            socket,
+            "default_message",
+            "Serveur connecté à la maquette",
+            "default_mode"
+          );
         } else {
+          send_message_client(
+            socket,
+            "default_message",
+            "Serveur déjà connecté à la maquette",
+            "default_mode"
+          );
           console.log("Serveur déjà connecté à la maquette");
         }
         break;
@@ -199,7 +220,20 @@ io.on("connection", function(socket) {
           mchenillard = "";
           connection = "";
           connected = false;
+          console.log("Serveur et maquette déconnecté");
+          send_message_client(
+            socket,
+            "default_message",
+            "Serveur et maquette déconnecté",
+            "default_mode"
+          );
         } else {
+          send_message_client(
+            socket,
+            "default_message",
+            "Pas de maquette appareillée.",
+            "default_mode"
+          );
           console.log("Pas de maquette appareillée.");
         }
         break;
@@ -207,7 +241,12 @@ io.on("connection", function(socket) {
         console.log("Accélération");
         if (connected && mode == "") {
           if (speed_ratio === 0) {
-            console.log("Impossible d'accélérer.");
+            send_message_client(
+              socket,
+              "default_message",
+              "Impossible d'accélérer.",
+              "default_mode"
+            );
           } else {
             //Accelere
             clearInterval(mchenillard);
@@ -216,13 +255,31 @@ io.on("connection", function(socket) {
               state = (state + 1) % 4;
             }, speed + speed_ratio);
             speed_ratio -= 100;
+            send_message_client(
+              socket,
+              "default_message",
+              "La vitesse est de : " + speed_ratio,
+              "default_mode"
+            );
             console.log("La vitesse est de : " + speed_ratio);
           }
         } else {
           if (!connected) {
             console.log("Non connecté à la maquette");
+            send_message_client(
+              socket,
+              "default_message",
+              "Non connecté à la maquette",
+              "default_mode"
+            );
           } else {
             console.log("Maquette en mode jeu : " + mode);
+            send_message_client(
+              socket,
+              "default_message",
+              "Maquette en mode jeu : " + mode,
+              "default_mode"
+            );
           }
         }
         break;
@@ -231,6 +288,12 @@ io.on("connection", function(socket) {
         if (connected && mode == "") {
           if (speed_ratio > 100000) {
             console.log("Impossible de ralentir.");
+            send_message_client(
+              socket,
+              "default_message",
+              "Impossible de ralentir.",
+              "default_mode"
+            );
           } else {
             //Ralenti
             speed_ratio += 100;
@@ -240,12 +303,30 @@ io.on("connection", function(socket) {
               state = (state + 1) % 4;
             }, speed + speed_ratio);
             console.log("La vitesse est de : " + speed_ratio);
+            send_message_client(
+              socket,
+              "default_message",
+              "La vitesse est de : " + speed_ratio,
+              "default_mode"
+            );
           }
         } else {
           if (!connected) {
             console.log("Non connecté à la maquette");
+            send_message_client(
+              socket,
+              "default_message",
+              "Non connecté à la maquette",
+              "default_mode"
+            );
           } else {
             console.log("Maquette en mode jeu : " + mode);
+            send_message_client(
+              socket,
+              "default_message",
+              "Maquette en mode jeu : " + mode,
+              "default_mode"
+            );
           }
         }
         break;
@@ -257,22 +338,52 @@ io.on("connection", function(socket) {
               chenillard(state);
               state = (state + 1) % 4;
               console.log("Lancement du chenillard");
+              send_message_client(
+                socket,
+                "default_message",
+                "Lancement du chenillard",
+                "default_mode"
+              );
             }, speed + speed_ratio);
           } else {
             console.log("Stop du chenillard");
+            send_message_client(
+              socket,
+              "default_message",
+              "Stop du chenillard",
+              "default_mode"
+            );
             clearInterval(mchenillard);
             mchenillard = "";
           }
         } else {
           if (!connected) {
             console.log("Non connecté à la maquette");
+            send_message_client(
+              socket,
+              "default_message",
+              "Non connecté à la maquette",
+              "default_mode"
+            );
           } else {
             console.log("Maquette en mode jeu : " + mode);
+            send_message_client(
+              socket,
+              "default_message",
+              "Maquette en mode jeu : " + mode,
+              "default_mode"
+            );
           }
         }
         break;
       case "REVERSE":
         console.log("Changement de sens du chenillard");
+        send_message_client(
+          socket,
+          "default_message",
+          "Changement de sens du chenillard",
+          "default_mode"
+        );
         if (connected && mode == "") {
           schema.reverse();
           console.log(schema);
@@ -284,13 +395,31 @@ io.on("connection", function(socket) {
         } else {
           if (!connected) {
             console.log("Non connecté à la maquette");
+            send_message_client(
+              socket,
+              "default_message",
+              "Non connecté à la maquette",
+              "default_mode"
+            );
           } else {
             console.log("Maquette en mode jeu : " + mode);
+            send_message_client(
+              socket,
+              "default_message",
+              "Maquette en mode jeu : " + mode,
+              "default_mode"
+            );
           }
         }
         break;
       case "SCHEMA":
         console.log("Changement du shéma du chenillard :" + input.data);
+        send_message_client(
+          socket,
+          "default_message",
+          "Changement du shéma du chenillard :" + input.data,
+          "default_mode"
+        );
         if (connected && mode == "") {
           schema = input.data;
           clearInterval(mchenillard);
@@ -301,21 +430,51 @@ io.on("connection", function(socket) {
         } else {
           if (!connected) {
             console.log("Non connecté à la maquette");
+            send_message_client(
+              socket,
+              "default_message",
+              "Non connecté à la maquette",
+              "default_mode"
+            );
           } else {
             console.log("Maquette en mode jeu : " + mode);
+            send_message_client(
+              socket,
+              "default_message",
+              "Maquette en mode jeu : " + mode,
+              "default_mode"
+            );
           }
         }
         break;
       case "RESET":
         console.log("Reset des paramètres par défaut de la maquette");
+        send_message_client(
+          socket,
+          "default_message",
+          "Reset des paramètres par défaut de la maquette",
+          "default_mode"
+        );
         if (connected) {
           init();
         } else {
           console.log("Non connecté à la maquette");
+          send_message_client(
+            socket,
+            "default_message",
+            "Non connecté à la maquette",
+            "default_mode"
+          );
         }
         break;
       default:
         console.log("Commande non supportée");
+        send_message_client(
+          socket,
+          "default_message",
+          "Commande non supportée",
+          "default_mode"
+        );
     }
   });
   socket.on("mastermind", function(data) {
@@ -331,19 +490,33 @@ io.on("connection", function(socket) {
             console.log("Initialisation du mastermind..");
             reference = shuffle_tab([0, 1, 2, 3], 30);
             console.log("Schéma du tableau : " + reference);
+            send_message_client(socket, "init_matermind", reference, "game");
           } else {
             console.log("Le jeu est déjà lancé..");
+            send_message_client(
+              socket,
+              "default_message",
+              "Le jeu est déjà lancé..",
+              "game"
+            );
           }
           break;
         case "VERIFY":
           if (mode === "mastermind" && reference != "") {
             result = verify_mastermind(input.data, reference);
             result.then(function(value) {
-              console.log(value);
+              console.log("Résultat de la comparaison : " + value);
+              send_message_client(socket, "verify_matermind", value, "game");
             });
           } else {
             console.log(
               "Erreur lors de la vérification : jeu non lancé ou pas initialisé"
+            );
+            send_message_client(
+              socket,
+              "default_message",
+              "Erreur lors de la vérification : jeu non lancé ou pas initialisé",
+              "game"
             );
           }
           break;
@@ -353,10 +526,24 @@ io.on("connection", function(socket) {
               mode +
               " vient d'être stoppé. Retour au mode par défaut."
           );
+          send_message_client(
+            socket,
+            "default_message",
+            "Le jeu " +
+              mode +
+              " vient d'être stoppé. Retour au mode par défaut.",
+            "game"
+          );
           mode = "";
           reference = "";
           break;
         default:
+          send_message_client(
+            socket,
+            "default_message",
+            "Commande non supportée",
+            "game"
+          );
           console.log("Commande non supportée");
       }
     } else {
