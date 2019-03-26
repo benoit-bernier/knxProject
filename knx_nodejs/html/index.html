@@ -10,6 +10,42 @@
   <body>
     <h1>Panneau de contrôle</h1>
     <div id="message"></div>
+    <button class="LED" name="LED_0" value="0" disabled></button>
+    <button class="LED" name="LED_1" value="0" disabled></button>
+    <button class="LED" name="LED_2" value="0" disabled></button>
+    <button class="LED" name="LED_3" value="0" disabled></button>
+    <button
+      class="LED_user"
+      id="LED_0_user"
+      value="0"
+      onclick="increaseValue(id)"
+    >
+      0
+    </button>
+    <button
+      class="LED_user"
+      id="LED_1_user"
+      value="0"
+      onclick="increaseValue(id)"
+    >
+      0
+    </button>
+    <button
+      class="LED_user"
+      id="LED_2_user"
+      value="0"
+      onclick="increaseValue(id)"
+    >
+      0
+    </button>
+    <button
+      class="LED_user"
+      id="LED_3_user"
+      value="0"
+      onclick="increaseValue(id)"
+    >
+      0
+    </button>
     <button type="button" name="button" onclick="testAlert()">Test !</button>
     <button type="button" name="button" onclick="connect()">Connect</button>
     <button type="button" name="button" onclick="disconnect()">
@@ -25,17 +61,27 @@
     <button type="button" name="button" onclick="postRESET()">
       Reset maquette
     </button>
-    <button type="button" name="button" onclick="postInitMastermind()">
+    <button
+      type="button"
+      name="buttonInitMastermind"
+      onclick="postInitMastermind()"
+    >
       Init / Reset Mastermind
     </button>
     <button
       type="button"
-      name="button"
-      onclick="postVerifyMastermind([0,1,2,3])"
+      name="buttonVerifyMastermind"
+      onclick="postVerifyMastermind()"
+      disabled
     >
       Verify Mastermind
     </button>
-    <button type="button" name="button" onclick="postStopMastermind()">
+    <button
+      type="button"
+      name="buttonStopMastermind"
+      onclick="postStopMastermind()"
+      disabled
+    >
       Stop Mastermind
     </button>
   </body>

@@ -19,6 +19,7 @@ function disconnect() {
   let myJSON = JSON.stringify(myObj);
   socket.emit("events", myJSON);
 }
+
 function postUP() {
   let myObj = {
     cmd: "UP"
@@ -26,6 +27,7 @@ function postUP() {
   let myJSON = JSON.stringify(myObj);
   socket.emit("events", myJSON);
 }
+
 function postDOWN() {
   let myObj = {
     cmd: "DOWN"
@@ -33,6 +35,7 @@ function postDOWN() {
   let myJSON = JSON.stringify(myObj);
   socket.emit("events", myJSON);
 }
+
 function postONOFF() {
   let myObj = {
     cmd: "ONOFF"
@@ -40,6 +43,7 @@ function postONOFF() {
   let myJSON = JSON.stringify(myObj);
   socket.emit("events", myJSON);
 }
+
 function postREVERSE() {
   let myObj = {
     cmd: "REVERSE"
@@ -47,6 +51,7 @@ function postREVERSE() {
   let myJSON = JSON.stringify(myObj);
   socket.emit("events", myJSON);
 }
+
 function postSCHEMA() {
   let myObj = {
     cmd: "SCHEMA",
@@ -55,13 +60,7 @@ function postSCHEMA() {
   let myJSON = JSON.stringify(myObj);
   socket.emit("events", myJSON);
 }
-function postInitMastermind() {
-  let myObj = {
-    cmd: "INIT"
-  };
-  let myJSON = JSON.stringify(myObj);
-  socket.emit("mastermind", myJSON);
-}
+
 function postRESET() {
   let myObj = {
     cmd: "RESET"
@@ -69,27 +68,75 @@ function postRESET() {
   let myJSON = JSON.stringify(myObj);
   socket.emit("events", myJSON);
 }
-function postResetMastermind(tab) {
+
+function postInitMastermind() {
+  let buttonInitMastermind = document.querySelector(
+    '[name="buttonInitMastermind"]'
+  );
+  buttonInitMastermind.setAttribute("disabled", true);
+  let buttonVerifyMastermind = document.querySelector(
+    '[name="buttonVerifyMastermind"]'
+  );
+  buttonVerifyMastermind.removeAttribute("disabled");
+  let buttonStopMastermind = document.querySelector(
+    '[name="buttonStopMastermind"]'
+  );
+  buttonStopMastermind.removeAttribute("disabled");
   let myObj = {
-    cmd: "RESET"
+    cmd: "INIT"
   };
   let myJSON = JSON.stringify(myObj);
   socket.emit("mastermind", myJSON);
 }
-function postVerifyMastermind(tab) {
+
+function postVerifyMastermind() {
+  let buttonStopMastermind = document.querySelector(
+    '[name="buttonStopMastermind"]'
+  );
+  let tab = [];
+  tab[0] = document.getElementById("LED_0_user").value;
+  tab[1] = document.getElementById("LED_1_user").value;
+  tab[2] = document.getElementById("LED_2_user").value;
+  tab[3] = document.getElementById("LED_3_user").value;
+  buttonStopMastermind.removeAttribute("disabled");
   let myObj = {
     cmd: "VERIFY",
     data: tab
   };
   let myJSON = JSON.stringify(myObj);
   socket.emit("mastermind", myJSON);
+  let buttonVerifyMastermind = document.querySelector(
+    '[name="buttonVerifyMastermind"]'
+  );
+  buttonVerifyMastermind.setAttribute("disabled", true);
+  setTimeout(function() {
+    buttonVerifyMastermind.removeAttribute("disabled");
+  }, 3000);
 }
+
 function postStopMastermind() {
+  let buttonVerifyMastermind = document.querySelector(
+    '[name="buttonInitMastermind"]'
+  );
+  buttonVerifyMastermind.removeAttribute("disabled");
+  let buttonStopMastermind = document.querySelector(
+    '[name="buttonStopMastermind"]'
+  );
+  buttonStopMastermind.setAttribute("disabled", true);
+
   let myObj = {
     cmd: "STOP"
   };
   let myJSON = JSON.stringify(myObj);
   socket.emit("mastermind", myJSON);
+}
+
+function increaseValue(id) {
+  var value = parseInt(document.getElementById(id).value, 10);
+  value = isNaN(value) ? 0 : value;
+  value++;
+  document.getElementById(id).value = value % 4;
+  document.getElementById(id).innerHTML = document.getElementById(id).value;
 }
 
 socket.on("default_mode", function(data) {
@@ -126,7 +173,20 @@ socket.on("game", function(data) {
       str = "Lancement / Reset du Mastermind : " + input.data;
       break;
     case "verify_matermind":
-      str = "Résultat Mastermind : " + input.data;
+      let clear = true;
+      for (i = 0; i < input.data.length; i++) {
+        if (input.data[i] == 0) {
+          clear = false;
+          str = "Résultat Mastermind : " + input.data;
+        }
+      }
+      if (clear) {
+        str =
+          "Bravo ! Vous avez trouvé la bonne combinaison !!  Le jeu se fermera dans 3 secondes !";
+        setTimeout(function() {
+          postStopMastermind();
+        }, 3000);
+      }
       break;
     default:
       console.log("Command not supported..");
