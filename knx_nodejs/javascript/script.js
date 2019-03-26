@@ -50,7 +50,7 @@ function postREVERSE() {
 function postSCHEMA() {
   let myObj = {
     cmd: "SCHEMA",
-    data: [2, 1, 3, 4]
+    data: [2, 1, 3, 0]
   };
   let myJSON = JSON.stringify(myObj);
   socket.emit("events", myJSON);
@@ -61,6 +61,13 @@ function postInitMastermind() {
   };
   let myJSON = JSON.stringify(myObj);
   socket.emit("mastermind", myJSON);
+}
+function postRESET() {
+  let myObj = {
+    cmd: "RESET"
+  };
+  let myJSON = JSON.stringify(myObj);
+  socket.emit("events", myJSON);
 }
 function postResetMastermind(tab) {
   let myObj = {
@@ -89,37 +96,40 @@ socket.on("default_mode", function(data) {
   let input = JSON.parse(data);
   switch (input.cmd) {
     case "default_message":
-      console.log(input.data);
+      str = input.data;
       break;
     default:
       console.log("Command not supported..");
   }
+  document.getElementById("message").innerHTML = str;
 });
 
 socket.on("state", function(data) {
   let input = JSON.parse(data);
   switch (input.cmd) {
     case "state_led":
-      console.log(input.data);
+      str = input.data;
       break;
     default:
       console.log("Command not supported..");
   }
+  document.getElementById("message").innerHTML = str;
 });
 
 socket.on("game", function(data) {
   let input = JSON.parse(data);
   switch (input.cmd) {
     case "default_message":
-      console.log(input.data);
+      str = input.data;
       break;
     case "init_matermind":
-      console.log("Lancement / Reset du Mastermind : " + input.data);
+      str = "Lancement / Reset du Mastermind : " + input.data;
       break;
     case "verify_matermind":
-      console.log("Résultat Mastermind : " + input.data);
+      str = "Résultat Mastermind : " + input.data;
       break;
     default:
       console.log("Command not supported..");
   }
+  document.getElementById("message").innerHTML = str;
 });

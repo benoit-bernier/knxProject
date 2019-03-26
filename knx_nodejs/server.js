@@ -9,7 +9,7 @@ const httpServer = http.createServer(app);
 const io = so.listen(httpServer);
 const port_server = 3000;
 
-let ip_maquette = "192.168.0.5";
+let ip_maquette = "192.168.0.6";
 let port_maquette = 3671;
 
 let connected = false; //connecté à la maquette
@@ -45,6 +45,12 @@ function init() {
         // partie connexion
         console.log("Connected !");
         connected = true;
+        let myObj = {
+          cmd: "default_message",
+          data: "Serveur connecté à la maquette"
+        };
+        let myJSON = JSON.stringify(myObj);
+        io.sockets.emit("default_mode", response);
         // fin partie connexion
       },
       // get notified for all KNX events:
@@ -135,15 +141,15 @@ function chenillard(state) {
 
 function blink(position, time) {
   if (time < 500) {
-    console.log("Erreur lors du blick : temps minimal non respecté.");
+    console.log("Erreur lors du blink : temps minimal non respecté.");
     return;
   }
 
   console.log("Blink ON LED " + position + " : " + time + "ms");
-  //connection.write("0/1/" + position);
+  connection.write("0/1/" + position, 1);
   setTimeout(function() {
     console.log("Blink OFF LED " + position);
-    //connection.write("0/1/" + position);
+    connection.write("0/1/" + position, 0);
   }, time);
 }
 
@@ -163,10 +169,7 @@ function verify_mastermind(tab, reference) {
     let result = [0, 0, 0, 0];
     for (i in tab) {
       if (tab[i] == reference[i]) {
-        blink(i, 2000);
         result[i] = 1;
-      } else {
-        blink(i, 500);
       }
     }
     resolve(result);
@@ -191,7 +194,6 @@ app.get("/", function(req, res) {
 io.on("connection", function(socket) {
   socket.on("events", function(data) {
     console.log(data);
-    console.log(connected);
     let input = JSON.parse(data);
     switch (input.cmd) {
       case "CONNECT":
@@ -200,7 +202,7 @@ io.on("connection", function(socket) {
           send_message_client(
             socket,
             "default_message",
-            "Serveur connecté à la maquette",
+            "Recherche de la maquette sur le réseau...",
             "default_mode"
           );
         } else {
@@ -448,14 +450,19 @@ io.on("connection", function(socket) {
         }
         break;
       case "RESET":
-        console.log("Reset des paramètres par défaut de la maquette");
-        send_message_client(
-          socket,
-          "default_message",
-          "Reset des paramètres par défaut de la maquette",
-          "default_mode"
-        );
         if (connected) {
+          console.log("Reset des paramètres par défaut de la maquette");
+          send_message_client(
+            socket,
+            "default_message",
+            "Reset des paramètres par défaut de la maquette",
+            "default_mode"
+          );
+          connection.Disconnect();
+          clearInterval(mchenillard);
+          mchenillard = "";
+          connection = "";
+          connected = false;
           init();
         } else {
           console.log("Non connecté à la maquette");
@@ -479,7 +486,6 @@ io.on("connection", function(socket) {
   });
   socket.on("mastermind", function(data) {
     console.log(data);
-    console.log(connected);
     mode = "mastermind";
     if (!connected) {
       let input = JSON.parse(data);
@@ -505,9 +511,19 @@ io.on("connection", function(socket) {
           if (mode === "mastermind" && reference != "") {
             result = verify_mastermind(input.data, reference);
             result.then(function(value) {
-              console.log("Résultat de la comparaison : " + value);
+              for (i = 0; i < 4; i++) {
+                console.log(value[i]);
+                if (value[i] == 1) {
+                  console.log("OK");
+                  blink(i, 2000);
+                } else {
+                  console.log("NOT OK");
+                  blink(i, 600);
+                }
+              }
               send_message_client(socket, "verify_matermind", value, "game");
             });
+            //.catch(error => {});
           } else {
             console.log(
               "Erreur lors de la vérification : jeu non lancé ou pas initialisé"
