@@ -10,12 +10,12 @@ void main() {
 }
 
 bool isConnected = true;
-
+bool isListening = false;
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     //Color color = Theme.of(context).primaryColor;
-    var channel = IOWebSocketChannel.connect('ws://echo.websocket.org');
+    var channel = IOWebSocketChannel.connect('ws://10.0.2.2:3000');
     channel.sink.add('Hello!');
 
     final _kTabPages = <Widget>[
@@ -238,9 +238,11 @@ class _PlayPauseWidgetState extends State<PlayPauseWidget> {
   @override
   Widget build(BuildContext context) {
     return Column(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+      //TODO: Debug StramBuilder : "I/flutter (10659): Bad state: Stream has already been listened to." lorsque qu'on revient sur la page principale
       StreamBuilder(
-        stream: widget.channel.stream,
+        stream: widget.channel.stream.asBroadcastStream(),
         builder: (context, snapshot) {
+          print(snapshot.data);
           return Padding(
             padding: const EdgeInsets.symmetric(vertical: 24.0),
             child: Text(snapshot.hasData ? '${snapshot.data}' : ''),
