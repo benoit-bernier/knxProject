@@ -9,6 +9,43 @@
   </head>
   <body>
     <h1>Panneau de contrôle</h1>
+    <div id="message"></div>
+    <button class="LED" id="LED_0" disabled></button>
+    <button class="LED" id="LED_1" disabled></button>
+    <button class="LED" id="LED_2" disabled></button>
+    <button class="LED" id="LED_3" disabled></button>
+    <button
+      class="LED_user"
+      id="LED_0_user"
+      value="0"
+      onclick="increaseValue(id)"
+    >
+      0
+    </button>
+    <button
+      class="LED_user"
+      id="LED_1_user"
+      value="0"
+      onclick="increaseValue(id)"
+    >
+      0
+    </button>
+    <button
+      class="LED_user"
+      id="LED_2_user"
+      value="0"
+      onclick="increaseValue(id)"
+    >
+      0
+    </button>
+    <button
+      class="LED_user"
+      id="LED_3_user"
+      value="0"
+      onclick="increaseValue(id)"
+    >
+      0
+    </button>
     <button type="button" name="button" onclick="testAlert()">Test !</button>
     <button type="button" name="button" onclick="connect()">Connect</button>
     <button type="button" name="button" onclick="disconnect()">
@@ -21,6 +58,31 @@
     <button type="button" name="button" onclick="postSCHEMA()">
       Change schéma
     </button>
-    <button type="button" name="button" onclick="postRESET()">Reset</button>
+    <button type="button" name="button" onclick="postRESET()">
+      Reset maquette
+    </button>
+    <button
+      type="button"
+      name="buttonInitMastermind"
+      onclick="postInitMastermind()"
+    >
+      Init / Reset Mastermind
+    </button>
+    <button
+      type="button"
+      name="buttonVerifyMastermind"
+      onclick="postVerifyMastermind()"
+      disabled
+    >
+      Verify Mastermind
+    </button>
+    <button
+      type="button"
+      name="buttonStopMastermind"
+      onclick="postStopMastermind()"
+      disabled
+    >
+      Stop Mastermind
+    </button>
   </body>
 </html>

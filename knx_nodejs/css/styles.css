@@ -1,3 +1,14 @@
 h1 {
   color: blue;
 }
+
+.LED {
+  height: 100px;
+  width: 100px;
+  background-color: red;
+}
+
+.LED_user {
+  height: 100px;
+  width: 100px;
+}
