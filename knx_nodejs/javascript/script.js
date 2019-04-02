@@ -161,20 +161,39 @@ socket.on("state_led", function(data) {
   let input = JSON.parse(data);
   switch (input.cmd) {
     case "state_led_1":
-      let mButton = document.getElementById("LED_0");
+      mButton = document.getElementById("LED_0");
       if (input.data == 0) {
         mButton.style.backgroundColor = "red";
       } else {
         mButton.style.backgroundColor = "green";
       }
+      str = input.data;
       break;
     case "state_led_2":
+      mButton = document.getElementById("LED_1");
+      if (input.data == 0) {
+        mButton.style.backgroundColor = "red";
+      } else {
+        mButton.style.backgroundColor = "green";
+      }
       str = input.data;
       break;
     case "state_led_3":
+      mButton = document.getElementById("LED_2");
+      if (input.data == 0) {
+        mButton.style.backgroundColor = "red";
+      } else {
+        mButton.style.backgroundColor = "green";
+      }
       str = input.data;
       break;
     case "state_led_4":
+      mButton = document.getElementById("LED_3");
+      if (input.data == 0) {
+        mButton.style.backgroundColor = "red";
+      } else {
+        mButton.style.backgroundColor = "green";
+      }
       str = input.data;
       break;
     default:
@@ -191,6 +210,10 @@ socket.on("game", function(data) {
       break;
     case "init_matermind":
       str = "Lancement / Reset du Mastermind : " + input.data;
+      for (i = 0; i < 4; i++) {
+        mButton = document.getElementById("LED_" + i + "_user");
+        mButton.style.backgroundColor = "red";
+      }
       break;
     case "verify_matermind":
       let clear = true;
@@ -210,6 +233,10 @@ socket.on("game", function(data) {
           "Bravo ! Vous avez trouvé la bonne combinaison !!  Le jeu se fermera dans 3 secondes !";
         setTimeout(function() {
           postStopMastermind();
+          for (i = 0; i < 4; i++) {
+            mButton = document.getElementById("LED_" + i + "_user");
+            mButton.style.backgroundColor = "white";
+          }
         }, 3000);
       }
       break;

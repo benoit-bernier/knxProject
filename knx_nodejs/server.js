@@ -518,7 +518,7 @@ io.on("connection", function(socket) {
   socket.on("mastermind", function(data) {
     console.log(data);
     mode = "mastermind";
-    if (connected) {
+    if (!connected) {
       let input = JSON.parse(data);
       switch (input.cmd) {
         case "INIT":
