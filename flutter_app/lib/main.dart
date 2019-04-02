@@ -20,10 +20,14 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    initialize();
+    initialize().then((socket){
+      setState(() {
+        this.socket=socket;
+      });
+    });
   }
 
-  initialize() async{
+  Future initialize() async{
     const uri = 'http://10.0.2.2:3000';
     socket = await SocketIO.createNewInstance(uri);
     await socket.on(SocketIOEvent.connecting, () async {
@@ -31,8 +35,9 @@ class _MyAppState extends State<MyApp> {
     });
     await socket.on(SocketIOEvent.connect, () async {
       print('Connected.');
-
       final id = await socket.id;
+
+      //TODO: initialize then the buttons etc.
       print('Client SocketID: $id');
     });
     await socket.on(SocketIOEvent.connectError, (error) {
@@ -45,114 +50,128 @@ class _MyAppState extends State<MyApp> {
     await socket.emit('sayHello',[
       {'Hello': 'world!'},
     ]);
-
+    return socket;
   }
   @override
   Widget build(BuildContext context) {
-    //Color color = Theme.of(context).primaryColor;
+    if (socket == null) {
+      return MaterialApp(
+          title: 'Flutter layout demo',
+          theme: new ThemeData(
+            primarySwatch: Colors.pink,
+          ),
+          //color: Colors.pink,
+          home:
+        Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[CircularProgressIndicator()],
+          ),
+        )
+      );
+    } else {
+      final _kTabPages = <Widget>[
+        Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
 
-    final _kTabPages = <Widget>[
-      Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-
-            PlayPauseWidget(channel :socket,),
-            Text(
-              'Choisis la durée :',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
-            ),
-            SliderWidget(channel: socket,),
-            Text(
-              'Sens de défilement',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
-            ),
-            OrderWidget(channel: socket,),
-            Text(
-              'Autre',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
-            ),
-            ButtonBar(
-              alignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
-                RaisedButton(
-                  onPressed: () {},
-                  color: Colors.pink,
-                  child: Text('Accélère'),
-                  padding: EdgeInsets.only(left: 10.0, right: 10.0),
-                ),
-                RaisedButton(
+              PlayPauseWidget(channel: socket,),
+              Text(
+                'Choisis la durée :',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+              ),
+              SliderWidget(channel: socket,),
+              Text(
+                'Sens de défilement',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+              ),
+              OrderWidget(channel: socket,),
+              Text(
+                'Autre',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+              ),
+              ButtonBar(
+                alignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  RaisedButton(
                     onPressed: () {},
-                    child: Text('Ralenti'),
-                    padding: EdgeInsets.only(left: 10.0, right: 10.0)),
-              ],
-            ),
-            // ignore: unnecessary_brace_in_string_interps
-          ],
+                    color: Colors.pink,
+                    child: Text('Accélère'),
+                    padding: EdgeInsets.only(left: 10.0, right: 10.0),
+                  ),
+                  RaisedButton(
+                      onPressed: () {},
+                      child: Text('Ralenti'),
+                      padding: EdgeInsets.only(left: 10.0, right: 10.0)),
+                ],
+              ),
+            ],
+          ),
         ),
-      ),
-      Center(
-        child: Icon(
-          Icons.lightbulb_outline,
-          size: 64.0,
-          color: Colors.pink,
+        Center(
+          child: Icon(
+            Icons.lightbulb_outline,
+            size: 64.0,
+            color: Colors.pink,
+          ),
         ),
-      ),
-      Center(
-        child: Icon(
-          Icons.videogame_asset,
-          size: 64.0,
-          color: Colors.pink,
+        Center(
+          child: Icon(
+            Icons.videogame_asset,
+            size: 64.0,
+            color: Colors.pink,
+          ),
         ),
-      ),
-      Center(
-        child: Icon(
-          Icons.settings,
-          size: 64.0,
-          color: Colors.pink,
+        Center(
+          child: Icon(
+            Icons.settings,
+            size: 64.0,
+            color: Colors.pink,
+          ),
         ),
-      ),
-    ];
+      ];
 
-    final _kTabs = <Tab>[
-      Tab(
-        icon: Icon(Icons.home),
-        text: "Chenillard",
-      ),
-      Tab(
-        icon: Icon(Icons.lightbulb_outline),
-        text: "Ampoules",
-      ),
-      Tab(
-        icon: Icon(Icons.videogame_asset),
-        text: "Jeux",
-      ),
-      Tab(
-        icon: Icon(Icons.settings),
-        text: "Réglages",
-      ),
-    ];
+      final _kTabs = <Tab>[
+        Tab(
+          icon: Icon(Icons.home),
+          text: "Chenillard",
+        ),
+        Tab(
+          icon: Icon(Icons.lightbulb_outline),
+          text: "Ampoules",
+        ),
+        Tab(
+          icon: Icon(Icons.videogame_asset),
+          text: "Jeux",
+        ),
+        Tab(
+          icon: Icon(Icons.settings),
+          text: "Réglages",
+        ),
+      ];
 
-    return MaterialApp(
-      title: 'Flutter layout demo',
-      theme: new ThemeData(
-        primarySwatch: Colors.pink,
-      ),
-      //color: Colors.pink,
-      home: DefaultTabController(
-        length: _kTabs.length,
-        child: Scaffold(
-            appBar: AppBar(
-              backgroundColor: Colors.pink,
-              title: Text("Chenillard App"),
-              actions: <Widget>[
-                ConnectionWidget(),
-              ],
-              bottom: TabBar(tabs: _kTabs),
-            ),
-            body: TabBarView(children: _kTabPages)),
-      ),
-    );
+      return MaterialApp(
+        title: 'Flutter layout demo',
+        theme: new ThemeData(
+          primarySwatch: Colors.pink,
+        ),
+        //color: Colors.pink,
+        home: DefaultTabController(
+          length: _kTabs.length,
+          child: Scaffold(
+              appBar: AppBar(
+                backgroundColor: Colors.pink,
+                title: Text("Chenillard App"),
+                actions: <Widget>[
+                  ConnectionWidget(channel: socket,),
+                ],
+                bottom: TabBar(tabs: _kTabs),
+              ),
+              body: TabBarView(children: _kTabPages)),
+        ),
+      );
+    }
   }
 }
 
@@ -189,7 +208,7 @@ class _ConnectionWidgetState extends State<ConnectionWidget> {
       isConnected = !isConnected;
     });
     widget.channel.sink.add(isConnected?"Connect":"Disconnect");
-    //TODO: Initialiser ou tuer la connexion
+    //TODO: Initialise or kill connexion
   }
 }
 
@@ -271,7 +290,6 @@ class _PlayPauseWidgetState extends State<PlayPauseWidget> {
   @override
   Widget build(BuildContext context) {
     return Column(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-      //TODO: Debug StramBuilder : "I/flutter (10659): Bad state: Stream has already been listened to." lorsque qu'on revient sur la page principale
       Text(
         "Le chenillard est en route : $_isPlaying",
         style: TextStyle(fontSize: 24, color: Colors.pink),
@@ -292,7 +310,8 @@ class _PlayPauseWidgetState extends State<PlayPauseWidget> {
   }
 
   toServer(String mStr) async{
-    await widget.channel.emit("events",{'cmd':mStr});
+    print("ONOFF to server");
+    await widget.channel.emit("events",[{'cmd':mStr}]);
   }
 }
 
