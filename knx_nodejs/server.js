@@ -224,7 +224,7 @@ app.get("/", function(req, res) {
 
 io.on("connection", function(socket) {
   socket.on("sayHello", function(data){
-      console.log("Message :"+data[0].toString());
+      console.log("Message :"+data.toString());
       socket.emit("sayHello", data);
   });
   socket.on("events", function(data) {
