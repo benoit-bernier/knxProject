@@ -11,6 +11,10 @@ dependencies:
     sdk: flutter
   cupertino_icons: ^0.1.2
   web_socket_channel: ^1.0.9
+  socket_flutter_plugin: ^0.0.1
+  socket_io:
+    git:
+      url: https://github.com/AlexeySemigradsky/socket_io
 
 dev_dependencies:
   flutter_test:

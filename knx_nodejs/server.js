@@ -223,7 +223,12 @@ app.get("/", function(req, res) {
 });
 
 io.on("connection", function(socket) {
+  socket.on("sayHello", function(data){
+      console.log("Message :"+data[0].toString());
+      socket.emit("sayHello", data);
+  });
   socket.on("events", function(data) {
+    console.log("========EVENT============")
     console.log(data);
     let input = JSON.parse(data);
     switch (input.cmd) {

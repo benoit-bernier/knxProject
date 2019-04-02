@@ -1,22 +1,55 @@
 import 'package:flutter/material.dart';
-// Uncomment lines 7 and 10 to view the visual layout at runtime.
-// import 'package:flutter/rendering.dart' show debugPaintSizeEnabled;
+
 import 'package:flutter/rendering.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
-import 'package:web_socket_channel/io.dart';
+import 'package:socket_io/socket_io.dart';
+
 
 void main() {
   runApp(MyApp());
 }
 
 bool isConnected = true;
+bool isListening = false;
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget{
+  @override
+  _MyAppState createState() => new _MyAppState();
+}
+class _MyAppState extends State<MyApp> {
+  var socket;
+  @override
+  void initState() {
+    super.initState();
+    initialize();
+  }
+
+  initialize() async{
+    const uri = 'http://10.0.2.2:3000';
+    socket = await SocketIO.createNewInstance(uri);
+    await socket.on(SocketIOEvent.connecting, () async {
+      print('connecting');
+    });
+    await socket.on(SocketIOEvent.connect, () async {
+      print('Connected.');
+
+      final id = await socket.id;
+      print('Client SocketID: $id');
+    });
+    await socket.on(SocketIOEvent.connectError, (error) {
+      print('Error: $error');
+    });
+    await socket.on('sayHello', (greeting) {
+      print('Hello, ${greeting['Hello']}');
+    });
+    await socket.connect();
+    await socket.emit('sayHello',[
+      {'Hello': 'world!'},
+    ]);
+
+  }
   @override
   Widget build(BuildContext context) {
     //Color color = Theme.of(context).primaryColor;
-    var channel = IOWebSocketChannel.connect('ws://echo.websocket.org');
-    channel.sink.add('Hello!');
 
     final _kTabPages = <Widget>[
       Center(
@@ -24,17 +57,17 @@ class MyApp extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
 
-            PlayPauseWidget(channel :channel,),
+            PlayPauseWidget(channel :socket,),
             Text(
               'Choisis la durée :',
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
             ),
-            SliderWidget(channel: channel,),
+            SliderWidget(channel: socket,),
             Text(
               'Sens de défilement',
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
             ),
-            OrderWidget(channel: channel,),
+            OrderWidget(channel: socket,),
             Text(
               'Autre',
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
@@ -124,7 +157,7 @@ class MyApp extends StatelessWidget {
 }
 
 class ConnectionWidget extends StatefulWidget {
-  final WebSocketChannel channel;
+  final channel;
 
   ConnectionWidget({Key key, @required this.channel})
       : super(key: key);
@@ -161,7 +194,7 @@ class _ConnectionWidgetState extends State<ConnectionWidget> {
 }
 
 class SliderWidget extends StatefulWidget {
-  final WebSocketChannel channel;
+  final channel;
 
   SliderWidget({Key key, @required this.channel})
       : super(key: key);
@@ -190,7 +223,7 @@ class _SliderWidgetState extends State<SliderWidget> {
 }
 
 class OrderWidget extends StatefulWidget {
-  final WebSocketChannel channel;
+  final channel;
 
   OrderWidget({Key key, @required this.channel})
       : super(key: key);
@@ -225,7 +258,7 @@ class _OrderWidgetState extends State<OrderWidget> {
 }
 
 class PlayPauseWidget extends StatefulWidget {
-  final WebSocketChannel channel;
+  final channel;
 
   PlayPauseWidget({Key key, @required this.channel})
       : super(key: key);
@@ -238,15 +271,7 @@ class _PlayPauseWidgetState extends State<PlayPauseWidget> {
   @override
   Widget build(BuildContext context) {
     return Column(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-      StreamBuilder(
-        stream: widget.channel.stream,
-        builder: (context, snapshot) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 24.0),
-            child: Text(snapshot.hasData ? '${snapshot.data}' : ''),
-          );
-        },
-      ),
+      //TODO: Debug StramBuilder : "I/flutter (10659): Bad state: Stream has already been listened to." lorsque qu'on revient sur la page principale
       Text(
         "Le chenillard est en route : $_isPlaying",
         style: TextStyle(fontSize: 24, color: Colors.pink),
@@ -258,12 +283,16 @@ class _PlayPauseWidgetState extends State<PlayPauseWidget> {
             _isPlaying = !_isPlaying;
           });
           //TODO: Launch chenillard
-          widget.channel.sink.add(_isPlaying?"Play":"Pause");
+          toServer('ONOFF');
         },
         color: Colors.pink,
         icon: Icon(_isPlaying?Icons.play_circle_filled:Icons.pause_circle_filled),
       ),
     ]);
+  }
+
+  toServer(String mStr) async{
+    await widget.channel.emit("events",{'cmd':mStr});
   }
 }
 
