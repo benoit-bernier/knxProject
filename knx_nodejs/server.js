@@ -45,11 +45,11 @@ function init() {
         // partie connexion
         console.log("Connected !");
         connected = true;
-        let myObj = {
+        myObj = {
           cmd: "default_message",
           data: "Serveur connecté à la maquette"
         };
-        let myJSON = JSON.stringify(myObj);
+        myJSON = JSON.stringify(myObj);
         io.sockets.emit("default_mode", myJSON);
         // fin partie connexion
       },
@@ -113,35 +113,35 @@ function init() {
             }, speed + speed_ratio);
             break;
           case "0/2/1":
-            let myObj = {
+            myObj = {
               cmd: "state_led_1",
               data: value
             };
-            let myJSON = JSON.stringify(myObj);
+            myJSON = JSON.stringify(myObj);
             io.sockets.emit("state_led", myJSON);
             break;
           case "0/2/2":
-            let myObj = {
+            myObj = {
               cmd: "state_led_2",
               data: value
             };
-            let myJSON = JSON.stringify(myObj);
+            myJSON = JSON.stringify(myObj);
             io.sockets.emit("state_led", myJSON);
             break;
           case "0/2/3":
-            let myObj = {
+            myObj = {
               cmd: "state_led_3",
               data: value
             };
-            let myJSON = JSON.stringify(myObj);
+            myJSON = JSON.stringify(myObj);
             io.sockets.emit("state_led", myJSON);
             break;
           case "0/2/4":
-            let myObj = {
+            myObj = {
               cmd: "state_led_4",
               data: value
             };
-            let myJSON = JSON.stringify(myObj);
+            myJSON = JSON.stringify(myObj);
             io.sockets.emit("state_led", myJSON);
             break;
           default:
@@ -208,11 +208,11 @@ function verify_mastermind(tab, reference) {
 }
 
 function send_message_client(socket, cmd, data, canal) {
-  let myObj = {
+  myObj = {
     cmd: cmd,
     data: data
   };
-  let myJSON = JSON.stringify(myObj);
+  myJSON = JSON.stringify(myObj);
   socket.emit(canal, myJSON);
 }
 
