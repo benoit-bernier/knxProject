@@ -223,12 +223,12 @@ app.get("/", function(req, res) {
 });
 
 io.on("connection", function(socket) {
-  socket.on("sayHello", function(data){
-      console.log("Message :"+data.toString());
-      socket.emit("sayHello", data);
+  socket.on("sayHello", function(data) {
+    console.log("Message :" + data.toString());
+    socket.emit("sayHello", data);
   });
   socket.on("events", function(data) {
-    console.log("========EVENT============")
+    console.log("========EVENT============");
     console.log(data);
     let input = JSON.parse(data);
     switch (input.cmd) {
@@ -602,6 +602,20 @@ io.on("connection", function(socket) {
       console.log("Erreur lors du lancement du jeu : maquette non connectée.");
     }
   });
+});
+
+process.on("SIGINT", function() {
+  console.log(" Ctrl+C détecté ! On coupe la connexion avec le serveur !");
+  if (connected == true) {
+    connection.Disconnect();
+  }
+  myObj = {
+    cmd: "default_message",
+    data: "Serveur Web déconnecté !"
+  };
+  myJSON = JSON.stringify(myObj);
+  io.sockets.emit("default_mode", myJSON);
+  process.exit();
 });
 
 app.use("/javascript", express.static(__dirname + "/javascript"));

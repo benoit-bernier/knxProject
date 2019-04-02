@@ -2,11 +2,12 @@ function testAlert() {
   window.alert("Test");
 }
 
-let socket = io.connect(window.location.protocol +
-  "//" +
-  window.location.hostname +
-  ":" +
-  window.location.port
+let socket = io.connect(
+  window.location.protocol +
+    "//" +
+    window.location.hostname +
+    ":" +
+    window.location.port
 );
 
 function connect() {
@@ -129,6 +130,11 @@ function postStopMastermind() {
   );
   buttonStopMastermind.setAttribute("disabled", true);
 
+  for (i = 0; i < 4; i++) {
+    mButton = document.getElementById("LED_" + i + "_user");
+    mButton.style.backgroundColor = "white";
+  }
+
   let myObj = {
     cmd: "STOP"
   };
@@ -209,10 +215,6 @@ socket.on("game", function(data) {
       break;
     case "init_matermind":
       str = "Lancement / Reset du Mastermind : " + input.data;
-      for (i = 0; i < 4; i++) {
-        mButton = document.getElementById("LED_" + i + "_user");
-        mButton.style.backgroundColor = "red";
-      }
       break;
     case "verify_matermind":
       let clear = true;
