@@ -301,7 +301,7 @@ class _PlayPauseWidgetState extends State<PlayPauseWidget> {
             _isPlaying = !_isPlaying;
           });
           //TODO: Launch chenillard
-          toServer('ONOFF');
+          toServer('sayHello');
         },
         color: Colors.pink,
         icon: Icon(_isPlaying?Icons.play_circle_filled:Icons.pause_circle_filled),
@@ -310,8 +310,10 @@ class _PlayPauseWidgetState extends State<PlayPauseWidget> {
   }
 
   toServer(String mStr) async{
-    print("ONOFF to server");
-    await widget.channel.emit("events",[{'cmd':mStr}]);
+    print("Hello dear !");
+    await widget.channel.emit(mStr,[
+      {'Hello': 'world!'},
+    ]);
   }
 }
 
