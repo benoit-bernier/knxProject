@@ -224,8 +224,15 @@ app.get("/", function(req, res) {
 
 io.on("connection", function(socket) {
   socket.on("sayHello", function(data) {
-    console.log("Message :" + data.toString());
-    socket.emit("sayHello", data);
+    try {
+      let input = JSON.parse(data);
+      console.log(input);
+      socket.emit("sayHello", input);
+    } catch (e) {
+      let input = data["Hello"];
+      console.log("Hello " + input);
+      socket.emit("sayHello", data);
+    }
   });
   socket.on("events", function(data) {
     console.log("========EVENT============");
