@@ -236,7 +236,7 @@ io.on("connection", function(socket) {
   });
   socket.on("events", function(data) {
     console.log("========EVENT============");
-    console.log(data);
+    console.log("myData = " + data);
     //for flutter:
     //let input = "${data['cmd']}";
     //switch (input){
