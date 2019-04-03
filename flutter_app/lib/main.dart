@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:socket_io/socket_io.dart';
 
-
 void main() {
   runApp(MyApp());
 }
@@ -11,23 +10,24 @@ void main() {
 bool isConnected = true;
 bool isListening = false;
 
-class MyApp extends StatefulWidget{
+class MyApp extends StatefulWidget {
   @override
   _MyAppState createState() => new _MyAppState();
 }
+
 class _MyAppState extends State<MyApp> {
   var socket;
   @override
   void initState() {
     super.initState();
-    initialize().then((socket){
+    initialize().then((socket) {
       setState(() {
-        this.socket=socket;
+        this.socket = socket;
       });
     });
   }
 
-  Future initialize() async{
+  Future initialize() async {
     const uri = 'http://10.0.2.2:3000';
     socket = await SocketIO.createNewInstance(uri);
     await socket.on(SocketIOEvent.connecting, () async {
@@ -47,11 +47,12 @@ class _MyAppState extends State<MyApp> {
       print('Hello, ${greeting['Hello']}');
     });
     await socket.connect();
-    await socket.emit('sayHello',[
+    await socket.emit('sayHello', [
       {'Hello': 'world!'},
     ]);
     return socket;
   }
+
   @override
   Widget build(BuildContext context) {
     if (socket == null) {
@@ -61,32 +62,35 @@ class _MyAppState extends State<MyApp> {
             primarySwatch: Colors.pink,
           ),
           //color: Colors.pink,
-          home:
-        Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[CircularProgressIndicator()],
-          ),
-        )
-      );
+          home: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[CircularProgressIndicator()],
+            ),
+          ));
     } else {
       final _kTabPages = <Widget>[
         Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-
-              PlayPauseWidget(channel: socket,),
+              PlayPauseWidget(
+                channel: socket,
+              ),
               Text(
                 'Choisis la durée :',
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
               ),
-              SliderWidget(channel: socket,),
+              SliderWidget(
+                channel: socket,
+              ),
               Text(
                 'Sens de défilement',
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
               ),
-              OrderWidget(channel: socket,),
+              OrderWidget(
+                channel: socket,
+              ),
               Text(
                 'Autre',
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
@@ -117,10 +121,34 @@ class _MyAppState extends State<MyApp> {
           ),
         ),
         Center(
-          child: Icon(
-            Icons.videogame_asset,
-            size: 64.0,
-            color: Colors.pink,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Icon(
+                Icons.videogame_asset,
+                size: 64.0,
+                color: Colors.pink,
+              ),
+              RaisedButton(
+                  onPressed: () {
+                    Navigator.of(context).push(_Mastermind())
+                        .then<String>((returnVal){
+                      Scaffold.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('$returnVal'),
+                            action: SnackBarAction(
+                                label: 'OK',
+                                onPressed: (){}),
+                          ));
+                    });
+                  },
+                  child: Text("Mastermind"),
+                  padding: EdgeInsets.only(left: 10.0, right: 10.0)),
+              RaisedButton(
+                  onPressed: () {},
+                  child: Text("Simon"),
+                  padding: EdgeInsets.only(left: 10.0, right: 10.0)),
+            ],
           ),
         ),
         Center(
@@ -157,19 +185,24 @@ class _MyAppState extends State<MyApp> {
           primarySwatch: Colors.pink,
         ),
         //color: Colors.pink,
-        home: DefaultTabController(
-          length: _kTabs.length,
-          child: Scaffold(
-              appBar: AppBar(
-                backgroundColor: Colors.pink,
-                title: Text("Chenillard App"),
-                actions: <Widget>[
-                  ConnectionWidget(channel: socket,),
-                ],
-                bottom: TabBar(tabs: _kTabs),
-              ),
-              body: TabBarView(children: _kTabPages)),
-        ),
+        home: Builder(
+          builder: (context) => DefaultTabController(
+            length: _kTabs.length,
+            child: Scaffold(
+                appBar: AppBar(
+                  backgroundColor: Colors.pink,
+                  title: Text("Chenillard App"),
+                  actions: <Widget>[
+                    ConnectionWidget(
+                      channel: socket,
+                    ),
+                  ],
+                  bottom: TabBar(tabs: _kTabs),
+                ),
+                body: TabBarView(children: _kTabPages)),
+          ),
+        )
+
       );
     }
   }
@@ -178,8 +211,7 @@ class _MyAppState extends State<MyApp> {
 class ConnectionWidget extends StatefulWidget {
   final channel;
 
-  ConnectionWidget({Key key, @required this.channel})
-      : super(key: key);
+  ConnectionWidget({Key key, @required this.channel}) : super(key: key);
   @override
   _ConnectionWidgetState createState() => _ConnectionWidgetState();
 }
@@ -207,7 +239,7 @@ class _ConnectionWidgetState extends State<ConnectionWidget> {
     setState(() {
       isConnected = !isConnected;
     });
-    widget.channel.sink.add(isConnected?"Connect":"Disconnect");
+    widget.channel.sink.add(isConnected ? "Connect" : "Disconnect");
     //TODO: Initialise or kill connexion
   }
 }
@@ -215,8 +247,7 @@ class _ConnectionWidgetState extends State<ConnectionWidget> {
 class SliderWidget extends StatefulWidget {
   final channel;
 
-  SliderWidget({Key key, @required this.channel})
-      : super(key: key);
+  SliderWidget({Key key, @required this.channel}) : super(key: key);
   @override
   State<StatefulWidget> createState() => _SliderWidgetState();
 }
@@ -244,8 +275,7 @@ class _SliderWidgetState extends State<SliderWidget> {
 class OrderWidget extends StatefulWidget {
   final channel;
 
-  OrderWidget({Key key, @required this.channel})
-      : super(key: key);
+  OrderWidget({Key key, @required this.channel}) : super(key: key);
   @override
   State<StatefulWidget> createState() => _OrderWidgetState();
 }
@@ -279,8 +309,7 @@ class _OrderWidgetState extends State<OrderWidget> {
 class PlayPauseWidget extends StatefulWidget {
   final channel;
 
-  PlayPauseWidget({Key key, @required this.channel})
-      : super(key: key);
+  PlayPauseWidget({Key key, @required this.channel}) : super(key: key);
   @override
   State<StatefulWidget> createState() => _PlayPauseWidgetState();
 }
@@ -289,31 +318,64 @@ class _PlayPauseWidgetState extends State<PlayPauseWidget> {
   bool _isPlaying = false;
   @override
   Widget build(BuildContext context) {
-    return Column(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-      Text(
-        "Le chenillard est en route : $_isPlaying",
-        style: TextStyle(fontSize: 24, color: Colors.pink),
-      ),
-      IconButton(
-        iconSize: 64.0,
-        onPressed: () {
-          setState(() {
-            _isPlaying = !_isPlaying;
-          });
-          //TODO: Launch chenillard
-          toServer('sayHello');
-        },
-        color: Colors.pink,
-        icon: Icon(_isPlaying?Icons.play_circle_filled:Icons.pause_circle_filled),
-      ),
-    ]);
+    return Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Text(
+            "Le chenillard est en route : $_isPlaying",
+            style: TextStyle(fontSize: 24, color: Colors.pink),
+          ),
+          IconButton(
+            iconSize: 64.0,
+            onPressed: () {
+              setState(() {
+                _isPlaying = !_isPlaying;
+              });
+              //TODO: Launch chenillard
+              toServer('sayHello');
+            },
+            color: Colors.pink,
+            icon: Icon(_isPlaying
+                ? Icons.play_circle_filled
+                : Icons.pause_circle_filled),
+          ),
+        ]);
   }
 
-  toServer(String mStr) async{
+  toServer(String mStr) async {
     print("Hello dear !");
-    await widget.channel.emit(mStr,[
+    await widget.channel.emit(mStr, [
       {'Hello': 'world!'},
     ]);
   }
 }
 
+class  _Mastermind extends MaterialPageRoute<String> {
+  _Mastermind()
+      : super(builder: (BuildContext context) {
+          return Scaffold(
+              appBar: AppBar(
+                title: Text("Mastermind"),
+                elevation: 1.0,
+                actions: <Widget>[
+                  IconButton(
+                    icon: Icon(Icons.close),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  )
+                ],
+              ),
+              body: Padding(
+                  padding: EdgeInsets.all(32.0),
+                  child: Column(children: <Widget>[
+                    Text("Nous aurons ici notre jeu"),
+                    RaisedButton(
+                      child: Text("Jeu gagné"),
+                      onPressed: (){
+                        Navigator.pop(context, "Gagné !");
+                      },
+                    )
+                  ])));
+        });
+}
