@@ -4,7 +4,15 @@ import 'package:flutter/rendering.dart';
 import 'package:socket_io/socket_io.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(MaterialApp(
+      title: 'Flutter layout demo',
+      theme: new ThemeData(
+        primarySwatch: Colors.pink,
+      ),
+      //color: Colors.pink,
+      home: MyApp()
+  )
+  );
 }
 
 bool isConnected = true;
@@ -30,9 +38,11 @@ class _MyAppState extends State<MyApp> {
   Future initialize() async {
     const uri = 'http://10.0.2.2:3000';
     socket = await SocketIO.createNewInstance(uri);
+    /*
     await socket.on(SocketIOEvent.connecting, () async {
       print('connecting');
     });
+    */
     await socket.on(SocketIOEvent.connect, () async {
       print('Connected.');
       final id = await socket.id;
@@ -56,18 +66,12 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     if (socket == null) {
-      return MaterialApp(
-          title: 'Flutter layout demo',
-          theme: new ThemeData(
-            primarySwatch: Colors.pink,
-          ),
-          //color: Colors.pink,
-          home: Center(
+      return Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[CircularProgressIndicator()],
             ),
-          ));
+          );
     } else {
       final _kTabPages = <Widget>[
         Center(
@@ -131,15 +135,13 @@ class _MyAppState extends State<MyApp> {
               ),
               RaisedButton(
                   onPressed: () {
-                    Navigator.of(context).push(_Mastermind())
-                        .then<String>((returnVal){
-                      Scaffold.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('$returnVal'),
-                            action: SnackBarAction(
-                                label: 'OK',
-                                onPressed: (){}),
-                          ));
+                    Navigator.of(context)
+                        .push(_Mastermind())
+                        .then<String>((returnVal) {
+                      Scaffold.of(context).showSnackBar(SnackBar(
+                        content: Text('$returnVal'),
+                        action: SnackBarAction(label: 'OK', onPressed: () {}),
+                      ));
                     });
                   },
                   child: Text("Mastermind"),
@@ -179,31 +181,23 @@ class _MyAppState extends State<MyApp> {
         ),
       ];
 
-      return MaterialApp(
-        title: 'Flutter layout demo',
-        theme: new ThemeData(
-          primarySwatch: Colors.pink,
-        ),
-        //color: Colors.pink,
-        home: Builder(
-          builder: (context) => DefaultTabController(
-            length: _kTabs.length,
-            child: Scaffold(
-                appBar: AppBar(
-                  backgroundColor: Colors.pink,
-                  title: Text("Chenillard App"),
-                  actions: <Widget>[
-                    ConnectionWidget(
-                      channel: socket,
-                    ),
-                  ],
-                  bottom: TabBar(tabs: _kTabs),
+      return Builder(
+            builder: (ctx) => DefaultTabController(
+                  length: _kTabs.length,
+                  child: Scaffold(
+                      appBar: AppBar(
+                        backgroundColor: Colors.pink,
+                        title: Text("Chenillard App"),
+                        actions: <Widget>[
+                          ConnectionWidget(
+                            channel: socket,
+                          ),
+                        ],
+                        bottom: TabBar(tabs: _kTabs),
+                      ),
+                      body: TabBarView(children: _kTabPages)),
                 ),
-                body: TabBarView(children: _kTabPages)),
-          ),
-        )
-
-      );
+          );
     }
   }
 }
@@ -350,7 +344,7 @@ class _PlayPauseWidgetState extends State<PlayPauseWidget> {
   }
 }
 
-class  _Mastermind extends MaterialPageRoute<String> {
+class _Mastermind extends MaterialPageRoute<String> {
   _Mastermind()
       : super(builder: (BuildContext context) {
           return Scaffold(
@@ -372,7 +366,7 @@ class  _Mastermind extends MaterialPageRoute<String> {
                     Text("Nous aurons ici notre jeu"),
                     RaisedButton(
                       child: Text("Jeu gagné"),
-                      onPressed: (){
+                      onPressed: () {
                         Navigator.pop(context, "Gagné !");
                       },
                     )
