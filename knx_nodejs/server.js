@@ -240,7 +240,7 @@ io.on("connection", function(socket) {
     try {
       input = JSON.parse(data);
     } catch (e) {
-      input = data["data"];
+      input = data["cmd"];
     }
     try {
       switch (input.cmd) {
@@ -357,6 +357,53 @@ io.on("connection", function(socket) {
                 socket,
                 "default_message",
                 "La vitesse est de : " + speed_ratio,
+                "default_mode"
+              );
+            }
+          } else {
+            if (!connected) {
+              console.log("Non connecté à la maquette");
+              send_message_client(
+                socket,
+                "default_message",
+                "Non connecté à la maquette",
+                "default_mode"
+              );
+            } else {
+              console.log("Maquette en mode jeu : " + mode);
+              send_message_client(
+                socket,
+                "default_message",
+                "Maquette en mode jeu : " + mode,
+                "default_mode"
+              );
+            }
+          }
+          break;
+        case "SETSPEED":
+          console.log("Set speed : " + input.data);
+          let speed_value = parseInt(input.data, 10);
+          if (connected && mode == "") {
+            if (speed_value > 100000 || speed_value <= 0) {
+              console.log("Impossible de set la speed : " + input.data);
+              send_message_client(
+                socket,
+                "default_message",
+                "Impossible de ralentir.",
+                "default_mode"
+              );
+            } else {
+              //Ralenti
+              clearInterval(mchenillard);
+              mchenillard = setInterval(function() {
+                chenillard(state);
+                state = (state + 1) % 4;
+              }, speed_value);
+              console.log("La vitesse est de : " + speed_value);
+              send_message_client(
+                socket,
+                "default_message",
+                "La vitesse est de : " + speed_value,
                 "default_mode"
               );
             }
