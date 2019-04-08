@@ -240,7 +240,8 @@ io.on("connection", function(socket) {
     try {
       input = JSON.parse(data);
     } catch (e) {
-      input = data["cmd"];
+      minput = data["data"];
+      input = JSON.parse(minput);
     }
     try {
       switch (input.cmd) {
