@@ -233,8 +233,14 @@ class _ConnectionWidgetState extends State<ConnectionWidget> {
     setState(() {
       isConnected = !isConnected;
     });
-    widget.channel.sink.add(isConnected ? "Connect" : "Disconnect");
     //TODO: Initialise or kill connexion
+    toServer(isConnected ? "Connect" : "Disconnect");
+  }
+  toServer(String mStr) async {
+    print("Setting speed...");
+    await widget.channel.emit(mStr, [
+      {'cmd': mStr,},
+    ]);
   }
 }
 
@@ -254,15 +260,23 @@ class _SliderWidgetState extends State<SliderWidget> {
       activeColor: Colors.pink,
       value: _value,
       min: 0.0,
-      max: 5000.0,
-      divisions: 10,
+      max: 10000.0,
+      divisions: 20,
       label: '${_value.round() / 1000}',
       onChanged: (double value) {
         setState(() => _value = value);
-        widget.channel.sink.add(_value.toString());
         //TODO: send _value to server
+        toServer("SETSPEED", _value.toString());
       },
     );
+  }
+
+  toServer(String mStr, String value) async {
+    print("Setting speed...");
+    await widget.channel.emit(mStr, [
+      {'cmd': mStr,
+      'data':value,},
+    ]);
   }
 }
 
@@ -288,14 +302,21 @@ class _OrderWidgetState extends State<OrderWidget> {
           setState(() {
             _defaultArray = _defaultArray.reversed.toList();
           });
-          //TODO: Send new array to server
-          widget.channel.sink.add(_defaultArray.toString());
+          //TODO: Send new array to server --verify
+          toServer("REVERSE");
+          //or send defaultArray.toString() to send the model
         },
         color: Colors.pink,
         icon: Icon(Icons.autorenew),
         tooltip: "Inverser le tableau",
         //padding: EdgeInsets.only(left: 10.0, right: 10.0),
       ),
+    ]);
+  }
+  toServer(String mStr) async {
+    print("Reversing...");
+    await widget.channel.emit(mStr, [
+      {'cmd': mStr},
     ]);
   }
 }
@@ -326,7 +347,8 @@ class _PlayPauseWidgetState extends State<PlayPauseWidget> {
                 _isPlaying = !_isPlaying;
               });
               //TODO: Launch chenillard
-              toServer('sayHello');
+              //toServer('ONOFF', _isPlaying.toString());
+              toServer('sayHello', _isPlaying.toString());
             },
             color: Colors.pink,
             icon: Icon(_isPlaying
@@ -336,10 +358,12 @@ class _PlayPauseWidgetState extends State<PlayPauseWidget> {
         ]);
   }
 
-  toServer(String mStr) async {
+  toServer(String mStr, String pp) async {
     print("Hello dear !");
+    print("I send :"+pp);
     await widget.channel.emit(mStr, [
-      {'Hello': 'world!'},
+      {'cmd': 'world!'},
+      //{'cmd': pp},
     ]);
   }
 }
