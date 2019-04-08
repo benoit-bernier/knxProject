@@ -237,20 +237,14 @@ io.on("connection", function(socket) {
   socket.on("events", function(data) {
     console.log("========EVENT============");
     console.log("myData = " + data.toString());
-    for (i in data){
+    for (i in data) {
       console.log(data[i]);
     }
     try {
       input = JSON.parse(data);
     } catch (e) {
-<<<<<<< HEAD
-      input = data["cmd"];
-      console.log(input);
-
-=======
       minput = data["data"];
       input = JSON.parse(minput);
->>>>>>> e5973eae3335b18ebc207cfd4b4340c0646831a6
     }
     try {
       switch (input.cmd) {
