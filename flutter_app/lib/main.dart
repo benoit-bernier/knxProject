@@ -373,7 +373,7 @@ class _PlayPauseWidgetState extends State<PlayPauseWidget> {
     print("Play pause !");
     await widget.channel.emit("events", [
       //{'cmd': 'world!'},
-      {'data': "{\"cmd\":"+mStr+","},
+      {'data': "{\"cmd\":\""+mStr+"\"}"},
     ]);
   }
 }
