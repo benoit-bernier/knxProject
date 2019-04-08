@@ -54,7 +54,7 @@ class _MyAppState extends State<MyApp> {
       print('Error: $error');
     });
     await socket.on('sayHello', (greeting) {
-      print('Hello, ${greeting['Hello']}');
+      print('Hello, ${greeting['cmd']}');
     });
     await socket.connect();
     await socket.emit('sayHello', [
