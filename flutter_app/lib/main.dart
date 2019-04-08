@@ -103,13 +103,17 @@ class _MyAppState extends State<MyApp> {
                 alignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
                   RaisedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      toServer("UP");
+                    },
                     color: Colors.pink,
                     child: Text('Accélère'),
                     padding: EdgeInsets.only(left: 10.0, right: 10.0),
                   ),
                   RaisedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        toServer("DOWN");
+                      },
                       child: Text('Ralenti'),
                       padding: EdgeInsets.only(left: 10.0, right: 10.0)),
                 ],
@@ -200,6 +204,13 @@ class _MyAppState extends State<MyApp> {
           );
     }
   }
+
+  toServer(String mStr) async {
+    print("Setting speed...");
+    await socket.emit("events", [
+      {'cmd': mStr,},
+    ]);
+  }
 }
 
 class ConnectionWidget extends StatefulWidget {
@@ -234,11 +245,11 @@ class _ConnectionWidgetState extends State<ConnectionWidget> {
       isConnected = !isConnected;
     });
     //TODO: Initialise or kill connexion
-    toServer(isConnected ? "Connect" : "Disconnect");
+    toServer(isConnected ? "CONNECT" : "DISCONNECT");
   }
   toServer(String mStr) async {
     print("Setting speed...");
-    await widget.channel.emit(mStr, [
+    await widget.channel.emit("events", [
       {'cmd': mStr,},
     ]);
   }
@@ -273,7 +284,7 @@ class _SliderWidgetState extends State<SliderWidget> {
 
   toServer(String mStr, String value) async {
     print("Setting speed...");
-    await widget.channel.emit(mStr, [
+    await widget.channel.emit("events", [
       {'cmd': mStr,
       'data':value,},
     ]);
@@ -315,7 +326,7 @@ class _OrderWidgetState extends State<OrderWidget> {
   }
   toServer(String mStr) async {
     print("Reversing...");
-    await widget.channel.emit(mStr, [
+    await widget.channel.emit("events", [
       {'cmd': mStr},
     ]);
   }
@@ -347,8 +358,8 @@ class _PlayPauseWidgetState extends State<PlayPauseWidget> {
                 _isPlaying = !_isPlaying;
               });
               //TODO: Launch chenillard
-              //toServer('ONOFF', _isPlaying.toString());
-              toServer('sayHello', _isPlaying.toString());
+              toServer('ONOFF');
+              //toServer('sayHello');
             },
             color: Colors.pink,
             icon: Icon(_isPlaying
@@ -358,12 +369,11 @@ class _PlayPauseWidgetState extends State<PlayPauseWidget> {
         ]);
   }
 
-  toServer(String mStr, String pp) async {
-    print("Hello dear !");
-    print("I send :"+pp);
-    await widget.channel.emit(mStr, [
-      {'cmd': 'world!'},
-      //{'cmd': pp},
+  toServer(String mStr) async {
+    print("Play pause !");
+    await widget.channel.emit("events", [
+      //{'cmd': 'world!'},
+      {'data': "{\"cmd\":"+mStr+","},
     ]);
   }
 }
