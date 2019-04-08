@@ -243,9 +243,14 @@ io.on("connection", function(socket) {
     try {
       input = JSON.parse(data);
     } catch (e) {
+<<<<<<< HEAD
       input = data["cmd"];
       console.log(input);
 
+=======
+      minput = data["data"];
+      input = JSON.parse(minput);
+>>>>>>> e5973eae3335b18ebc207cfd4b4340c0646831a6
     }
     try {
       switch (input.cmd) {
