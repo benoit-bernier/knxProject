@@ -237,7 +237,7 @@ io.on("connection", function(socket) {
   socket.on("events", function(data) {
     console.log("========EVENT============");
     console.log("myData = " + data.toString());
-    for (i in data){
+    for (i in data) {
       console.log(data[i]);
     }
     try {
@@ -398,11 +398,13 @@ io.on("connection", function(socket) {
               );
             } else {
               //Ralenti
+              speed = 500;
+              speed_ratio = speed_value;
               clearInterval(mchenillard);
               mchenillard = setInterval(function() {
                 chenillard(state);
                 state = (state + 1) % 4;
-              }, speed_value);
+              }, speed + speed_ratio);
               console.log("La vitesse est de : " + speed_value);
               send_message_client(
                 socket,
