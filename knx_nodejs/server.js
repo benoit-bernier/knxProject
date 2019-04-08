@@ -236,11 +236,16 @@ io.on("connection", function(socket) {
   });
   socket.on("events", function(data) {
     console.log("========EVENT============");
-    console.log("myData = " + data);
+    console.log("myData = " + data.toString());
+    for (i in data){
+      console.log(data[i]);
+    }
     try {
       input = JSON.parse(data);
     } catch (e) {
       input = data["cmd"];
+      console.log(input);
+
     }
     try {
       switch (input.cmd) {
