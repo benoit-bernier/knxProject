@@ -208,7 +208,7 @@ class _MyAppState extends State<MyApp> {
   toServer(String mStr) async {
     print("Setting speed...");
     await socket.emit("events", [
-      {'cmd': mStr,},
+      {'data': "{\"cmd\":\""+mStr+"\"}"},
     ]);
   }
 }
@@ -250,7 +250,7 @@ class _ConnectionWidgetState extends State<ConnectionWidget> {
   toServer(String mStr) async {
     print("Setting speed...");
     await widget.channel.emit("events", [
-      {'cmd': mStr,},
+      {'data': "{\"cmd\":\""+mStr+"\"}"},
     ]);
   }
 }
@@ -285,8 +285,7 @@ class _SliderWidgetState extends State<SliderWidget> {
   toServer(String mStr, String value) async {
     print("Setting speed...");
     await widget.channel.emit("events", [
-      {'cmd': mStr,
-      'data':value,},
+      {'data': "{\"cmd\":\""+mStr+"\",\"data\":\""+value+"\"}"},
     ]);
   }
 }
@@ -327,7 +326,7 @@ class _OrderWidgetState extends State<OrderWidget> {
   toServer(String mStr) async {
     print("Reversing...");
     await widget.channel.emit("events", [
-      {'cmd': mStr},
+      {'data': "{\"cmd\":\""+mStr+"\"}"},
     ]);
   }
 }
@@ -363,8 +362,8 @@ class _PlayPauseWidgetState extends State<PlayPauseWidget> {
             },
             color: Colors.pink,
             icon: Icon(_isPlaying
-                ? Icons.play_circle_filled
-                : Icons.pause_circle_filled),
+                ? Icons.pause_circle_filled
+                : Icons.play_circle_filled),
           ),
         ]);
   }
