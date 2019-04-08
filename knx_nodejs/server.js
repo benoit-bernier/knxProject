@@ -229,8 +229,8 @@ io.on("connection", function(socket) {
       console.log(input);
       socket.emit("sayHello", input);
     } catch (e) {
-      let input = data["Hello"];
-      console.log("Hello " + input);
+      let input = data["cmd"];
+      console.log(input);
       socket.emit("sayHello", data);
     }
   });
