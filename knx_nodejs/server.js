@@ -73,7 +73,7 @@ function init() {
             break;
           case "0/3/2":
             mode = "";
-            if (speed_ratio > 100000) {
+            if (speed_ratio > 10000) {
               console.log("Impossible de ralentir.");
             } else {
               //Ralenti
@@ -336,7 +336,7 @@ io.on("connection", function(socket) {
         case "DOWN":
           console.log("Ralentissement");
           if (connected && mode == "") {
-            if (speed_ratio > 100000) {
+            if (speed_ratio > 10000) {
               console.log("Impossible de ralentir.");
               send_message_client(
                 socket,
@@ -384,7 +384,7 @@ io.on("connection", function(socket) {
           console.log("Set speed : " + input.data);
           let speed_value = parseInt(input.data, 10);
           if (connected && mode == "") {
-            if (speed_value > 100000 || speed_value <= 0) {
+            if (speed_value > 10000 || speed_value <= 0) {
               console.log("Impossible de set la speed : " + input.data);
               send_message_client(
                 socket,
