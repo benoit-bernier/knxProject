@@ -31,6 +31,7 @@ function init() {
   mode = "";
   reference = "";
   clearInterval(mchenillard);
+  downLED();
   mchenillard = "";
   connection = new knx.Connection({
     // ip address and port of the KNX router or interface
@@ -61,6 +62,7 @@ function init() {
             } else {
               //Accelere
               clearInterval(mchenillard);
+              downLED();
               mchenillard = setInterval(function() {
                 chenillard(state);
                 state = (state + 1) % 4;
@@ -77,6 +79,7 @@ function init() {
               //Ralenti
               speed += 100;
               clearInterval(mchenillard);
+              downLED();
               mchenillard = setInterval(function() {
                 chenillard(state);
                 state = (state + 1) % 4;
@@ -96,6 +99,7 @@ function init() {
             } else {
               console.log("Stop du chenillard");
               clearInterval(mchenillard);
+              downLED();
               mchenillard = "";
             }
             break;
@@ -105,6 +109,7 @@ function init() {
             schema.reverse();
             console.log(schema);
             clearInterval(mchenillard);
+            downLED();
             mchenillard = setInterval(function() {
               chenillard(state);
               state = (state + 1) % 4;
@@ -160,6 +165,13 @@ function init() {
       }
     }
   });
+}
+
+function downLED() {
+  connection.write("0/1/1", 0);
+  connection.write("0/1/2", 0);
+  connection.write("0/1/3", 0);
+  connection.write("0/1/4", 0);
 }
 
 function chenillard(state) {
@@ -234,9 +246,6 @@ io.on("connection", function(socket) {
   });
   socket.on("events", function(data) {
     console.log("========EVENT============");
-    for (i in data) {
-      console.log(data[i]);
-    }
     try {
       input = JSON.parse(data);
     } catch (e) {
@@ -268,6 +277,7 @@ io.on("connection", function(socket) {
           if (connected == true) {
             connection.Disconnect();
             clearInterval(mchenillard);
+            downLED();
             mchenillard = "";
             connection = "";
             connected = false;
@@ -301,6 +311,7 @@ io.on("connection", function(socket) {
             } else {
               //Accelere
               clearInterval(mchenillard);
+              downLED();
               mchenillard = setInterval(function() {
                 chenillard(state);
                 state = (state + 1) % 4;
@@ -349,6 +360,7 @@ io.on("connection", function(socket) {
               //Ralenti
               speed += 100;
               clearInterval(mchenillard);
+              downLED();
               mchenillard = setInterval(function() {
                 chenillard(state);
                 state = (state + 1) % 4;
@@ -397,6 +409,7 @@ io.on("connection", function(socket) {
               //Ralenti
               speed = speed_value;
               clearInterval(mchenillard);
+              downLED();
               mchenillard = setInterval(function() {
                 chenillard(state);
                 state = (state + 1) % 4;
@@ -453,6 +466,7 @@ io.on("connection", function(socket) {
                 "default_mode"
               );
               clearInterval(mchenillard);
+              downLED();
               mchenillard = "";
             }
           } else {
@@ -487,6 +501,7 @@ io.on("connection", function(socket) {
             schema.reverse();
             console.log(schema);
             clearInterval(mchenillard);
+            downLED();
             mchenillard = setInterval(function() {
               chenillard(state);
               state = (state + 1) % 4;
@@ -522,6 +537,7 @@ io.on("connection", function(socket) {
           if (connected && mode == "") {
             schema = input.data;
             clearInterval(mchenillard);
+            downLED();
             mchenillard = setInterval(function() {
               chenillard(state);
               state = (state + 1) % 4;
@@ -557,6 +573,7 @@ io.on("connection", function(socket) {
             );
             connection.Disconnect();
             clearInterval(mchenillard);
+            downLED();
             mchenillard = "";
             connection = "";
             connected = false;
