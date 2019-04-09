@@ -55,7 +55,7 @@ function init() {
         switch (dest) {
           case "0/3/1":
             mode = "";
-            if (speed == 0) {
+            if (speed < 500) {
               console.log("Impossible d'accélérer.");
             } else {
               //Accelere
