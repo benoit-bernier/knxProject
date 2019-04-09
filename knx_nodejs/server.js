@@ -120,6 +120,8 @@ function init() {
               cmd: "state_led_1",
               data: value
             };
+            console.log("---------------ETAT LED-------------------");
+            console.log("state_led " + value);
             myJSON = JSON.stringify(myObj);
             io.sockets.emit("state_led", myJSON);
             break;
