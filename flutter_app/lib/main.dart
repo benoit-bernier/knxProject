@@ -24,6 +24,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  bool isConnectedToServer = false;
   var socket;
   @override
   void initState() {
@@ -31,6 +32,7 @@ class _MyAppState extends State<MyApp> {
     initialize().then((socket) {
       setState(() {
         this.socket = socket;
+        this.isConnectedToServer=isConnectedToServer;
       });
     });
   }
@@ -57,15 +59,13 @@ class _MyAppState extends State<MyApp> {
       print('Hello, ${greeting['cmd']}');
     });
     await socket.connect();
-    await socket.emit('sayHello', [
-      {'Hello': 'world!'},
-    ]);
+    isConnectedToServer=true;
     return socket;
   }
 
   @override
   Widget build(BuildContext context) {
-    if (socket == null) {
+    if (!isConnectedToServer) {
       return Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -151,7 +151,16 @@ class _MyAppState extends State<MyApp> {
                   child: Text("Mastermind"),
                   padding: EdgeInsets.only(left: 10.0, right: 10.0)),
               RaisedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                      Navigator.of(context)
+                          .push(_Simon())
+                          .then<String>((returnVal) {
+                        Scaffold.of(context).showSnackBar(SnackBar(
+                          content: Text('$returnVal'),
+                          action: SnackBarAction(label: 'OK', onPressed: () {}),
+                        ));
+                      });
+                  },
                   child: Text("Simon"),
                   padding: EdgeInsets.only(left: 10.0, right: 10.0)),
             ],
@@ -271,8 +280,8 @@ class _SliderWidgetState extends State<SliderWidget> {
       activeColor: Colors.pink,
       value: _value,
       min: 0.0,
-      max: 10000.0,
-      divisions: 20,
+      max: 5000.0,
+      divisions: 10,
       label: '${_value.round() / 1000}',
       onChanged: (double value) {
         setState(() => _value = value);
@@ -405,4 +414,34 @@ class _Mastermind extends MaterialPageRoute<String> {
                     )
                   ])));
         });
+}
+
+class _Simon extends MaterialPageRoute<String> {
+  _Simon()
+      : super(builder: (BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(
+          title: Text("Simon"),
+          elevation: 1.0,
+          actions: <Widget>[
+            IconButton(
+              icon: Icon(Icons.close),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            )
+          ],
+        ),
+        body: Padding(
+            padding: EdgeInsets.all(32.0),
+            child: Column(children: <Widget>[
+              Text("Nous aurons ici notre jeu"),
+              RaisedButton(
+                child: Text("Jeu gagné"),
+                onPressed: () {
+                  Navigator.pop(context, "Gagné !");
+                },
+              )
+            ])));
+  });
 }
