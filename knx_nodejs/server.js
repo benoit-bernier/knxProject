@@ -17,7 +17,6 @@ let connection = ""; //contient la socket de connexion KNX
 let mchenillard = ""; //instance du chenillard
 let state = 0; // state for the chenillard
 let speed = 500; // default time between two commands
-let speed_ratio = 100; // real speed = speed + speed_ratio (allow to increase or decrease the speed of the chenillard)
 let schema = [0, 1, 2, 3]; // schéma allumage des LED par défaut
 
 let mode = ""; //mode de la maquette
@@ -28,7 +27,6 @@ init();
 function init() {
   state = 0;
   speed = 500;
-  speed_ratio = 100;
   schema = [0, 1, 2, 3];
   mode = "";
   reference = "";
@@ -58,7 +56,7 @@ function init() {
         switch (dest) {
           case "0/3/1":
             mode = "";
-            if (speed_ratio === 0) {
+            if (speed == 0) {
               console.log("Impossible d'accélérer.");
             } else {
               //Accelere
@@ -66,24 +64,24 @@ function init() {
               mchenillard = setInterval(function() {
                 chenillard(state);
                 state = (state + 1) % 4;
-              }, speed + speed_ratio);
-              speed_ratio -= 100;
-              console.log("La vitesse est de :" + speed_ratio);
+              }, speed);
+              speed -= 100;
+              console.log("La vitesse est de :" + speed);
             }
             break;
           case "0/3/2":
             mode = "";
-            if (speed_ratio > 10000) {
+            if (speed > 5000) {
               console.log("Impossible de ralentir.");
             } else {
               //Ralenti
-              speed_ratio += 100;
+              speed += 100;
               clearInterval(mchenillard);
               mchenillard = setInterval(function() {
                 chenillard(state);
                 state = (state + 1) % 4;
-              }, speed + speed_ratio);
-              console.log("La vitesse est de :" + speed_ratio);
+              }, speed);
+              console.log("La vitesse est de :" + speed);
             }
             //Ralenti
             break;
@@ -94,7 +92,7 @@ function init() {
                 chenillard(state);
                 state = (state + 1) % 4;
                 console.log("Lancement du chenillard");
-              }, speed + speed_ratio);
+              }, speed);
             } else {
               console.log("Stop du chenillard");
               clearInterval(mchenillard);
@@ -110,7 +108,7 @@ function init() {
             mchenillard = setInterval(function() {
               chenillard(state);
               state = (state + 1) % 4;
-            }, speed + speed_ratio);
+            }, speed);
             break;
           case "0/2/1":
             myObj = {
@@ -167,7 +165,7 @@ function init() {
 function chenillard(state) {
   connection.write("0/1/" + (schema[(state + 1) % 4] + 1), 1);
   connection.write("0/1/" + (schema[state % 4] + 1), 0);
-  console.log("Vitesse actuelle : " + speed_ratio);
+  console.log("Vitesse actuelle : " + speed);
 }
 
 function blink(position, time) {
@@ -236,7 +234,6 @@ io.on("connection", function(socket) {
   });
   socket.on("events", function(data) {
     console.log("========EVENT============");
-    console.log("myData = " + data.toString());
     for (i in data) {
       console.log(data[i]);
     }
@@ -294,7 +291,7 @@ io.on("connection", function(socket) {
         case "UP":
           console.log("Accélération");
           if (connected && mode == "") {
-            if (speed_ratio === 0) {
+            if (speed == 0) {
               send_message_client(
                 socket,
                 "default_message",
@@ -307,15 +304,15 @@ io.on("connection", function(socket) {
               mchenillard = setInterval(function() {
                 chenillard(state);
                 state = (state + 1) % 4;
-              }, speed + speed_ratio);
-              speed_ratio -= 100;
+              }, speed);
+              speed -= 100;
               send_message_client(
                 socket,
                 "default_message",
-                "La vitesse est de : " + speed_ratio,
+                "La vitesse est de : " + speed,
                 "default_mode"
               );
-              console.log("La vitesse est de : " + speed_ratio);
+              console.log("La vitesse est de : " + speed);
             }
           } else {
             if (!connected) {
@@ -340,7 +337,7 @@ io.on("connection", function(socket) {
         case "DOWN":
           console.log("Ralentissement");
           if (connected && mode == "") {
-            if (speed_ratio > 10000) {
+            if (speed > 5000) {
               console.log("Impossible de ralentir.");
               send_message_client(
                 socket,
@@ -350,17 +347,17 @@ io.on("connection", function(socket) {
               );
             } else {
               //Ralenti
-              speed_ratio += 100;
+              speed += 100;
               clearInterval(mchenillard);
               mchenillard = setInterval(function() {
                 chenillard(state);
                 state = (state + 1) % 4;
-              }, speed + speed_ratio);
-              console.log("La vitesse est de : " + speed_ratio);
+              }, speed);
+              console.log("La vitesse est de : " + speed);
               send_message_client(
                 socket,
                 "default_message",
-                "La vitesse est de : " + speed_ratio,
+                "La vitesse est de : " + speed,
                 "default_mode"
               );
             }
@@ -388,7 +385,7 @@ io.on("connection", function(socket) {
           console.log("Set speed : " + input.data);
           let speed_value = parseInt(input.data, 10);
           if (connected && mode == "") {
-            if (speed_value > 10000 || speed_value <= 0) {
+            if (speed_value > 5000 || speed_value <= 500) {
               console.log("Impossible de set la speed : " + input.data);
               send_message_client(
                 socket,
@@ -398,13 +395,12 @@ io.on("connection", function(socket) {
               );
             } else {
               //Ralenti
-              speed = 500;
-              speed_ratio = speed_value;
+              speed = speed_value;
               clearInterval(mchenillard);
               mchenillard = setInterval(function() {
                 chenillard(state);
                 state = (state + 1) % 4;
-              }, speed + speed_ratio);
+              }, speed);
               console.log("La vitesse est de : " + speed_value);
               send_message_client(
                 socket,
@@ -447,7 +443,7 @@ io.on("connection", function(socket) {
                   "Lancement du chenillard",
                   "default_mode"
                 );
-              }, speed + speed_ratio);
+              }, speed);
             } else {
               console.log("Stop du chenillard");
               send_message_client(
@@ -494,7 +490,7 @@ io.on("connection", function(socket) {
             mchenillard = setInterval(function() {
               chenillard(state);
               state = (state + 1) % 4;
-            }, speed + speed_ratio);
+            }, speed);
           } else {
             if (!connected) {
               console.log("Non connecté à la maquette");
@@ -529,7 +525,7 @@ io.on("connection", function(socket) {
             mchenillard = setInterval(function() {
               chenillard(state);
               state = (state + 1) % 4;
-            }, speed + speed_ratio);
+            }, speed);
           } else {
             if (!connected) {
               console.log("Non connecté à la maquette");
