@@ -31,7 +31,6 @@ function init() {
   mode = "";
   reference = "";
   clearInterval(mchenillard);
-  downLED();
   mchenillard = "";
   connection = new knx.Connection({
     // ip address and port of the KNX router or interface
@@ -279,7 +278,7 @@ io.on("connection", function(socket) {
           if (connected == true) {
             connection.Disconnect();
             clearInterval(mchenillard);
-            downLED();
+            downLED(connection);
             mchenillard = "";
             connection = "";
             connected = false;
