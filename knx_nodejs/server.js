@@ -18,7 +18,6 @@ let mchenillard = ""; //instance du chenillard
 let state = 0; // state for the chenillard
 let speed = 500; // default time between two commands
 let schema = [0, 1, 2, 3]; // schéma allumage des LED par défaut
-
 let mode = ""; //mode de la maquette
 let reference = ""; //reférence / modèle du jeu
 
@@ -56,7 +55,7 @@ function init() {
         switch (dest) {
           case "0/3/1":
             mode = "";
-            if (speed == 0) {
+            if (speed < 500) {
               console.log("Impossible d'accélérer.");
             } else {
               //Accelere
@@ -115,35 +114,66 @@ function init() {
             }, speed);
             break;
           case "0/2/1":
+            mValue = new String(value);
+            input = new String("\u0000");
+            if (mValue.toString() == input.toString()) {
+              mBool = 0;
+            } else {
+              mBool = 1;
+            }
             myObj = {
               cmd: "state_led_1",
-              data: value
+              data: mBool
             };
+<<<<<<< HEAD
             console.log("---------------ETAT LED-------------------");
             console.log("state_led " + value.toString());
+=======
+>>>>>>> 17b524457044df735c407cd83a3559fe2d7f9a97
             myJSON = JSON.stringify(myObj);
             io.sockets.emit("state_led", myJSON);
             break;
           case "0/2/2":
+            mValue = new String(value);
+            input = new String("\u0000");
+            if (mValue.toString() == input.toString()) {
+              mBool = 0;
+            } else {
+              mBool = 1;
+            }
             myObj = {
               cmd: "state_led_2",
-              data: value
+              data: mBool
             };
             myJSON = JSON.stringify(myObj);
             io.sockets.emit("state_led", myJSON);
             break;
           case "0/2/3":
+            let mValue = new String(value);
+            let input = new String("\u0000");
+            if (mValue.toString() == input.toString()) {
+              mBool = 0;
+            } else {
+              mBool = 1;
+            }
             myObj = {
               cmd: "state_led_3",
-              data: value
+              data: mBool
             };
             myJSON = JSON.stringify(myObj);
             io.sockets.emit("state_led", myJSON);
             break;
           case "0/2/4":
+            let mValue = new String(value);
+            let input = new String("\u0000");
+            if (mValue.toString() == input.toString()) {
+              mBool = 0;
+            } else {
+              mBool = 1;
+            }
             myObj = {
               cmd: "state_led_4",
-              data: value
+              data: mBool
             };
             myJSON = JSON.stringify(myObj);
             io.sockets.emit("state_led", myJSON);
