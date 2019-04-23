@@ -120,7 +120,7 @@ function init() {
               data: value
             };
             console.log("---------------ETAT LED-------------------");
-            console.log("state_led " + value);
+            console.log("state_led " + value.toString());
             myJSON = JSON.stringify(myObj);
             io.sockets.emit("state_led", myJSON);
             break;
