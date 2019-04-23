@@ -10,9 +10,7 @@ void main() {
         primarySwatch: Colors.pink,
       ),
       //color: Colors.pink,
-      home: MyApp()
-  )
-  );
+      home: MyApp()));
 }
 
 bool isConnected = true;
@@ -32,19 +30,18 @@ class _MyAppState extends State<MyApp> {
     initialize().then((socket) {
       setState(() {
         this.socket = socket;
-        this.isConnectedToServer=isConnectedToServer;
+        this.isConnectedToServer = isConnectedToServer;
       });
     });
   }
 
+//TODO: get the different status
   Future initialize() async {
     const uri = 'http://10.0.2.2:3000';
     socket = await SocketIO.createNewInstance(uri);
-    /*
     await socket.on(SocketIOEvent.connecting, () async {
       print('connecting');
     });
-    */
     await socket.on(SocketIOEvent.connect, () async {
       print('Connected.');
       final id = await socket.id;
@@ -59,7 +56,7 @@ class _MyAppState extends State<MyApp> {
       print('Hello, ${greeting['cmd']}');
     });
     await socket.connect();
-    isConnectedToServer=true;
+    isConnectedToServer = true;
     return socket;
   }
 
@@ -67,11 +64,11 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     if (!isConnectedToServer) {
       return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[CircularProgressIndicator()],
-            ),
-          );
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[CircularProgressIndicator()],
+        ),
+      );
     } else {
       final _kTabPages = <Widget>[
         Center(
@@ -122,14 +119,36 @@ class _MyAppState extends State<MyApp> {
           ),
         ),
         Center(
-          child: Icon(
-            Icons.lightbulb_outline,
-            size: 64.0,
-            color: Colors.pink,
-          ),
-        ),
-        Center(
-          child: Column(
+            //TODO:Add Icons updating xwith socket.on("state_led")
+            child: Column(
+          children: <Widget>[
+            Icon(
+              Icons.lightbulb_outline,
+              size: 64.0,
+              color: Colors.pink,
+            ),
+            Icon(
+              Icons.lightbulb_outline,
+              size: 64.0,
+              color: Colors.pink,
+            ),
+            Icon(
+              Icons.highlight,
+              size: 64.0,
+              color: Colors.pink,
+            ),
+            Icon(
+              Icons.lightbulb_outline,
+              size: 64.0,
+              color: Colors.pink,
+            ),
+          ],
+        )),
+        Center(child: Builder(
+            // Create an inner BuildContext so that the onPressed methods
+            // can refer to the Scaffold with Scaffold.of().
+            builder: (BuildContext context) {
+          return Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Icon(
@@ -152,26 +171,22 @@ class _MyAppState extends State<MyApp> {
                   padding: EdgeInsets.only(left: 10.0, right: 10.0)),
               RaisedButton(
                   onPressed: () {
-                      Navigator.of(context)
-                          .push(_Simon())
-                          .then<String>((returnVal) {
-                        Scaffold.of(context).showSnackBar(SnackBar(
-                          content: Text('$returnVal'),
-                          action: SnackBarAction(label: 'OK', onPressed: () {}),
-                        ));
-                      });
+                    Navigator.of(context)
+                        .push(_Simon())
+                        .then<String>((returnVal) {
+                      Scaffold.of(context).showSnackBar(SnackBar(
+                        content: Text('$returnVal'),
+                        action: SnackBarAction(label: 'OK', onPressed: () {}),
+                      ));
+                    });
                   },
                   child: Text("Simon"),
                   padding: EdgeInsets.only(left: 10.0, right: 10.0)),
             ],
-          ),
-        ),
+          );
+        })),
         Center(
-          child: Icon(
-            Icons.settings,
-            size: 64.0,
-            color: Colors.pink,
-          ),
+          child: _IPInput(),
         ),
       ];
 
@@ -195,29 +210,29 @@ class _MyAppState extends State<MyApp> {
       ];
 
       return Builder(
-            builder: (ctx) => DefaultTabController(
-                  length: _kTabs.length,
-                  child: Scaffold(
-                      appBar: AppBar(
-                        backgroundColor: Colors.pink,
-                        title: Text("Chenillard App"),
-                        actions: <Widget>[
-                          ConnectionWidget(
-                            channel: socket,
-                          ),
-                        ],
-                        bottom: TabBar(tabs: _kTabs),
+        builder: (ctx) => DefaultTabController(
+              length: _kTabs.length,
+              child: Scaffold(
+                  appBar: AppBar(
+                    backgroundColor: Colors.pink,
+                    title: Text("Chenillard App"),
+                    actions: <Widget>[
+                      ConnectionWidget(
+                        channel: socket,
                       ),
-                      body: TabBarView(children: _kTabPages)),
-                ),
-          );
+                    ],
+                    bottom: TabBar(tabs: _kTabs),
+                  ),
+                  body: TabBarView(children: _kTabPages)),
+            ),
+      );
     }
   }
 
   toServer(String mStr) async {
     print("Setting speed...");
     await socket.emit("events", [
-      {'data': "{\"cmd\":\""+mStr+"\"}"},
+      {'data': "{\"cmd\":\"" + mStr + "\"}"},
     ]);
   }
 }
@@ -256,10 +271,11 @@ class _ConnectionWidgetState extends State<ConnectionWidget> {
     //TODO: Initialise or kill connexion
     toServer(isConnected ? "CONNECT" : "DISCONNECT");
   }
+
   toServer(String mStr) async {
     print("Setting speed...");
     await widget.channel.emit("events", [
-      {'data': "{\"cmd\":\""+mStr+"\"}"},
+      {'data': "{\"cmd\":\"" + mStr + "\"}"},
     ]);
   }
 }
@@ -294,7 +310,7 @@ class _SliderWidgetState extends State<SliderWidget> {
   toServer(String mStr, String value) async {
     print("Setting speed...");
     await widget.channel.emit("events", [
-      {'data': "{\"cmd\":\""+mStr+"\",\"data\":\""+value+"\"}"},
+      {'data': "{\"cmd\":\"" + mStr + "\",\"data\":\"" + value + "\"}"},
     ]);
   }
 }
@@ -332,10 +348,11 @@ class _OrderWidgetState extends State<OrderWidget> {
       ),
     ]);
   }
+
   toServer(String mStr) async {
     print("Reversing...");
     await widget.channel.emit("events", [
-      {'data': "{\"cmd\":\""+mStr+"\"}"},
+      {'data': "{\"cmd\":\"" + mStr + "\"}"},
     ]);
   }
 }
@@ -381,8 +398,43 @@ class _PlayPauseWidgetState extends State<PlayPauseWidget> {
     print("Play pause !");
     await widget.channel.emit("events", [
       //{'cmd': 'world!'},
-      {'data': "{\"cmd\":\""+mStr+"\"}"},
+      {'data': "{\"cmd\":\"" + mStr + "\"}"},
     ]);
+  }
+}
+
+class _IPInput extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() => _IPInputState();
+}
+
+class _IPInputState extends State<_IPInput> {
+  bool _isInputValid = true;
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: TextField(
+        keyboardType: TextInputType.number,
+        style: Theme.of(context).textTheme.display1,
+        decoration: InputDecoration(
+            labelText: 'Enter IP Address :',
+            errorText: _isInputValid ? null : 'Please enter an IP address',
+            border: OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(10.0)))),
+        onSubmitted: (String val) {
+          Scaffold.of(context).showSnackBar(
+            SnackBar(content: Text(val)),
+          );
+          //TODO change socket for this new ipAddress
+        },
+        onChanged: (String val) {
+          //TODO: verify if val is an IP address
+          int.parse(val, onError: (val) {
+            setState(() => _isInputValid = false);
+          });
+        },
+      ),
+    );
   }
 }
 
@@ -419,29 +471,58 @@ class _Mastermind extends MaterialPageRoute<String> {
 class _Simon extends MaterialPageRoute<String> {
   _Simon()
       : super(builder: (BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: Text("Simon"),
-          elevation: 1.0,
-          actions: <Widget>[
-            IconButton(
-              icon: Icon(Icons.close),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            )
-          ],
-        ),
-        body: Padding(
-            padding: EdgeInsets.all(32.0),
-            child: Column(children: <Widget>[
-              Text("Nous aurons ici notre jeu"),
-              RaisedButton(
-                child: Text("Jeu gagné"),
-                onPressed: () {
-                  Navigator.pop(context, "Gagné !");
-                },
-              )
-            ])));
-  });
+          return Scaffold(
+              appBar: AppBar(
+                title: Text("Simon"),
+                actions: <Widget>[
+                  IconButton(
+                    icon: Icon(Icons.close),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  )
+                ],
+              ),
+              body: Center(
+                //TODO: Why does it isn't centered???
+                  child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                      Text("Nous aurons ici notre jeu"),
+                    ButtonBar(
+                      children: <Widget>[
+                        IconButton(icon: Icon(Icons.lightbulb_outline), onPressed: null),
+                        IconButton(icon: Icon(Icons.lightbulb_outline), onPressed: null),
+                        IconButton(icon: Icon(Icons.lightbulb_outline), onPressed: null),
+                        IconButton(icon: Icon(Icons.lightbulb_outline), onPressed: null)
+                      ],
+                    ),
+                    ButtonBar(children: <Widget>[
+                      RaisedButton(
+                        child: Row(
+                        children: <Widget>[
+                          Icon(Icons.cancel),
+                          Text("Annuler"),
+                        ],
+                    ),
+                        onPressed: () {
+                          //TODO : vider la liste
+                          //Navigator.pop(context, "Gagné !");
+                        },
+                      ),
+                      RaisedButton(
+                        child: Row(
+                          children: <Widget>[
+                            Icon(Icons.send),
+                            Text("Envoyer"),
+                          ],
+                        ),
+                        onPressed: () {
+                          //TODO : envoyer la liste au serveur
+                          //Navigator.pop(context, "Gagné !");
+                        },
+                      ),
+                    ],)
+                  ])));
+        });
 }
