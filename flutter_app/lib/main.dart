@@ -63,6 +63,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     if (!isConnectedToServer) {
+      //TODO: debug waiter
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -118,32 +119,7 @@ class _MyAppState extends State<MyApp> {
             ],
           ),
         ),
-        Center(
-            //TODO:Add Icons updating xwith socket.on("state_led")
-            child: Column(
-          children: <Widget>[
-            Icon(
-              Icons.lightbulb_outline,
-              size: 64.0,
-              color: Colors.pink,
-            ),
-            Icon(
-              Icons.lightbulb_outline,
-              size: 64.0,
-              color: Colors.pink,
-            ),
-            Icon(
-              Icons.highlight,
-              size: 64.0,
-              color: Colors.pink,
-            ),
-            Icon(
-              Icons.lightbulb_outline,
-              size: 64.0,
-              color: Colors.pink,
-            ),
-          ],
-        )),
+        StateLedsWidget(channel: socket),
         Center(child: Builder(
             // Create an inner BuildContext so that the onPressed methods
             // can refer to the Scaffold with Scaffold.of().
@@ -393,7 +369,6 @@ class _PlayPauseWidgetState extends State<PlayPauseWidget> {
           ),
         ]);
   }
-
   toServer(String mStr) async {
     print("Play pause !");
     await widget.channel.emit("events", [
@@ -525,4 +500,62 @@ class _Simon extends MaterialPageRoute<String> {
                     ],)
                   ])));
         });
+}
+
+
+class StateLedsWidget extends StatefulWidget {
+  final channel;
+
+  StateLedsWidget({Key key, @required this.channel}) : super(key: key);
+  @override
+  State<StatefulWidget> createState() => _StateLedsWidgetState();
+}
+
+class _StateLedsWidgetState extends State<StateLedsWidget> {
+  bool _led1 = false;
+  bool _led2 = false;
+  bool _led3 = false;
+  bool _led4 = false;
+
+  @override
+  Widget build(BuildContext context) {
+    listen();
+    return Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Center(
+            //TODO:Add Icons updating xwith socket.on("state_led")
+              child: Column(
+                children: <Widget>[
+                  Icon(
+                    _led1?Icons.highlight:Icons.lightbulb_outline,
+                    size: 64.0,
+                    color: Colors.pink,
+                  ),
+                  Icon(
+                    _led2?Icons.highlight:Icons.lightbulb_outline,
+                    size: 64.0,
+                    color: Colors.pink,
+                  ),
+                  Icon(
+                    _led3?Icons.highlight:Icons.lightbulb_outline,
+                    size: 64.0,
+                    color: Colors.pink,
+                  ),
+                  Icon(
+                    _led4?Icons.highlight:Icons.lightbulb_outline,
+                    size: 64.0,
+                    color: Colors.pink,
+                  ),
+                ],
+              )),
+        ]);
+  }
+  listen() async{
+    print("listening");
+    await widget.channel.on('state_led', (mData) {
+      print("${mData['cmd']}");
+      print("${mData['data']}");
+    });
+  }
 }
