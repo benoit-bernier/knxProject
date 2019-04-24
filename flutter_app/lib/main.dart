@@ -554,6 +554,20 @@ class _StateLedsWidgetState extends State<StateLedsWidget> {
   listen() async{
     print("listening");
     await widget.channel.on('state_led', (mData) {
+      setState(() {
+        if (mData['cmd']=="state_led_1"){
+          _led1=mData['data']==1?true:false;
+        }
+        if (mData['cmd']=="state_led_2"){
+          _led2=mData['data']==1?true:false;
+        }
+        if (mData['cmd']=="state_led_3"){
+          _led3=mData['data']==1?true:false;
+        }
+        if (mData['cmd']=="state_led_4"){
+          _led4=mData['data']==1?true:false;
+        }
+      });
       print("${mData['cmd']}");
       print("${mData['data']}");
     });
