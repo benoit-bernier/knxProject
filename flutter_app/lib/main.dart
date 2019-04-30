@@ -524,7 +524,7 @@ class _StateLedsWidgetState extends State<StateLedsWidget> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Center(
-            //TODO:Add Icons updating xwith socket.on("state_led")
+            //TODO:Add Icons updating with socket.on("state_led")
               child: Column(
                 children: <Widget>[
                   Icon(
