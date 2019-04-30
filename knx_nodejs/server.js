@@ -125,6 +125,11 @@ function init() {
               cmd: "state_led_1",
               data: mBool
             };
+<<<<<<< HEAD
+            console.log("---------------ETAT LED-------------------");
+            console.log("state_led " + value.toString());
+=======
+>>>>>>> 17b524457044df735c407cd83a3559fe2d7f9a97
             myJSON = JSON.stringify(myObj);
             io.sockets.emit("state_led", myJSON);
             break;
