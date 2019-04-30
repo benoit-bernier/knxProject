@@ -84,7 +84,6 @@ const styles = {
     borderColor: "white",
     color: "white",
     fontSize: "1.5em",
-    borderWidth: "1px",
     borderRadius: "50px",
     borderWidth: "5px",
     width: 250,
