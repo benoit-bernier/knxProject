@@ -144,8 +144,8 @@ function init() {
             io.sockets.emit("state_led", myJSON);
             break;
           case "0/2/3":
-            let mValue = new String(value);
-            let input = new String("\u0000");
+            mValue = new String(value);
+            input = new String("\u0000");
             if (mValue.toString() == input.toString()) {
               mBool = 0;
             } else {
@@ -159,8 +159,8 @@ function init() {
             io.sockets.emit("state_led", myJSON);
             break;
           case "0/2/4":
-            let mValue = new String(value);
-            let input = new String("\u0000");
+            mValue = new String(value);
+            input = new String("\u0000");
             if (mValue.toString() == input.toString()) {
               mBool = 0;
             } else {
@@ -261,11 +261,11 @@ app.get("/", function(req, res) {
 io.on("connection", function(socket) {
   socket.on("sayHello", function(data) {
     try {
-      let input = JSON.parse(data);
+      input = JSON.parse(data);
       console.log(input);
       socket.emit("sayHello", input);
     } catch (e) {
-      let input = data["cmd"];
+      input = data["cmd"];
       console.log(input);
       socket.emit("sayHello", data);
     }
@@ -631,7 +631,7 @@ io.on("connection", function(socket) {
     console.log(data);
     mode = "mastermind";
     if (!connected) {
-      let input = JSON.parse(data);
+      input = JSON.parse(data);
       switch (input.cmd) {
         case "INIT":
           if (reference === "") {
