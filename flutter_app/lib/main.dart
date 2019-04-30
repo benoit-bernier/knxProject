@@ -525,7 +525,7 @@ class _StateLedsWidgetState extends State<StateLedsWidget> {
         children: <Widget>[
           Center(
             //TODO:Add Icons updating with socket.on("state_led")
-              child: Column(
+              child: Row(
                 children: <Widget>[
                   Icon(
                     _led1?Icons.highlight:Icons.lightbulb_outline,
