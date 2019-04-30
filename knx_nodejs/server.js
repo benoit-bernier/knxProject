@@ -125,11 +125,8 @@ function init() {
               cmd: "state_led_1",
               data: mBool
             };
-<<<<<<< HEAD
             console.log("---------------ETAT LED-------------------");
             console.log("state_led " + value.toString());
-=======
->>>>>>> 17b524457044df735c407cd83a3559fe2d7f9a97
             myJSON = JSON.stringify(myObj);
             io.sockets.emit("state_led", myJSON);
             break;
@@ -632,6 +629,8 @@ io.on("connection", function(socket) {
       console.log("Erreur lors du parse de la commande.");
     }
   });
+
+  // ################# MASTERMIND ################# //
   socket.on("mastermind", function(data) {
     console.log(data);
     mode = "mastermind";
@@ -642,9 +641,10 @@ io.on("connection", function(socket) {
           if (reference === "") {
             mode = "mastermind";
             console.log("Initialisation du mastermind..");
-            reference = shuffle_tab([0, 1, 2, 3], 30);
+            // generate random boolean array
+            reference = [Math.random() >= 0.5, Math.random() >= 0.5, Math.random() >= 0.5, Math.random() >= 0.5];
             console.log("Schéma du tableau : " + reference);
-            send_message_client(socket, "init_matermind", reference, "game");
+            send_message_client(socket, "init_mastermind", reference, "game");
           } else {
             console.log("Le jeu est déjà lancé..");
             send_message_client(
@@ -657,11 +657,9 @@ io.on("connection", function(socket) {
           break;
         case "VERIFY":
           if (mode === "mastermind" && reference != "") {
-            result = verify_mastermind(input.data, reference);
-            result.then(function(value) {
               for (i = 0; i < 4; i++) {
-                console.log(value[i]);
-                if (value[i] == 1) {
+                console.log(inpu.data[i]===reference[i]);
+                if (inpu.data[i]===reference[i]) {
                   console.log("OK");
                   blink(i, 2000);
                 } else {
@@ -669,10 +667,8 @@ io.on("connection", function(socket) {
                   blink(i, 600);
                 }
               }
-              send_message_client(socket, "verify_matermind", value, "game");
-            });
-            //.catch(error => {});
-          } else {
+              //send_message_client(socket, "verify_matermind", value, "game");
+            } else {
             console.log(
               "Erreur lors de la vérification : jeu non lancé ou pas initialisé"
             );
@@ -714,7 +710,93 @@ io.on("connection", function(socket) {
       console.log("Erreur lors du lancement du jeu : maquette non connectée.");
     }
   });
+
+ // ################# MASTERMIND ################# //
+ socket.on("order", function(data) {
+  console.log(data);
+  mode = "order";
+  if (!connected) {
+    let input = JSON.parse(data);
+    switch (input.cmd) {
+      case "INIT":
+        if (reference === "") {
+          mode = "order";
+          console.log("Initialisation du order..");
+          //
+          reference = shuffle_tab([0, 1, 2, 3], 30);
+          console.log("Schéma du tableau : " + reference);
+          send_message_client(socket, "init_order", reference, "game");
+        } else {
+          console.log("Le jeu est déjà lancé..");
+          send_message_client(
+            socket,
+            "default_message",
+            "Le jeu est déjà lancé..",
+            "game"
+          );
+        }
+        break;
+      case "VERIFY":
+        if (mode === "order" && reference != "") {
+          result = verify_order(input.data, reference);
+          result.then(function(value) {
+            for (i = 0; i < 4; i++) {
+              console.log(value[i]);
+              if (value[i] == 1) {
+                console.log("OK");
+                blink(i, 2000);
+              } else {
+                console.log("NOT OK");
+                blink(i, 600);
+              }
+            }
+            send_message_client(socket, "verify_order", value, "game");
+          });
+          //.catch(error => {});
+        } else {
+          console.log(
+            "Erreur lors de la vérification : jeu non lancé ou pas initialisé"
+          );
+          send_message_client(
+            socket,
+            "default_message",
+            "Erreur lors de la vérification : jeu non lancé ou pas initialisé",
+            "game"
+          );
+        }
+        break;
+      case "STOP":
+        console.log(
+          "Le jeu " +
+            mode +
+            " vient d'être stoppé. Retour au mode par défaut."
+        );
+        send_message_client(
+          socket,
+          "default_message",
+          "Le jeu " +
+            mode +
+            " vient d'être stoppé. Retour au mode par défaut.",
+          "game"
+        );
+        mode = "";
+        reference = "";
+        break;
+      default:
+        send_message_client(
+          socket,
+          "default_message",
+          "Commande non supportée",
+          "game"
+        );
+        console.log("Commande non supportée");
+    }
+  } else {
+    console.log("Erreur lors du lancement du jeu : maquette non connectée.");
+  }
+  });
 });
+
 
 process.on("SIGINT", function() {
   console.log(" Ctrl+C détecté ! On coupe la connexion avec le serveur !");
