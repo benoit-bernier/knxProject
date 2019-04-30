@@ -1,0 +1,37 @@
+import React, { Component } from "react";
+import { BrowserRouter as Router, Route } from "react-router-dom";
+import { withStyles } from "@material-ui/core/styles";
+import "typeface-roboto";
+import Chenillard from "./components/chenillard/chenillard";
+import LampVisu from "./components/lamp_visu/lamp_visu";
+import Topbar from "./components/topbar/topbar";
+import Game from "./components/games/games";
+
+const styles = {
+  root: {
+    width: "100%",
+    background: "white",
+    margin: 0,
+    padding: 0,
+    height: "100%"
+  }
+};
+
+class App extends Component {
+  render() {
+    const { classes } = this.props;
+    return (
+      <Router>
+        <div className={classes.root}>
+          <Topbar />
+          <Route exact path="/" component={LampVisu} />
+          <Route exact path="/games" component={Game} />
+          <Route exact path="/chenillard" component={Chenillard} />
+          <Route exact path="/lamp_visu" component={LampVisu} />
+        </div>
+      </Router>
+    );
+  }
+}
+
+export default withStyles(styles)(App);

@@ -1,0 +1,19 @@
+.container_state {
+  color: black;
+  font-style: oblique;
+  font-variant: small-caps;
+  font-size: 1.1em;
+  font-weight: 500;
+}
+
+.colonne_state {
+  vertical-align: top;
+  margin-left: 5%;
+  flex-grow: 1;
+  display: inline-block;
+  width: 25%;
+}
+
+.colonne_state_description {
+  text-align: center;
+}
