@@ -8,6 +8,14 @@ import purple from "@material-ui/core/colors/purple";
 import blue from "@material-ui/core/colors/blue";
 import green from "@material-ui/core/colors/green";
 import Button from "@material-ui/core/Button";
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import InputLabel from "@material-ui/core/InputLabel";
+import Input from "@material-ui/core/Input";
+import FormControl from "@material-ui/core/FormControl";
+import Select from "@material-ui/core/Select";
 
 const Amber = amber[500];
 const Orange = orange[800];
@@ -88,14 +96,49 @@ const styles = {
     borderWidth: "5px",
     width: 250,
     height: 80
+  },
+  container: {
+    display: "flex",
+    flexWrap: "wrap"
+  },
+  formControl: {
+    minWidth: 120
+  },
+  fail: {
+    color: Red,
+    marginLeft: "25px"
   }
 };
 
 class Chenillard extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      open: false,
+      fail: false,
+      LED_0: 0,
+      LED_1: 0,
+      LED_2: 0,
+      LED_3: 0
+    };
   }
+
+  handleChange = name => event => {
+    this.setState({ [name]: Number(event.target.value) });
+  };
+
+  handleClickOpen = () => {
+    this.setState({ open: true });
+  };
+
+  handleClose = () => {
+    this.setState({ open: false });
+    this.setState({ fail: false });
+  };
+
+  failDetected = () => {
+    this.setState({ fail: true });
+  };
 
   render() {
     const { classes } = this.props;
@@ -118,7 +161,11 @@ class Chenillard extends Component {
           </p>
         </div>
         <div className={classes.tuile_red}>
-          <Button variant="outlined" className={classes.button}>
+          <Button
+            variant="outlined"
+            className={classes.button}
+            onClick={this.handleClickOpen}
+          >
             Change !
           </Button>
           <p className={classes.description_text}>
@@ -147,6 +194,106 @@ class Chenillard extends Component {
             Un bug ? Relance la maquette !
           </p>
         </div>
+        <Dialog
+          disableBackdropClick
+          disableEscapeKeyDown
+          open={this.state.open}
+          onClose={this.handleClose}
+        >
+          <DialogTitle>Choisi l'ordre des LED</DialogTitle>
+          {this.state.fail ? (
+            <p className={classes.fail}>
+              Veuillez choisir une position unique pour chaque LED.
+            </p>
+          ) : (
+            <p />
+          )}
+          <DialogContent>
+            <form className={classes.container}>
+              <FormControl required className={classes.formControl}>
+                <InputLabel>LED 1</InputLabel>
+                <Select
+                  native
+                  value={this.state.LED_0}
+                  onChange={this.handleChange("LED_0")}
+                  input={<Input id="age-native-simple" />}
+                >
+                  <option value="" />
+                  <option value={0}>position 1</option>
+                  <option value={1}>position 2</option>
+                  <option value={2}>position 3</option>
+                  <option value={3}>position 4</option>
+                </Select>
+              </FormControl>
+              <FormControl required className={classes.formControl}>
+                <InputLabel>LED 2</InputLabel>
+                <Select
+                  native
+                  value={this.state.LED_1}
+                  onChange={this.handleChange("LED_1")}
+                  input={<Input id="age-native-simple" />}
+                >
+                  <option value="" />
+                  <option value={0}>position 1</option>
+                  <option value={1}>position 2</option>
+                  <option value={2}>position 3</option>
+                  <option value={3}>position 4</option>
+                </Select>
+              </FormControl>
+              <FormControl required className={classes.formControl}>
+                <InputLabel>LED 3</InputLabel>
+                <Select
+                  native
+                  value={this.state.LED_2}
+                  onChange={this.handleChange("LED_2")}
+                  input={<Input id="age-native-simple" />}
+                >
+                  <option value="" />
+                  <option value={0}>position 1</option>
+                  <option value={1}>position 2</option>
+                  <option value={2}>position 3</option>
+                  <option value={3}>position 4</option>
+                </Select>
+              </FormControl>
+              <FormControl required className={classes.formControl}>
+                <InputLabel>LED 4</InputLabel>
+                <Select
+                  native
+                  value={this.state.LED_3}
+                  onChange={this.handleChange("LED_3")}
+                  input={<Input id="age-native-simple" />}
+                >
+                  <option value="" />
+                  <option value={0}>position 1</option>
+                  <option value={1}>position 2</option>
+                  <option value={2}>position 3</option>
+                  <option value={3}>position 4</option>
+                </Select>
+              </FormControl>
+            </form>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={this.handleClose} color="secondary">
+              Cancel
+            </Button>
+            <Button
+              onClick={
+                this.state.LED_0 +
+                  this.state.LED_1 +
+                  this.state.LED_2 +
+                  this.state.LED_3 ===
+                  6 &&
+                this.state.LED_0 !== this.state.LED_1 &&
+                this.state.LED_0 !== this.state.LED_1
+                  ? this.handleClose
+                  : this.failDetected
+              }
+              color="secondary"
+            >
+              Ok
+            </Button>
+          </DialogActions>
+        </Dialog>
       </div>
     );
   }
