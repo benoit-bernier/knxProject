@@ -340,7 +340,7 @@ io.on("connection", function(socket) {
               //Accelere
               clearInterval(mchenillard);
               downLED();
-              mchenillard = nterval(function() {
+              mchenillard = setInterval(function() {
                 chenillard(state);
                 state = (state + 1) % 4;
               }, speed);
@@ -658,8 +658,7 @@ io.on("connection", function(socket) {
         case "VERIFY":
           if (mode === "mastermind" && reference != "") {
               for (i = 0; i < 4; i++) {
-                console.log(inpu.data[i]===reference[i]);
-                if (inpu.data[i]===reference[i]) {
+                if (input.data[i]) {
                   console.log("OK");
                   blink(i, 2000);
                 } else {
@@ -679,6 +678,14 @@ io.on("connection", function(socket) {
               "game"
             );
           }
+          break;
+        case "WON":
+          blink(1, 550); 
+          blink(2,550);
+          blink(3,550);
+          blink(4, 550);
+          break;
+        case "LOST" :
           break;
         case "STOP":
           console.log(
