@@ -265,7 +265,7 @@ io.on("connection", function(socket) {
       console.log(input);
       socket.emit("sayHello", input);
     } catch (e) {
-      let input = data["cmd"];
+      input = data["cmd"];
       console.log(input);
       socket.emit("sayHello", data);
     }
@@ -631,7 +631,7 @@ io.on("connection", function(socket) {
     console.log(data);
     mode = "mastermind";
     if (!connected) {
-      let input = JSON.parse(data);
+      input = JSON.parse(data);
       switch (input.cmd) {
         case "INIT":
           if (reference === "") {
