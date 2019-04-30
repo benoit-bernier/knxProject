@@ -7,7 +7,7 @@ const so = require("socket.io");
 const app = express();
 const httpServer = http.createServer(app);
 const io = so.listen(httpServer);
-const port_server = 3000;
+const port_server = 5000;
 
 let ip_maquette = "192.168.0.6";
 let port_maquette = 3671;
@@ -723,6 +723,15 @@ process.on("SIGINT", function() {
   myJSON = JSON.stringify(myObj);
   io.sockets.emit("default_mode", myJSON);
   process.exit();
+});
+
+app.get("/api/customers", (req, res) => {
+  const customers = [
+    { id: 1, firstName: "John", lastName: "Doe" },
+    { id: 2, firstName: "Jean", lastName: "Dupont" },
+    { id: 3, firstName: "Pierre", lastName: "Dubois" }
+  ];
+  res.json(customers);
 });
 
 app.use("/javascript", express.static(__dirname + "/javascript"));
