@@ -135,7 +135,7 @@ class _MyAppState extends State<MyApp> {
               RaisedButton(
                   onPressed: () {
                     Navigator.of(context)
-                        .push(_Mastermind())
+                        .push(_Mastermind(socket))
                         .then<String>((returnVal) {
                       Scaffold.of(context).showSnackBar(SnackBar(
                         content: Text('$returnVal'),
@@ -369,6 +369,7 @@ class _PlayPauseWidgetState extends State<PlayPauseWidget> {
           ),
         ]);
   }
+
   toServer(String mStr) async {
     print("Play pause !");
     await widget.channel.emit("events", [
@@ -414,7 +415,8 @@ class _IPInputState extends State<_IPInput> {
 }
 
 class _Mastermind extends MaterialPageRoute<String> {
-  _Mastermind()
+  final channel;
+  _Mastermind(this.channel)
       : super(builder: (BuildContext context) {
           return Scaffold(
               appBar: AppBar(
@@ -429,17 +431,13 @@ class _Mastermind extends MaterialPageRoute<String> {
                   )
                 ],
               ),
-              body: Padding(
-                  padding: EdgeInsets.all(32.0),
-                  child: Column(children: <Widget>[
-                    Text("Nous aurons ici notre jeu"),
-                    RaisedButton(
-                      child: Text("Jeu gagné"),
-                      onPressed: () {
-                        Navigator.pop(context, "Gagné !");
-                      },
-                    )
-                  ])));
+              body:
+                    Align(
+                        alignment: Alignment.bottomCenter,
+                        child:MastermindSenderWidget(
+                          channel: channel,
+                        )
+                    ));
         });
 }
 
@@ -459,49 +457,58 @@ class _Simon extends MaterialPageRoute<String> {
                 ],
               ),
               body: Center(
-                //TODO: Why does it isn't centered???
+                  //TODO: Why does it isn't centered???
                   child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                      Text("Nous aurons ici notre jeu"),
+                    Text("Nous aurons ici notre jeu"),
                     ButtonBar(
                       children: <Widget>[
-                        IconButton(icon: Icon(Icons.lightbulb_outline), onPressed: null),
-                        IconButton(icon: Icon(Icons.lightbulb_outline), onPressed: null),
-                        IconButton(icon: Icon(Icons.lightbulb_outline), onPressed: null),
-                        IconButton(icon: Icon(Icons.lightbulb_outline), onPressed: null)
+                        IconButton(
+                            icon: Icon(Icons.lightbulb_outline),
+                            onPressed: null),
+                        IconButton(
+                            icon: Icon(Icons.lightbulb_outline),
+                            onPressed: null),
+                        IconButton(
+                            icon: Icon(Icons.lightbulb_outline),
+                            onPressed: null),
+                        IconButton(
+                            icon: Icon(Icons.lightbulb_outline),
+                            onPressed: null)
                       ],
                     ),
-                    ButtonBar(children: <Widget>[
-                      RaisedButton(
-                        child: Row(
-                        children: <Widget>[
-                          Icon(Icons.cancel),
-                          Text("Annuler"),
-                        ],
-                    ),
-                        onPressed: () {
-                          //TODO : vider la liste
-                          //Navigator.pop(context, "Gagné !");
-                        },
-                      ),
-                      RaisedButton(
-                        child: Row(
-                          children: <Widget>[
-                            Icon(Icons.send),
-                            Text("Envoyer"),
-                          ],
+                    ButtonBar(
+                      children: <Widget>[
+                        RaisedButton(
+                          child: Row(
+                            children: <Widget>[
+                              Icon(Icons.cancel),
+                              Text("Annuler"),
+                            ],
+                          ),
+                          onPressed: () {
+                            //TODO : vider la liste
+                            //Navigator.pop(context, "Gagné !");
+                          },
                         ),
-                        onPressed: () {
-                          //TODO : envoyer la liste au serveur
-                          //Navigator.pop(context, "Gagné !");
-                        },
-                      ),
-                    ],)
+                        RaisedButton(
+                          child: Row(
+                            children: <Widget>[
+                              Icon(Icons.send),
+                              Text("Envoyer"),
+                            ],
+                          ),
+                          onPressed: () {
+                            //TODO : envoyer la liste au serveur
+                            //Navigator.pop(context, "Gagné !");
+                          },
+                        ),
+                      ],
+                    )
                   ])));
         });
 }
-
 
 class StateLedsWidget extends StatefulWidget {
   final channel;
@@ -524,52 +531,136 @@ class _StateLedsWidgetState extends State<StateLedsWidget> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Center(
-            //TODO:Add Icons updating with socket.on("state_led")
-              child: Row(
-                children: <Widget>[
-                  Icon(
-                    _led1?Icons.highlight:Icons.lightbulb_outline,
-                    size: 64.0,
-                    color: Colors.pink,
-                  ),
-                  Icon(
-                    _led2?Icons.highlight:Icons.lightbulb_outline,
-                    size: 64.0,
-                    color: Colors.pink,
-                  ),
-                  Icon(
-                    _led3?Icons.highlight:Icons.lightbulb_outline,
-                    size: 64.0,
-                    color: Colors.pink,
-                  ),
-                  Icon(
-                    _led4?Icons.highlight:Icons.lightbulb_outline,
-                    size: 64.0,
-                    color: Colors.pink,
-                  ),
-                ],
-              )),
+              child: Column(
+            children: <Widget>[
+              Icon(
+                _led1 ? Icons.highlight : Icons.lightbulb_outline,
+                size: 64.0,
+                color: Colors.pink,
+              ),
+              Icon(
+                _led2 ? Icons.highlight : Icons.lightbulb_outline,
+                size: 64.0,
+                color: Colors.pink,
+              ),
+              Icon(
+                _led3 ? Icons.highlight : Icons.lightbulb_outline,
+                size: 64.0,
+                color: Colors.pink,
+              ),
+              Icon(
+                _led4 ? Icons.highlight : Icons.lightbulb_outline,
+                size: 64.0,
+                color: Colors.pink,
+              ),
+            ],
+          )),
         ]);
   }
-  listen() async{
+
+  listen() async {
     print("listening");
     await widget.channel.on('state_led', (mData) {
       setState(() {
-        if (mData['cmd']=="state_led_1"){
-          _led1=mData['data']==1?true:false;
+        if (mData['cmd'] == "state_led_1") {
+          _led1 = mData['data'] == 1 ? true : false;
         }
-        if (mData['cmd']=="state_led_2"){
-          _led2=mData['data']==1?true:false;
+        if (mData['cmd'] == "state_led_2") {
+          _led2 = mData['data'] == 1 ? true : false;
         }
-        if (mData['cmd']=="state_led_3"){
-          _led3=mData['data']==1?true:false;
+        if (mData['cmd'] == "state_led_3") {
+          _led3 = mData['data'] == 1 ? true : false;
         }
-        if (mData['cmd']=="state_led_4"){
-          _led4=mData['data']==1?true:false;
+        if (mData['cmd'] == "state_led_4") {
+          _led4 = mData['data'] == 1 ? true : false;
         }
       });
       print("${mData['cmd']}");
       print("${mData['data']}");
+    });
+  }
+}
+
+class MastermindSenderWidget extends StatefulWidget {
+  final channel;
+
+  MastermindSenderWidget({Key key, @required this.channel}) : super(key: key);
+  @override
+  State<StatefulWidget> createState() => _MastermindSenderWidgetState();
+}
+
+class _MastermindSenderWidgetState extends State<MastermindSenderWidget> {
+  var _myArray = [false, false, false, false];
+
+  @override
+  Widget build(BuildContext context) {
+    listen();
+    return Row(
+          children: <Widget>[
+            IconButton(
+                icon: Icon(
+                    _myArray[0] ? Icons.highlight : Icons.lightbulb_outline),
+                onPressed: () {
+                  setState(() {
+                    _myArray[0] = !_myArray[0];
+                  });
+                }),
+            IconButton(
+                icon: Icon(
+                    _myArray[1] ? Icons.highlight : Icons.lightbulb_outline),
+                onPressed: () {
+                  setState(() {
+                    _myArray[1] = !_myArray[1];
+                  });
+                }),
+            IconButton(
+                icon: Icon(
+                    _myArray[2] ? Icons.highlight : Icons.lightbulb_outline),
+                onPressed: () {
+                  setState(() {
+                    _myArray[2] = !_myArray[2];
+                  });
+                }),
+            IconButton(
+                icon: Icon(
+                    _myArray[3] ? Icons.highlight : Icons.lightbulb_outline),
+                onPressed: () {
+                  setState(() {
+                    _myArray[3] = !_myArray[3];
+                  });
+                }),
+            ButtonBar(children: <Widget>[
+              IconButton(
+                icon: Icon(Icons.autorenew),
+                onPressed: () {
+                  setState(() {
+                    _myArray = [false, false, false, false];
+                  });
+                },
+              ),
+              IconButton(
+                icon: Icon(Icons.send),
+                onPressed: () {
+                  toServer("VERIFIY", _myArray);
+                },
+              )
+            ])
+          ],
+        );
+  }
+
+  toServer(String mStr, mArr) async {
+    print("Sending to Server");
+    await widget.channel.emit("mastermind", [
+      //{'cmd': 'world!'},
+      {'data': "{\"cmd\":\"" + mStr + "\", \"data\":" + mArr.toString() + "}"},
+    ]);
+  }
+
+  listen() async {
+    print("listening");
+    await widget.channel.on('mastermind', (mData) {
+      setState(() {});
     });
   }
 }
