@@ -9,7 +9,6 @@ import StateMaquette from "../state_maquette/state_maquette";
 import red from "@material-ui/core/colors/red";
 import { Help } from "@material-ui/icons";
 import ghost from "./ghost.svg";
-import "./topbar.css";
 import { Link } from "react-router-dom";
 
 const styles = {
@@ -107,6 +106,13 @@ const styles = {
       borderBottom: "4px solid",
       boxShadow: "none"
     }
+  },
+  website_name: {
+    fontFamily: "Verdana",
+    flexGrow: "1",
+    color: "black",
+    fontWeight: "bold",
+    fontSize: "2em"
   }
 };
 
@@ -132,7 +138,7 @@ class Topbar extends Component {
             <IconButton className={classes.menuButton} color="inherit">
               <img src={ghost} alt="ghost_logo" width="64" height="64" />
             </IconButton>
-            <p className="website_name">I love KNX</p>
+            <p className={classes.website_name}>I love KNX</p>
             <Link to={"/"}>
               <Button
                 disableRipple

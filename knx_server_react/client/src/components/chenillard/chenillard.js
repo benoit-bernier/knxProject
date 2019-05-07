@@ -146,10 +146,10 @@ class Chenillard extends Component {
       <div className={classes.root}>
         <div className={classes.tuile_yellow}>
           <Button variant="outlined" className={classes.button}>
-            Let's go !
+            Let's go / off !
           </Button>
           <div className={classes.description_text}>
-            <p>Lancement du chenillard</p>
+            <p>Lancement / arrêt du chenillard</p>
           </div>
         </div>
         <div className={classes.tuile_orange}>

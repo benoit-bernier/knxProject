@@ -1,5 +1,23 @@
 import React, { Component } from "react";
-import "./state_maquette.css";
+import PropTypes from "prop-types";
+import { withStyles } from "@material-ui/core/styles";
+
+const styles = {
+  root: {
+    color: "black",
+    fontStyle: "oblique",
+    fontVariant: "small-caps",
+    fontSize: "1.1em",
+    fontWeight: "500"
+  },
+  colonne_state: {
+    verticalAlign: "top",
+    marginLeft: "5%",
+    flexGrow: "1",
+    display: "inline-block",
+    width: "25%"
+  }
+};
 
 class StateMaquette extends Component {
   constructor(props) {
@@ -9,12 +27,13 @@ class StateMaquette extends Component {
     };
   }
   render() {
+    const { classes } = this.props;
     return (
-      <div className="container_state">
-        <div className="colonne_state colonne_state_description">
+      <div className={classes.root}>
+        <div className={classes.colonne_state}>
           <p> Status du service :</p>
         </div>
-        <div className="colonne_state">
+        <div className={classes.colonne_state}>
           {this.state.information.state_maquette ? (
             <p>
               État de la maquette :{" "}
@@ -38,7 +57,7 @@ class StateMaquette extends Component {
             </p>
           )}
         </div>
-        <div className="colonne_state">
+        <div className={classes.colonne_state}>
           <p>
             Adresse IP de la maquette :{" "}
             {this.state.information.address_IP_maquette.toString()}
@@ -53,4 +72,8 @@ class StateMaquette extends Component {
   }
 }
 
-export default StateMaquette;
+StateMaquette.propTypes = {
+  classes: PropTypes.object.isRequired
+};
+
+export default withStyles(styles)(StateMaquette);

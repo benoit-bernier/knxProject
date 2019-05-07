@@ -3,7 +3,6 @@ import PropTypes from "prop-types";
 import Fab from "@material-ui/core/Fab";
 import { VideogameAsset } from "@material-ui/icons";
 import { withStyles } from "@material-ui/core/styles";
-import "./gamedescript.css";
 
 const styles = {
   root: {
@@ -21,6 +20,35 @@ const styles = {
     fontSize: "1.5em",
     width: "50%",
     height: "15%"
+  },
+  left_part: {
+    width: "50%",
+    background: "white",
+    textAlign: "center",
+    color: "grey"
+  },
+  right_part: {
+    display: "inline-block",
+    width: "50%",
+    background: "#1c1c1c",
+    textAlign: "center",
+    verticalAlign: "middle",
+    lineHeight: "600px"
+  },
+  left_part_title: {
+    margin: "10%",
+    marginBottom: "5%",
+    weight: "bold",
+    fontSize: "2em",
+    color: "#1c1c1c",
+    textAlign: "left"
+  },
+  left_part_description: {
+    margin: "10%",
+    marginTop: "5%",
+    weight: "bold",
+    color: "#1c1c1c",
+    textAlign: "justify"
   }
 };
 
@@ -34,9 +62,9 @@ class Gamedescript extends Component {
     const { classes } = this.props;
     return (
       <div className={classes.root}>
-        <div className="left_part">
-          <p id="left_part_title">Rules :</p>
-          <p id="left_part_description">
+        <div className={classes.left_part}>
+          <p className={classes.left_part_title}>Rules :</p>
+          <p className={classes.left_part_description}>
             Sin autem ad adulescentiam perduxissent, dirimi tamen interdum
             contentione vel uxoriae condicionis vel commodi alicuius, quod idem
             adipisci uterque non posset. Quod si qui longius in amicitia
@@ -46,8 +74,8 @@ class Gamedescript extends Component {
             certamen et gloriae; ex quo inimicitias maximas saepe inter
             amicissimos exstitisse.
           </p>
-          <p id="left_part_title">Other text :</p>
-          <p id="left_part_description">
+          <p className={classes.left_part_title}>Other text :</p>
+          <p className={classes.left_part_description}>
             Sin autem ad adulescentiam perduxissent, dirimi tamen interdum
             contentione vel uxoriae condicionis vel commodi alicuius, quod idem
             adipisci uterque non posset. Quod si qui longius in amicitia
@@ -58,7 +86,7 @@ class Gamedescript extends Component {
             amicissimos exstitisse.
           </p>
         </div>
-        <div className="right_part">
+        <div className={classes.right_part}>
           <Fab
             variant="extended"
             color="secondary"
