@@ -55,7 +55,14 @@ const styles = {
 class Gamedescript extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      description: props.description || {
+        title: "",
+        description_title: "",
+        title_2: "",
+        description_title_2: ""
+      }
+    };
   }
 
   render() {
@@ -63,27 +70,17 @@ class Gamedescript extends Component {
     return (
       <div className={classes.root}>
         <div className={classes.left_part}>
-          <p className={classes.left_part_title}>Rules :</p>
-          <p className={classes.left_part_description}>
-            Sin autem ad adulescentiam perduxissent, dirimi tamen interdum
-            contentione vel uxoriae condicionis vel commodi alicuius, quod idem
-            adipisci uterque non posset. Quod si qui longius in amicitia
-            provecti essent, tamen saepe labefactari, si in honoris contentionem
-            incidissent; pestem enim nullam maiorem esse amicitiis quam in
-            plerisque pecuniae cupiditatem, in optimis quibusque honoris
-            certamen et gloriae; ex quo inimicitias maximas saepe inter
-            amicissimos exstitisse.
+          <p className={classes.left_part_title}>
+            {this.state.description.title}
           </p>
-          <p className={classes.left_part_title}>Other text :</p>
           <p className={classes.left_part_description}>
-            Sin autem ad adulescentiam perduxissent, dirimi tamen interdum
-            contentione vel uxoriae condicionis vel commodi alicuius, quod idem
-            adipisci uterque non posset. Quod si qui longius in amicitia
-            provecti essent, tamen saepe labefactari, si in honoris contentionem
-            incidissent; pestem enim nullam maiorem esse amicitiis quam in
-            plerisque pecuniae cupiditatem, in optimis quibusque honoris
-            certamen et gloriae; ex quo inimicitias maximas saepe inter
-            amicissimos exstitisse.
+            {this.state.description.description_title}
+          </p>
+          <p className={classes.left_part_title}>
+            {this.state.description.title_2}
+          </p>
+          <p className={classes.left_part_description}>
+            {this.state.description.description_title_2}
           </p>
         </div>
         <div className={classes.right_part}>

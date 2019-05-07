@@ -69,10 +69,24 @@ class Gamebar extends React.Component {
           onChangeIndex={this.handleChangeIndex}
         >
           <TabContainer dir={theme.direction}>
-            <Gamedescript />
+            <Gamedescript
+              description={{
+                title: "titre1",
+                description_title: "description",
+                title_2: "titre2",
+                description_title_2: "description 2"
+              }}
+            />
           </TabContainer>
           <TabContainer dir={theme.direction}>
-            <Gamedescript />
+            <Gamedescript
+              description={{
+                title: "titre3",
+                description_title: "description",
+                title_2: "titre4",
+                description_title_2: "description 2"
+              }}
+            />
           </TabContainer>
         </SwipeableViews>
       </div>
