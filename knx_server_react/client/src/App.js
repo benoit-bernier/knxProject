@@ -5,7 +5,7 @@ import "typeface-roboto";
 import Chenillard from "./components/chenillard/chenillard";
 import LampVisu from "./components/lamp_visu/lamp_visu";
 import Topbar from "./components/topbar/topbar";
-import Game from "./components/games/games";
+import Gamebar from "./components/gamebar/gamebar";
 
 const styles = {
   root: {
@@ -25,7 +25,7 @@ class App extends Component {
         <div className={classes.root}>
           <Topbar />
           <Route exact path="/" component={LampVisu} />
-          <Route exact path="/games" component={Game} />
+          <Route exact path="/games" component={Gamebar} />
           <Route exact path="/chenillard" component={Chenillard} />
           <Route exact path="/lamp_visu" component={LampVisu} />
         </div>
