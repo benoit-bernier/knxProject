@@ -7,6 +7,7 @@ import LampVisu from "./components/lamp_visu/lamp_visu";
 import Topbar from "./components/topbar/topbar";
 import BottomBar from "./components/bottombar/bottombar";
 import Gamebar from "./components/gamebar/gamebar";
+import About from "./components/about/about";
 
 const styles = {
   root: {
@@ -29,6 +30,7 @@ class App extends Component {
           <Route exact path="/games" component={Gamebar} />
           <Route exact path="/chenillard" component={Chenillard} />
           <Route exact path="/lamp_visu" component={LampVisu} />
+          <Route exact path="/about" component={About} />
           <BottomBar />
         </div>
       </Router>
