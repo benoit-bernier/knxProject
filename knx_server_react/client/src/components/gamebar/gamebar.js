@@ -71,19 +71,21 @@ class Gamebar extends React.Component {
           <TabContainer dir={theme.direction}>
             <Gamedescript
               description={{
-                title: "titre1",
-                description_title: "description",
-                title_2: "titre2",
-                description_title_2: "description 2"
+                title: "Description du jeu",
+                description_title:
+                  "Le Mastermind est un jeu très simple à appréhender (mais aussi à maitriser). Le but du jeu est de trouver l'ordre d'affichage des LED déterminé par une IA (IA fortement inspiré du génie Pierre-Damien travaillant sur un arroseur automatique intelligent). Après chaque tentative, le serveur vous affichera sur la maquette les LED bien placées.",
+                title_2: "Comment jouer !",
+                description_title_2:
+                  "Entrer les positions des LED dans la pop-up puis regarder l'affichage des LED ! Utilisé toute votre matière grise non grillé par la SCP pour chercher le bon ordre des LED ! Indication : une LED bien placée reste allumé plus longtemps qu'une LED mal placé ! "
               }}
             />
           </TabContainer>
           <TabContainer dir={theme.direction}>
             <Gamedescript
               description={{
-                title: "titre3",
+                title: "Description du jeu",
                 description_title: "description",
-                title_2: "titre4",
+                title_2: "Comment jouer !",
                 description_title_2: "description 2"
               }}
             />

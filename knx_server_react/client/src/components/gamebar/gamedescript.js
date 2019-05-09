@@ -3,6 +3,11 @@ import PropTypes from "prop-types";
 import Fab from "@material-ui/core/Fab";
 import { VideogameAsset } from "@material-ui/icons";
 import { withStyles } from "@material-ui/core/styles";
+import { Games } from "@material-ui/icons";
+import { QuestionAnswer } from "@material-ui/icons";
+import red from "@material-ui/core/colors/red";
+
+const Red = red[600];
 
 const styles = {
   root: {
@@ -41,14 +46,31 @@ const styles = {
     weight: "bold",
     fontSize: "2em",
     color: "#1c1c1c",
-    textAlign: "left"
+    textAlign: "left",
+    fontWeight: "bold",
+    borderBottom: "3px solid grey",
+    height: "35px"
   },
   left_part_description: {
     margin: "10%",
     marginTop: "5%",
+    marginBottom: "5%",
     weight: "bold",
     color: "#1c1c1c",
-    textAlign: "justify"
+    textAlign: "justify",
+    fontSize: "1.3em"
+  },
+  icon: {
+    fontSize: 30,
+    marginRight: "40px",
+    verticalAlign: "middle",
+    color: Red
+  },
+  line_gamedescript: {
+    border: "0",
+    height: "0",
+    borderTop: "1px solid rgba(0, 0, 0, 0.1)",
+    borderBottom: "border-bottom: 1px solid rgba(255, 255, 255, 0.3)"
   }
 };
 
@@ -71,12 +93,15 @@ class Gamedescript extends Component {
       <div className={classes.root}>
         <div className={classes.left_part}>
           <p className={classes.left_part_title}>
+            <QuestionAnswer className={classes.icon} />
             {this.state.description.title}
           </p>
           <p className={classes.left_part_description}>
             {this.state.description.description_title}
           </p>
+          <hr className={classes.line_gamedescript} />
           <p className={classes.left_part_title}>
+            <Games className={classes.icon} />
             {this.state.description.title_2}
           </p>
           <p className={classes.left_part_description}>

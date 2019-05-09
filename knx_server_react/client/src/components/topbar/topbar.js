@@ -16,7 +16,7 @@ const styles = {
     flexGrow: 1
   },
   toolbar: {
-    height: "150px"
+    height: "140px"
   },
   icon: {
     fontSize: 30,
