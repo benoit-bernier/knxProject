@@ -20,7 +20,6 @@ const styles = {
     textAlign: "center"
   },
   description: {
-    marginBottom: "50px",
     display: "flex",
     flexWrap: "wrap",
     marginLeft: "20%",
@@ -29,7 +28,6 @@ const styles = {
     marginBottom: "50px"
   },
   description_techno: {
-    marginBottom: "50px",
     display: "flex",
     flexWrap: "wrap",
     marginLeft: "10%",

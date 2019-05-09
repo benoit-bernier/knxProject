@@ -2,9 +2,6 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
-import red from "@material-ui/core/colors/red";
-
-const Red = red[600];
 
 const styles = {
   root: {
@@ -30,6 +27,7 @@ class BottomBar extends Component {
               className={classes.bottombar_link}
               href="https://play.google.com/store/apps/details?id=alexandre.testapp.sailorapp&hl=en_US"
               target="_blank"
+              rel="noopener noreferrer"
             >
               SailorApp
             </a>{" "}
