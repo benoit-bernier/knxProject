@@ -12,7 +12,7 @@ const port_server = 3000;
 let ip_maquette = "192.168.0.6";
 let port_maquette = 3671;
 
-let connected = false; //connecté à la maquette
+let connected = true; //connecté à la maquette
 let connection = ""; //contient la socket de connexion KNX
 let mchenillard = ""; //instance du chenillard
 let state = 0; // state for the chenillard
@@ -40,15 +40,7 @@ function init() {
         myJSON = JSON.stringify(myObj);
         io.sockets.emit("default_mode", myJSON);
         // fin partie connexion
- setInterval(function() {
-  myObj = {
-    cmd: "state_led_1",
-    data: 1
-  };
-  console.log("---------------ETAT LED-------------------");
-  myJSON = JSON.stringify(myObj);
-  io.sockets.emit("state_led", myJSON);
- }, 5000);
+ 
  
 
 /*
@@ -663,18 +655,24 @@ io.on("connection", function(socket) {
     }
   });
   socket.on("mastermind", function(data) {
-    console.log(data);
+    try {
+      input = JSON.parse(data);
+    } catch (e) {
+      minput = data["data"];
+      input = JSON.parse(minput);
+    }
+    console.log("MASTERMIND" + input);
     mode = "mastermind";
-    if (!connected) {
-      let input = JSON.parse(data);
+    if (true) {
       switch (input.cmd) {
         case "INIT":
           if (reference === "") {
             mode = "mastermind";
             console.log("Initialisation du mastermind..");
-            reference = shuffle_tab([0, 1, 2, 3], 30);
+            // generate random boolean array
+            reference = [Math.random() >= 0.5, Math.random() >= 0.5, Math.random() >= 0.5, Math.random() >= 0.5];
             console.log("Schéma du tableau : " + reference);
-            send_message_client(socket, "init_matermind", reference, "game");
+            send_message_client(socket, "init_mastermind", reference, "mastermind");
           } else {
             console.log("Le jeu est déjà lancé..");
             send_message_client(
@@ -687,11 +685,8 @@ io.on("connection", function(socket) {
           break;
         case "VERIFY":
           if (mode === "mastermind" && reference != "") {
-            result = verify_mastermind(input.data, reference);
-            result.then(function(value) {
               for (i = 0; i < 4; i++) {
-                console.log(value[i]);
-                if (value[i] == 1) {
+                if (input.data[i]) {
                   console.log("OK");
                   blink(i, 2000);
                 } else {
@@ -699,10 +694,8 @@ io.on("connection", function(socket) {
                   blink(i, 600);
                 }
               }
-              send_message_client(socket, "verify_matermind", value, "game");
-            });
-            //.catch(error => {});
-          } else {
+              //send_message_client(socket, "verify_matermind", value, "game");
+            } else {
             console.log(
               "Erreur lors de la vérification : jeu non lancé ou pas initialisé"
             );
@@ -710,9 +703,29 @@ io.on("connection", function(socket) {
               socket,
               "default_message",
               "Erreur lors de la vérification : jeu non lancé ou pas initialisé",
-              "game"
+              "mastermind"
             );
           }
+          break;
+        case "WON":
+          blink(1, 550); 
+          blink(2, 550);
+          blink(3, 550);
+          blink(4, 550);
+          blink(1, 550); 
+          blink(2, 550);
+          blink(3, 550);
+          blink(4, 550);
+          break;
+        case "LOST" :
+          blink(1, 1000); 
+          blink(2, 1000);
+          blink(3, 1000);
+          blink(4, 1000);
+          blink(1, 1000); 
+          blink(2, 1000);
+          blink(3, 1000);
+          blink(4, 1000);
           break;
         case "STOP":
           console.log(
@@ -720,14 +733,14 @@ io.on("connection", function(socket) {
               mode +
               " vient d'être stoppé. Retour au mode par défaut."
           );
-          send_message_client(
+          /* send_message_client(
             socket,
             "default_message",
             "Le jeu " +
               mode +
               " vient d'être stoppé. Retour au mode par défaut.",
-            "game"
-          );
+            "mastermind"
+          ); */
           mode = "";
           reference = "";
           break;
@@ -736,7 +749,7 @@ io.on("connection", function(socket) {
             socket,
             "default_message",
             "Commande non supportée",
-            "game"
+            "mastermind"
           );
           console.log("Commande non supportée");
       }
