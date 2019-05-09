@@ -134,9 +134,10 @@ class _MyAppState extends State<MyApp> {
               ),
               RaisedButton(
                   onPressed: () {
+                    initMastermind();
                     Navigator.of(context)
                         .push(_Mastermind(socket))
-                        .then<String>((returnVal) {
+                        .then<String>((returnVal) {quitMastermind();
                       Scaffold.of(context).showSnackBar(SnackBar(
                         content: Text('$returnVal'),
                         action: SnackBarAction(label: 'OK', onPressed: () {}),
@@ -147,9 +148,11 @@ class _MyAppState extends State<MyApp> {
                   padding: EdgeInsets.only(left: 10.0, right: 10.0)),
               RaisedButton(
                   onPressed: () {
+                    initSimon();
                     Navigator.of(context)
                         .push(_Simon())
                         .then<String>((returnVal) {
+                          quitSimon();
                       Scaffold.of(context).showSnackBar(SnackBar(
                         content: Text('$returnVal'),
                         action: SnackBarAction(label: 'OK', onPressed: () {}),
@@ -209,6 +212,27 @@ class _MyAppState extends State<MyApp> {
     print("Setting speed...");
     await socket.emit("events", [
       {'data': "{\"cmd\":\"" + mStr + "\"}"},
+    ]);
+  }
+  initMastermind() async {
+    print("tamere la pute");
+    await socket.emit("mastermind", [
+      {'data':"{\"cmd\": \"INIT\"}"},
+    ]);
+  }
+  quitMastermind() async {
+    await socket.emit("mastermind", [
+      {'data':"{\"cmd\": \"STOP\"}"},
+    ]);
+  }
+  initSimon() async {
+    await socket.emit("simon", [
+      {'data':"{\"cmd\": \"INIT\"}"},
+    ]);
+  }
+  quitSimon() async {
+    await socket.emit("simon", [
+      {'data':"{\"cmd\": \"STOP\"}"},
     ]);
   }
 }
@@ -439,6 +463,7 @@ class _Mastermind extends MaterialPageRoute<String> {
                         )
                     ));
         });
+
 }
 
 class _Simon extends MaterialPageRoute<String> {
@@ -591,6 +616,7 @@ class MastermindSenderWidget extends StatefulWidget {
 
 class _MastermindSenderWidgetState extends State<MastermindSenderWidget> {
   var _myArray = [false, false, false, false];
+  var _ServerArray;
 
   @override
   Widget build(BuildContext context) {
@@ -641,7 +667,14 @@ class _MastermindSenderWidgetState extends State<MastermindSenderWidget> {
               IconButton(
                 icon: Icon(Icons.send),
                 onPressed: () {
-                  toServer("VERIFIY", _myArray);
+                  if((_ServerArray!=null) && (_myArray==_ServerArray)){
+                    toServerWithData("VERIFIY", _myArray);
+                  } else{
+                    Scaffold.of(context).showSnackBar(SnackBar(
+                      content: Text('FAUX'),
+                      action: SnackBarAction(label: 'OK', onPressed: () {}),
+                    ));
+                  }
                 },
               )
             ])
@@ -649,7 +682,15 @@ class _MastermindSenderWidgetState extends State<MastermindSenderWidget> {
         );
   }
 
-  toServer(String mStr, mArr) async {
+  toServer(String mStr) async {
+    print("Sending to Server");
+    await widget.channel.emit("mastermind", [
+      //{'cmd': 'world!'},
+      {'data': "{\"cmd\":\"" + mStr + "\"}"},
+    ]);
+  }
+
+  toServerWithData(String mStr, mArr) async {
     print("Sending to Server");
     await widget.channel.emit("mastermind", [
       //{'cmd': 'world!'},
@@ -658,9 +699,20 @@ class _MastermindSenderWidgetState extends State<MastermindSenderWidget> {
   }
 
   listen() async {
-    print("listening");
+    print("listening mastermind");
     await widget.channel.on('mastermind', (mData) {
-      setState(() {});
+      print(mData);
+      if(mData['cmd'] == "init_mastermind") {
+        setState(() {
+          _ServerArray = mData['data'];
+          _ServerArray.forEach((element) => (element=='true'?element=true:element=false));
+        });
+        print(_ServerArray[1]);
+      }
+      if(mData['cmd'] == "default_message") {
+        print(mData['data']);
+      }
+
     });
   }
 }
