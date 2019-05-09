@@ -259,6 +259,82 @@ app.get("/", function(req, res) {
 });
 
 io.on("connection", function(socket) {
+  setInterval(function() {
+    myObj = {
+      cmd: "state_led_1",
+      data: 0
+    };
+    myJSON = JSON.stringify(myObj);
+    io.sockets.emit("state_led", myJSON);
+    console.log("LED 1 OFF");
+  }, 7000);
+
+  setInterval(function() {
+    myObj = {
+      cmd: "state_led_1",
+      data: 1
+    };
+    myJSON = JSON.stringify(myObj);
+    io.sockets.emit("state_led", myJSON);
+    console.log("LED 1 ON");
+  }, 10000);
+
+  setInterval(function() {
+    myObj = {
+      cmd: "state_led_2",
+      data: 0
+    };
+    myJSON = JSON.stringify(myObj);
+    io.sockets.emit("state_led", myJSON);
+  }, 12000);
+
+  setInterval(function() {
+    myObj = {
+      cmd: "state_led_2",
+      data: 1
+    };
+    myJSON = JSON.stringify(myObj);
+    io.sockets.emit("state_led", myJSON);
+  }, 7000);
+
+  setInterval(function() {
+    myObj = {
+      cmd: "state_led_3",
+      data: 0
+    };
+    myJSON = JSON.stringify(myObj);
+    io.sockets.emit("state_led", myJSON);
+  }, 5000);
+
+  setInterval(function() {
+    myObj = {
+      cmd: "state_led_3",
+      data: 1
+    };
+    myJSON = JSON.stringify(myObj);
+    io.sockets.emit("state_led", myJSON);
+  }, 4000);
+
+  setInterval(function() {
+    myObj = {
+      cmd: "state_led_4",
+      data: 0
+    };
+    myJSON = JSON.stringify(myObj);
+    io.sockets.emit("state_led", myJSON);
+  }, 10000);
+
+  setInterval(function() {
+    myObj = {
+      cmd: "state_led_4",
+      data: 1
+    };
+    myJSON = JSON.stringify(myObj);
+    io.sockets.emit("state_led", myJSON);
+  }, 7000);
+
+  ///////////////////////////////////////////////////////////////////////
+
   socket.on("sayHello", function(data) {
     try {
       input = JSON.parse(data);
@@ -589,6 +665,7 @@ io.on("connection", function(socket) {
           }
           break;
         case "RESET":
+          console.log("RESET");
           if (connected) {
             console.log("Reset des paramètres par défaut de la maquette");
             send_message_client(

@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import lamp_0 from "./lamp_0.png";
 import lamp_1 from "./lamp_1.png";
+import { socket } from "../../App";
 
 const styles = {
   root: {
@@ -24,32 +25,108 @@ class LampVisu extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      images: [lamp_0, lamp_1, lamp_0, lamp_0],
-      mInterval: ""
+      images: [lamp_0, lamp_0, lamp_0, lamp_0]
     };
   }
 
-  componentDidMount() {
-    function shuffle(a) {
-      var j, x, i;
-      for (i = a.length - 1; i > 0; i--) {
-        j = Math.floor(Math.random() * (i + 1));
-        x = a[i];
-        a[i] = a[j];
-        a[j] = x;
+  componentDidMount = () => {
+    socket.on("state_led", data => {
+      console.log(data);
+      let input = JSON.parse(data);
+      try {
+        switch (input.cmd) {
+          case "state_led_1":
+            if (input.data === 0) {
+              this.setState({
+                images: [
+                  lamp_0,
+                  this.state.images[1],
+                  this.state.images[2],
+                  this.state.images[3]
+                ]
+              });
+            } else {
+              this.setState({
+                images: [
+                  lamp_1,
+                  this.state.images[1],
+                  this.state.images[2],
+                  this.state.images[3]
+                ]
+              });
+            }
+            break;
+          case "state_led_2":
+            if (input.data === 0) {
+              this.setState({
+                images: [
+                  this.state.images[0],
+                  lamp_0,
+                  this.state.images[2],
+                  this.state.images[3]
+                ]
+              });
+            } else {
+              this.setState({
+                images: [
+                  this.state.images[0],
+                  lamp_1,
+                  this.state.images[2],
+                  this.state.images[3]
+                ]
+              });
+            }
+            break;
+          case "state_led_3":
+            if (input.data === 0) {
+              this.setState({
+                images: [
+                  this.state.images[0],
+                  this.state.images[1],
+                  lamp_0,
+                  this.state.images[3]
+                ]
+              });
+            } else {
+              this.setState({
+                images: [
+                  this.state.images[0],
+                  this.state.images[1],
+                  lamp_1,
+                  this.state.images[3]
+                ]
+              });
+            }
+            break;
+          case "state_led_4":
+            if (input.data === 0) {
+              this.setState({
+                images: [
+                  this.state.images[0],
+                  this.state.images[1],
+                  this.state.images[2],
+                  lamp_0
+                ]
+              });
+            } else {
+              this.setState({
+                images: [
+                  this.state.images[0],
+                  this.state.images[1],
+                  this.state.images[2],
+                  lamp_1
+                ]
+              });
+            }
+            break;
+          default:
+            console.log("Command not supported..");
+        }
+      } catch (error) {
+        console.log(error);
       }
-      return a;
-    }
-    this.setState({
-      mInterval: setInterval(() => {
-        this.setState({ images: shuffle(this.state.images) });
-      }, 2000)
     });
-  }
-
-  componentWillUnmount() {
-    clearInterval(this.state.mInterval);
-  }
+  };
 
   render() {
     const { classes } = this.props;

@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { BrowserRouter as Router, Route } from "react-router-dom";
+import socketIOClient from "socket.io-client";
 import { withStyles } from "@material-ui/core/styles";
 import "typeface-roboto";
 import Chenillard from "./components/chenillard/chenillard";
@@ -8,6 +9,8 @@ import Topbar from "./components/topbar/topbar";
 import BottomBar from "./components/bottombar/bottombar";
 import Gamebar from "./components/gamebar/gamebar";
 import About from "./components/about/about";
+
+var socket;
 
 const styles = {
   root: {
@@ -20,6 +23,14 @@ const styles = {
 };
 
 class App extends Component {
+  constructor() {
+    super();
+    this.state = {
+      endpoint: "http://localhost:5000/"
+    };
+
+    socket = socketIOClient(this.state.endpoint);
+  }
   render() {
     const { classes } = this.props;
     return (
@@ -39,3 +50,4 @@ class App extends Component {
 }
 
 export default withStyles(styles)(App);
+export { socket };

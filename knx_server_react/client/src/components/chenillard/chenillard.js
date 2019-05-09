@@ -16,6 +16,7 @@ import InputLabel from "@material-ui/core/InputLabel";
 import Input from "@material-ui/core/Input";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
+import { socket } from "../../App";
 
 const Amber = amber[500];
 const Orange = orange[800];
@@ -140,12 +141,76 @@ class Chenillard extends Component {
     this.setState({ fail: true });
   };
 
+  onoff = () => {
+    let myObj = {
+      cmd: "ONOFF"
+    };
+    let myJSON = JSON.stringify(myObj);
+    socket.emit("events", myJSON);
+    console.log("ONOFF");
+  };
+
+  upspeed = () => {
+    let myObj = {
+      cmd: "UP"
+    };
+    let myJSON = JSON.stringify(myObj);
+    socket.emit("events", myJSON);
+    console.log("UP");
+  };
+
+  downspeed = () => {
+    let myObj = {
+      cmd: "DOWN"
+    };
+    let myJSON = JSON.stringify(myObj);
+    socket.emit("events", myJSON);
+    console.log("DOWN");
+  };
+
+  reverse = () => {
+    let myObj = {
+      cmd: "REVERSE"
+    };
+    let myJSON = JSON.stringify(myObj);
+    socket.emit("events", myJSON);
+    console.log("REVERSE");
+  };
+
+  changeschema = () => {
+    let myObj = {
+      cmd: "SCHEMA",
+      data: [
+        this.state.LED_0,
+        this.state.LED_1,
+        this.state.LED_2,
+        this.state.LED_3
+      ]
+    };
+    let myJSON = JSON.stringify(myObj);
+    socket.emit("events", myJSON);
+    console.log("CHANGEMENT SCHEMA : " + myJSON);
+  };
+
+  reset = () => {
+    let myObj = {
+      cmd: "RESET"
+    };
+    let myJSON = JSON.stringify(myObj);
+    socket.emit("events", myJSON);
+    console.log("RESET");
+  };
+
   render() {
     const { classes } = this.props;
     return (
       <div className={classes.root}>
         <div className={classes.tuile_yellow}>
-          <Button variant="outlined" className={classes.button}>
+          <Button
+            variant="outlined"
+            className={classes.button}
+            onClick={this.onoff}
+          >
             Let's go / off !
           </Button>
           <div className={classes.description_text}>
@@ -153,7 +218,11 @@ class Chenillard extends Component {
           </div>
         </div>
         <div className={classes.tuile_orange}>
-          <Button variant="outlined" className={classes.button}>
+          <Button
+            variant="outlined"
+            className={classes.button}
+            onClick={this.reverse}
+          >
             Reverse !
           </Button>
           <p className={classes.description_text}>
@@ -173,7 +242,11 @@ class Chenillard extends Component {
           </p>
         </div>
         <div className={classes.tuile_purple}>
-          <Button variant="outlined" className={classes.button}>
+          <Button
+            variant="outlined"
+            className={classes.button}
+            onClick={this.upspeed}
+          >
             Speed Up !
           </Button>
           <p className={classes.description_text}>
@@ -181,13 +254,21 @@ class Chenillard extends Component {
           </p>
         </div>
         <div className={classes.tuile_blue}>
-          <Button variant="outlined" className={classes.button}>
+          <Button
+            variant="outlined"
+            className={classes.button}
+            onClick={this.downspeed}
+          >
             Speed Down !
           </Button>
           <p className={classes.description_text}>Ralentis bonhomme !</p>
         </div>
         <div className={classes.tuile_green}>
-          <Button variant="outlined" className={classes.button}>
+          <Button
+            variant="outlined"
+            className={classes.button}
+            onClick={this.reset}
+          >
             Reset !
           </Button>
           <p className={classes.description_text}>
@@ -277,17 +358,22 @@ class Chenillard extends Component {
               Cancel
             </Button>
             <Button
-              onClick={
-                this.state.LED_0 +
-                  this.state.LED_1 +
-                  this.state.LED_2 +
-                  this.state.LED_3 ===
-                  6 &&
-                this.state.LED_0 !== this.state.LED_1 &&
-                this.state.LED_0 !== this.state.LED_1
-                  ? this.handleClose
-                  : this.failDetected
-              }
+              onClick={() => {
+                if (
+                  this.state.LED_0 +
+                    this.state.LED_1 +
+                    this.state.LED_2 +
+                    this.state.LED_3 ===
+                    6 &&
+                  this.state.LED_0 !== this.state.LED_1 &&
+                  this.state.LED_0 !== this.state.LED_1
+                ) {
+                  this.handleClose();
+                  this.changeschema();
+                } else {
+                  this.failDetected();
+                }
+              }}
               color="secondary"
             >
               Ok
