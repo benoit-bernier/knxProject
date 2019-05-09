@@ -8,21 +8,52 @@ import IconButton from "@material-ui/core/IconButton";
 import StateMaquette from "../state_maquette/state_maquette";
 import red from "@material-ui/core/colors/red";
 import { Help } from "@material-ui/icons";
-import ghost from "./ghost.svg";
+import logo from "./logo.png";
 import { Link } from "react-router-dom";
 
 const styles = {
   root: {
     flexGrow: 1
   },
-  menuButton: {
-    marginLeft: -12,
-    marginRight: 20
+  toolbar: {
+    height: "150px"
   },
   icon: {
     fontSize: 30,
     "&:hover": {
       color: red[400]
+    }
+  },
+  bouton_logo: {
+    borderTop: "0",
+    borderRight: "0",
+    borderLeft: "0",
+    borderBottom: "0",
+    boxShadow: "none",
+    padding: "6px 12px",
+    background: "white",
+    lineHeight: 1.5,
+    fontFamily: [
+      "-apple-system",
+      "BlinkMacSystemFont",
+      '"Segoe UI"',
+      "Roboto",
+      '"Helvetica Neue"',
+      "Arial",
+      "sans-serif",
+      '"Apple Color Emoji"',
+      '"Segoe UI Emoji"',
+      '"Segoe UI Symbol"'
+    ].join(","),
+    "&:hover": {
+      border: "0",
+      background: "white"
+    },
+    "&:active": {
+      border: "0"
+    },
+    "&:focus": {
+      boxShadow: "none"
     }
   },
   bouton_base: {
@@ -108,11 +139,32 @@ const styles = {
     }
   },
   website_name: {
+    borderLeft: "100px",
     fontFamily: "Verdana",
     flexGrow: "1",
     color: "black",
     fontWeight: "bold",
     fontSize: "2em"
+  },
+  logo: {
+    border: "0",
+    color: "white",
+    background: "white",
+    marginLeft: "20px",
+    width: "300px",
+    height: "100px",
+    "&:hover": {
+      border: "0",
+      color: "blue"
+    },
+    "&:active": {
+      border: "0",
+      color: "white"
+    },
+    "&:focus": {
+      border: "0",
+      color: "white"
+    }
   }
 };
 
@@ -135,10 +187,27 @@ class Topbar extends Component {
       <div className={classes.root}>
         <AppBar position="static" color="inherit">
           <Toolbar className={classes.toolbar}>
-            <IconButton className={classes.menuButton} color="inherit">
-              <img src={ghost} alt="ghost_logo" width="64" height="64" />
-            </IconButton>
-            <p className={classes.website_name}>I love KNX</p>
+            <Link to={"/"}>
+              <Button
+                disableRipple
+                variant="outlined"
+                color="secondary"
+                className={classes.bouton_logo}
+                onClick={() => {
+                  this.setState({
+                    border: {
+                      onglet_visu: true,
+                      onglet_game: false,
+                      onglet_chenillard: false,
+                      onglet_about: false
+                    }
+                  });
+                }}
+              >
+                <img src={logo} alt="logo" />
+              </Button>
+            </Link>
+            <p className={classes.website_name}> </p>
             <Link to={"/"}>
               <Button
                 disableRipple
