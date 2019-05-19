@@ -42,12 +42,14 @@ function init() {
         // partie connexion
         console.log("Connected !");
         connected = true;
+
         myObj = {
-          cmd: "default_message",
-          data: "Serveur connecté à la maquette"
+          cmd: "state_connection",
+          data: connected
         };
         myJSON = JSON.stringify(myObj);
-        io.sockets.emit("default_mode", myJSON);
+        io.sockets.emit("state", myJSON);
+
         // fin partie connexion
       },
       // get notified for all KNX events:
@@ -259,6 +261,38 @@ app.get("/", function(req, res) {
 });
 
 io.on("connection", function(socket) {
+  ///////////////////////////////////////////////////////////////////////
+
+  myObj = {
+    cmd: "state_server",
+    data: true
+  };
+  myJSON = JSON.stringify(myObj);
+  io.sockets.emit("state", myJSON);
+
+  myObj = {
+    cmd: "state_connection",
+    data: connected
+  };
+  myJSON = JSON.stringify(myObj);
+  io.sockets.emit("state", myJSON);
+
+  myObj = {
+    cmd: "state_ip_maquette",
+    data: ip_maquette
+  };
+  myJSON = JSON.stringify(myObj);
+  io.sockets.emit("state", myJSON);
+
+  myObj = {
+    cmd: "state_port_maquette",
+    data: port_maquette
+  };
+  myJSON = JSON.stringify(myObj);
+  io.sockets.emit("state", myJSON);
+
+  ///////////////////////////////////////////////////////////////////////
+
   setInterval(function() {
     myObj = {
       cmd: "state_led_1",

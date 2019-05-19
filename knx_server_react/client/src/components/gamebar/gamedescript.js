@@ -6,6 +6,7 @@ import { withStyles } from "@material-ui/core/styles";
 import { Games } from "@material-ui/icons";
 import { QuestionAnswer } from "@material-ui/icons";
 import red from "@material-ui/core/colors/red";
+import { Link } from "react-router-dom";
 
 const Red = red[600];
 
@@ -109,14 +110,16 @@ class Gamedescript extends Component {
           </p>
         </div>
         <div className={classes.right_part}>
-          <Fab
-            variant="extended"
-            color="secondary"
-            className={classes.button_game}
-          >
-            <VideogameAsset className={classes.icon_play} />
-            Play
-          </Fab>
+          <Link to={"/mastermind"}>
+            <Fab
+              variant="extended"
+              color="secondary"
+              className={classes.button_game}
+            >
+              <VideogameAsset className={classes.icon_play} />
+              Play
+            </Fab>
+          </Link>
         </div>
       </div>
     );

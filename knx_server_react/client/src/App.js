@@ -9,6 +9,7 @@ import Topbar from "./components/topbar/topbar";
 import BottomBar from "./components/bottombar/bottombar";
 import Gamebar from "./components/gamebar/gamebar";
 import About from "./components/about/about";
+import Mastermind from "./components/mastermind/mastermind";
 
 var socket;
 
@@ -42,6 +43,7 @@ class App extends Component {
           <Route exact path="/chenillard" component={Chenillard} />
           <Route exact path="/lamp_visu" component={LampVisu} />
           <Route exact path="/about" component={About} />
+          <Route exact path="/mastermind" component={Mastermind} />
           <BottomBar />
         </div>
       </Router>

@@ -31,7 +31,6 @@ class LampVisu extends Component {
 
   componentDidMount = () => {
     socket.on("state_led", data => {
-      console.log(data);
       let input = JSON.parse(data);
       try {
         switch (input.cmd) {

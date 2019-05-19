@@ -6,7 +6,6 @@ import Toolbar from "@material-ui/core/Toolbar";
 import Button from "@material-ui/core/Button";
 import StateMaquette from "../state_maquette/state_maquette";
 import red from "@material-ui/core/colors/red";
-import { Help } from "@material-ui/icons";
 import logo from "./logo.png";
 import { Link } from "react-router-dom";
 
@@ -171,7 +170,6 @@ class Topbar extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      mbool: true,
       border: {
         onglet_visu: true,
         onglet_game: false,
@@ -306,27 +304,8 @@ class Topbar extends Component {
                 à propos
               </Button>
             </Link>
-            <Help
-              className={classes.icon}
-              onClick={() => {
-                this.setState({
-                  mbool: !this.state.mbool
-                });
-              }}
-            />
           </Toolbar>
-          {this.state.mbool ? (
-            <StateMaquette
-              information={{
-                state_maquette: false,
-                state_connection: false,
-                address_IP_maquette: "192.168.0.0",
-                address_IP_client: "192.168.0.0"
-              }}
-            />
-          ) : (
-            <div />
-          )}
+          <StateMaquette />
         </AppBar>
       </div>
     );
