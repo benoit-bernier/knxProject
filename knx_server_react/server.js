@@ -245,6 +245,19 @@ function verify_order(tab, reference) {
   });
 }
 
+function show_simon(tab){
+  connection.write("0/1/1", 0);
+  connection.write("0/1/2", 0);
+  connection.write("0/1/3", 0);
+  connection.write("0/1/4", 0);
+  tab.forEach(element => {
+    connection.write("0/1/"+element, 1);
+    setTimeout(function () {
+      connection.write("0/1/"+element, 0);
+    },500);
+  });
+}
+
 function send_message_client(socket, cmd, data, canal) {
   myObj = {
     cmd: cmd,
@@ -738,6 +751,7 @@ io.on("connection", function(socket) {
       console.log("Erreur lors du parse de la commande.");
     }
   });
+
   socket.on("order", function(data) {
     console.log(data);
     mode = "order";
@@ -788,6 +802,86 @@ io.on("connection", function(socket) {
               "Erreur lors de la vérification : jeu non lancé ou pas initialisé",
               "game"
             );
+          }
+          break;
+        case "STOP":
+          console.log(
+            "Le jeu " +
+              mode +
+              " vient d'être stoppé. Retour au mode par défaut."
+          );
+          send_message_client(
+            socket,
+            "default_message",
+            "Le jeu " +
+              mode +
+              " vient d'être stoppé. Retour au mode par défaut.",
+            "game"
+          );
+          mode = "";
+          reference = "";
+          break;
+        default:
+          send_message_client(
+            socket,
+            "default_message",
+            "Commande non supportée",
+            "game"
+          );
+          console.log("Commande non supportée");
+      }
+    } else {
+      console.log("Erreur lors du lancement du jeu : maquette non connectée.");
+    }
+  });
+
+  // ---------------- SIMON -------------------------//
+
+  socket.on("simon", function(data) {
+    console.log(data);
+    mode = "simon";
+    if (!connected) {
+      input = JSON.parse(data);
+      switch (input.cmd) {
+        case "INIT":
+          if (reference === "") {
+            mode = "simon";
+            console.log("Initialisation du simon..");
+            reference = [Math.floor(Math.random*4)+1];
+            console.log("Schéma du tableau : " + reference);
+            show_simon(reference);
+          } else {
+            console.log("Le jeu est déjà lancé..");
+            send_message_client(
+              socket,
+              "default_message",
+              "Le jeu est déjà lancé..",
+              "game"
+            );
+          }
+          break;
+        case "VERIFY":
+          if (mode === "simon" && reference != "") {
+            if(input.data.toString() === reference.toString()){
+              reference.push(Math.floor(Math.random*4)+1);
+              send_message_client(socket, "verify_simon", true, "game");
+              show_simon(reference);
+            } else {
+              send_message_client(socket, "verify_simon", false, "game");
+              
+            }
+          } else {
+            console.log(
+              "Erreur lors de la vérification : jeu non lancé ou pas initialisé"
+            );
+            send_message_client(
+              socket,
+              "default_message",
+              "Erreur lors de la vérification : jeu non lancé ou pas initialisé",
+              "game"
+            );
+            mode = "";
+            reference = "";
           }
           break;
         case "STOP":
