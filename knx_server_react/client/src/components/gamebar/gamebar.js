@@ -59,7 +59,7 @@ class Gamebar extends React.Component {
             indicatorColor="secondary"
             textColor="secondary"
           >
-            <Tab label="Mastermind" />
+            <Tab label="Order" />
             <Tab label="Simon" />
           </Tabs>
         </AppBar>
@@ -73,7 +73,7 @@ class Gamebar extends React.Component {
               description={{
                 title: "Description du jeu",
                 description_title:
-                  "Le Mastermind est un jeu très simple à appréhender (mais aussi à maitriser). Le but du jeu est de trouver l'ordre d'affichage des LED déterminé par une IA (IA fortement inspiré du génie Pierre-Damien travaillant sur un arroseur automatique intelligent). Après chaque tentative, le serveur vous affichera sur la maquette les LED bien placées.",
+                  "Le Order est un jeu très simple à appréhender (mais aussi à maitriser). Le but du jeu est de trouver l'ordre d'affichage des LED déterminé par une IA (IA fortement inspiré du génie Pierre-Damien travaillant sur un arroseur automatique intelligent). Après chaque tentative, le serveur vous affichera sur la maquette les LED bien placées.",
                 title_2: "Comment jouer !",
                 description_title_2:
                   "Entrer les positions des LED dans la pop-up puis regarder l'affichage des LED ! Utilisé toute votre matière grise non grillé par la SCP pour chercher le bon ordre des LED ! Indication : une LED bien placée reste allumé plus longtemps qu'une LED mal placé ! "
@@ -84,9 +84,11 @@ class Gamebar extends React.Component {
             <Gamedescript
               description={{
                 title: "Description du jeu",
-                description_title: "description",
+                description_title:
+                  "Le Simon est un jeu très simple à appréhender (mais très dur à maitriser). Utiliser votre brain pour repoduire le schéma projeté sur les LED de la maquette. Pour gagner, reproduiser à l'identique le schéma grâce à l'interface !",
                 title_2: "Comment jouer !",
-                description_title_2: "description 2"
+                description_title_2:
+                  "Appuyer sur les boutons pour reproduire le motif proposé par l'IA (IA fortement inspiré du génie Pierre-Damien travaillant sur un arroseur automatique intelligent). Attention ! Vous devez reproduire le schéma en suivant l'ordre d'allumage des LED."
               }}
             />
           </TabContainer>

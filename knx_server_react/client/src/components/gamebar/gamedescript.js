@@ -110,7 +110,7 @@ class Gamedescript extends Component {
           </p>
         </div>
         <div className={classes.right_part}>
-          <Link to={"/mastermind"}>
+          <Link to={"/order"}>
             <Fab
               variant="extended"
               color="secondary"

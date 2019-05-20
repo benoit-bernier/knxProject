@@ -50,7 +50,7 @@ const styles = {
   }
 };
 
-class Mastermind extends Component {
+class Order extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -77,7 +77,7 @@ class Mastermind extends Component {
       let input = JSON.parse(data);
       try {
         switch (input.cmd) {
-          case "verify_matermind":
+          case "verify_order":
             console.log(data);
             let clear = true;
             for (let i = 0; i < input.data.length; i++) {
@@ -124,8 +124,12 @@ class Mastermind extends Component {
     this.setState({ button_4: temp });
   };
 
+  reset_count = () => {
+    this.setState({ count: 0 });
+  };
+
   count = () => {
-    let temp = this.state.button_4 + 1;
+    let temp = this.state.count + 1;
     this.setState({ count: temp });
   };
 
@@ -134,7 +138,8 @@ class Mastermind extends Component {
       cmd: "INIT"
     };
     let myJSON = JSON.stringify(myObj);
-    socket.emit("mastermind", myJSON);
+    socket.emit("order", myJSON);
+    this.reset_count();
     console.log("Init / Reset");
   };
 
@@ -149,7 +154,7 @@ class Mastermind extends Component {
       ]
     };
     let myJSON = JSON.stringify(myObj);
-    socket.emit("mastermind", myJSON);
+    socket.emit("order", myJSON);
     console.log("VERIFY : " + myObj.data);
   };
 
@@ -158,7 +163,7 @@ class Mastermind extends Component {
       cmd: "STOP"
     };
     let myJSON = JSON.stringify(myObj);
-    socket.emit("mastermind", myJSON);
+    socket.emit("order", myJSON);
     console.log("STOP");
   };
 
@@ -194,7 +199,7 @@ class Mastermind extends Component {
               color="primary"
               onClick={this.init_reset}
             >
-              Init / Reset Mastermind
+              Init / Reset order
             </Fab>
             <Fab
               variant="extended"
@@ -202,7 +207,7 @@ class Mastermind extends Component {
               color="primary"
               onClick={this.stop}
             >
-              Stop Mastermind
+              Stop order
             </Fab>
           </div>
           <div className={classes.windows}>
@@ -256,8 +261,8 @@ class Mastermind extends Component {
   }
 }
 
-Mastermind.propTypes = {
+Order.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(Mastermind);
+export default withStyles(styles)(Order);
