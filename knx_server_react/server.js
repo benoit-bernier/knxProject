@@ -848,7 +848,7 @@ io.on("connection", function(socket) {
             mode = "simon";
             console.log("Initialisation du simon..");
             reference=[];
-            reference.push(Math.floor(Math.random*4)+1);
+            reference.push(Math.floor(Math.random()*4)+1);
             console.log("Schéma du tableau : " + reference);
             show_simon(reference);
           } else {
