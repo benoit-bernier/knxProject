@@ -245,16 +245,16 @@ function verify_order(tab, reference) {
   });
 }
 
-function show_simon(tab){
+function show_simon(tab) {
   connection.write("0/1/1", 0);
   connection.write("0/1/2", 0);
   connection.write("0/1/3", 0);
   connection.write("0/1/4", 0);
   tab.forEach(element => {
-    connection.write("0/1/"+element, 1);
-    setTimeout(function () {
-      connection.write("0/1/"+element, 0);
-    },500);
+    connection.write("0/1/" + element, 1);
+    setTimeout(function() {
+      connection.write("0/1/" + element, 0);
+    }, 500);
   });
 }
 
@@ -847,8 +847,8 @@ io.on("connection", function(socket) {
           if (reference === "") {
             mode = "simon";
             console.log("Initialisation du simon..");
-            reference=[];
-            reference.push(Math.floor(Math.random()*4)+1);
+            reference = [];
+            reference.push(Math.floor(Math.random() * 4) + 1);
             console.log("Schéma du tableau : " + reference);
             show_simon(reference);
           } else {
@@ -863,14 +863,13 @@ io.on("connection", function(socket) {
           break;
         case "VERIFY":
           if (mode === "simon" && reference != "") {
-            if(input.data.toString() === reference.toString()){
-              reference.push(Math.floor(Math.random*4)+1);
+            if (input.data.toString() === reference.toString()) {
+              reference.push(Math.floor(Math.random() * 4) + 1);
               send_message_client(socket, "verify_simon", true, "game");
               show_simon(reference);
-              console.log("Nouvelle référence : "+reference);
+              console.log("Nouvelle référence : " + reference);
             } else {
               send_message_client(socket, "verify_simon", false, "game");
-              
             }
           } else {
             console.log(

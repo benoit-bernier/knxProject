@@ -55,7 +55,8 @@ class Simon extends Component {
     super(props);
     this.state = {
       tab: [],
-      open: false
+      open: false,
+      count: 0
     };
   }
 
@@ -79,6 +80,8 @@ class Simon extends Component {
               this.stop();
               this.handleClickOpen();
               console.log("Partie terminée !");
+            } else {
+              this.count();
             }
             break;
           default:
@@ -92,6 +95,11 @@ class Simon extends Component {
 
   componentWillUnmount = () => {
     this.stop();
+  };
+
+  count = () => {
+    let temp = this.state.count + 1;
+    this.setState({ count: temp });
   };
 
   up_button_1 = () => {
@@ -139,6 +147,7 @@ class Simon extends Component {
     };
     let myJSON = JSON.stringify(myObj);
     socket.emit("simon", myJSON);
+    this.setState({ tab: [] });
     console.log("VERIFY : " + myObj.data);
   };
 
@@ -164,8 +173,9 @@ class Simon extends Component {
               aria-describedby="alert-dialog-description"
             >
               <DialogTitle id="alert-dialog-title">
-                {"Bravo ! Voici ce que vous avez réussi à reproduire " +
-                  this.state.tab}
+                {"Bravo ! Vous avez réussi à reproduire " +
+                  this.state.count +
+                  " symbole(s) !"}
               </DialogTitle>
               <DialogContent />
               <DialogActions>
