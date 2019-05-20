@@ -233,7 +233,7 @@ function shuffle_tab(tab, iteration) {
   return tab;
 }
 
-function verify_mastermind(tab, reference) {
+function verify_order(tab, reference) {
   return new Promise(function(resolve, reject) {
     let result = [0, 0, 0, 0];
     for (i in tab) {
@@ -738,16 +738,16 @@ io.on("connection", function(socket) {
       console.log("Erreur lors du parse de la commande.");
     }
   });
-  socket.on("mastermind", function(data) {
+  socket.on("order", function(data) {
     console.log(data);
-    mode = "mastermind";
+    mode = "order";
     if (!connected) {
       input = JSON.parse(data);
       switch (input.cmd) {
         case "INIT":
           if (reference === "") {
-            mode = "mastermind";
-            console.log("Initialisation du mastermind..");
+            mode = "order";
+            console.log("Initialisation du order..");
             reference = shuffle_tab([0, 1, 2, 3], 30);
             console.log("Schéma du tableau : " + reference);
             send_message_client(socket, "init_matermind", reference, "game");
@@ -762,8 +762,8 @@ io.on("connection", function(socket) {
           }
           break;
         case "VERIFY":
-          if (mode === "mastermind" && reference != "") {
-            result = verify_mastermind(input.data, reference);
+          if (mode === "order" && reference != "") {
+            result = verify_order(input.data, reference);
             result.then(function(value) {
               for (i = 0; i < 4; i++) {
                 console.log(value[i]);

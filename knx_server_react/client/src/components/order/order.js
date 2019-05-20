@@ -50,7 +50,7 @@ const styles = {
   }
 };
 
-class Mastermind extends Component {
+class Order extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -134,7 +134,7 @@ class Mastermind extends Component {
       cmd: "INIT"
     };
     let myJSON = JSON.stringify(myObj);
-    socket.emit("mastermind", myJSON);
+    socket.emit("order", myJSON);
     console.log("Init / Reset");
   };
 
@@ -149,7 +149,7 @@ class Mastermind extends Component {
       ]
     };
     let myJSON = JSON.stringify(myObj);
-    socket.emit("mastermind", myJSON);
+    socket.emit("order", myJSON);
     console.log("VERIFY : " + myObj.data);
   };
 
@@ -158,7 +158,7 @@ class Mastermind extends Component {
       cmd: "STOP"
     };
     let myJSON = JSON.stringify(myObj);
-    socket.emit("mastermind", myJSON);
+    socket.emit("order", myJSON);
     console.log("STOP");
   };
 
@@ -194,7 +194,7 @@ class Mastermind extends Component {
               color="primary"
               onClick={this.init_reset}
             >
-              Init / Reset Mastermind
+              Init / Reset order
             </Fab>
             <Fab
               variant="extended"
@@ -202,7 +202,7 @@ class Mastermind extends Component {
               color="primary"
               onClick={this.stop}
             >
-              Stop Mastermind
+              Stop order
             </Fab>
           </div>
           <div className={classes.windows}>
@@ -256,8 +256,8 @@ class Mastermind extends Component {
   }
 }
 
-Mastermind.propTypes = {
+Order.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(Mastermind);
+export default withStyles(styles)(Order);
