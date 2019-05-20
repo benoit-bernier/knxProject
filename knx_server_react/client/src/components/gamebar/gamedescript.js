@@ -80,6 +80,7 @@ class Gamedescript extends Component {
     super(props);
     this.state = {
       description: props.description || {
+        link: "/games",
         title: "",
         description_title: "",
         title_2: "",
@@ -110,7 +111,7 @@ class Gamedescript extends Component {
           </p>
         </div>
         <div className={classes.right_part}>
-          <Link to={"/order"}>
+          <Link to={this.state.description.link}>
             <Fab
               variant="extended"
               color="secondary"
