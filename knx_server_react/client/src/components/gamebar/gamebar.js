@@ -71,6 +71,7 @@ class Gamebar extends React.Component {
           <TabContainer dir={theme.direction}>
             <Gamedescript
               description={{
+                link: "/order",
                 title: "Description du jeu",
                 description_title:
                   "Le Order est un jeu très simple à appréhender (mais aussi à maitriser). Le but du jeu est de trouver l'ordre d'affichage des LED déterminé par une IA (IA fortement inspiré du génie Pierre-Damien travaillant sur un arroseur automatique intelligent). Après chaque tentative, le serveur vous affichera sur la maquette les LED bien placées.",
@@ -83,6 +84,7 @@ class Gamebar extends React.Component {
           <TabContainer dir={theme.direction}>
             <Gamedescript
               description={{
+                link: "/simon",
                 title: "Description du jeu",
                 description_title:
                   "Le Simon est un jeu très simple à appréhender (mais très dur à maitriser). Utiliser votre brain pour repoduire le schéma projeté sur les LED de la maquette. Pour gagner, reproduiser à l'identique le schéma grâce à l'interface !",
