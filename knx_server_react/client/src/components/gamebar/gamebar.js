@@ -84,9 +84,11 @@ class Gamebar extends React.Component {
             <Gamedescript
               description={{
                 title: "Description du jeu",
-                description_title: "description",
+                description_title:
+                  "Le Simon est un jeu très simple à appréhender (mais très dur à maitriser). Utiliser votre brain pour repoduire le schéma projeté sur les LED de la maquette. Pour gagner, reproduiser à l'identique le schéma grâce à l'interface !",
                 title_2: "Comment jouer !",
-                description_title_2: "description 2"
+                description_title_2:
+                  "Appuyer sur les boutons pour reproduire le motif proposé par l'IA (IA fortement inspiré du génie Pierre-Damien travaillant sur un arroseur automatique intelligent). Attention ! Vous devez reproduire le schéma en suivant l'ordre d'allumage des LED."
               }}
             />
           </TabContainer>
