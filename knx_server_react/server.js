@@ -867,6 +867,7 @@ io.on("connection", function(socket) {
               reference.push(Math.floor(Math.random*4)+1);
               send_message_client(socket, "verify_simon", true, "game");
               show_simon(reference);
+              console.log("Nouvelle référence : "+reference);
             } else {
               send_message_client(socket, "verify_simon", false, "game");
               
