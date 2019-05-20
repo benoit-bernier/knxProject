@@ -77,7 +77,7 @@ class Order extends Component {
       let input = JSON.parse(data);
       try {
         switch (input.cmd) {
-          case "verify_matermind":
+          case "verify_order":
             console.log(data);
             let clear = true;
             for (let i = 0; i < input.data.length; i++) {
@@ -124,8 +124,12 @@ class Order extends Component {
     this.setState({ button_4: temp });
   };
 
+  reset_count = () => {
+    this.setState({ count: 0 });
+  };
+
   count = () => {
-    let temp = this.state.button_4 + 1;
+    let temp = this.state.count + 1;
     this.setState({ count: temp });
   };
 
@@ -135,6 +139,7 @@ class Order extends Component {
     };
     let myJSON = JSON.stringify(myObj);
     socket.emit("order", myJSON);
+    this.reset_count();
     console.log("Init / Reset");
   };
 

@@ -292,7 +292,7 @@ io.on("connection", function(socket) {
   io.sockets.emit("state", myJSON);
 
   ///////////////////////////////////////////////////////////////////////
-
+  /*
   setInterval(function() {
     myObj = {
       cmd: "state_led_1",
@@ -368,7 +368,7 @@ io.on("connection", function(socket) {
   }, 7000);
 
   ///////////////////////////////////////////////////////////////////////
-
+*/
   socket.on("sayHello", function(data) {
     try {
       input = JSON.parse(data);
@@ -775,7 +775,7 @@ io.on("connection", function(socket) {
                   blink(i, 600);
                 }
               }
-              send_message_client(socket, "verify_matermind", value, "game");
+              send_message_client(socket, "verify_order", value, "game");
             });
             //.catch(error => {});
           } else {
