@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter/rendering.dart';
 import 'package:socket_io/socket_io.dart';
+import 'dart:convert';
+
 
 void main() {
   runApp(MaterialApp(
@@ -215,7 +217,7 @@ class _MyAppState extends State<MyApp> {
     ]);
   }
   initMastermind() async {
-    print("tamere la pute");
+    //print("ta mere la pute");
     await socket.emit("mastermind", [
       {'data':"{\"cmd\": \"INIT\"}"},
     ]);
@@ -484,7 +486,6 @@ class _Simon extends MaterialPageRoute<String> {
               body: Center(
                   //TODO: Why does it isn't centered???
                   child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                     Text("Nous aurons ici notre jeu"),
                     ButtonBar(
@@ -616,7 +617,7 @@ class MastermindSenderWidget extends StatefulWidget {
 
 class _MastermindSenderWidgetState extends State<MastermindSenderWidget> {
   var _myArray = [false, false, false, false];
-  var _ServerArray;
+  var _ServerArray = [];
 
   @override
   Widget build(BuildContext context) {
@@ -667,6 +668,8 @@ class _MastermindSenderWidgetState extends State<MastermindSenderWidget> {
               IconButton(
                 icon: Icon(Icons.send),
                 onPressed: () {
+                  print("Server Array :"+_ServerArray.toString());
+                  print("My Array : "+_myArray.toString());
                   if((_ServerArray!=null) && (_myArray==_ServerArray)){
                     toServerWithData("VERIFIY", _myArray);
                   } else{
@@ -703,9 +706,12 @@ class _MastermindSenderWidgetState extends State<MastermindSenderWidget> {
     await widget.channel.on('mastermind', (mData) {
       print(mData);
       if(mData['cmd'] == "init_mastermind") {
+        print("J'y suis !!!");
+        var _temp =[];
+        mData['data'].toString().replaceAll( '[','').replaceAll(']', '').split(', ').forEach((element) => (element=="true")?_temp.add(true):_temp.add(false));
         setState(() {
-          _ServerArray = mData['data'];
-          _ServerArray.forEach((element) => (element=='true'?element=true:element=false));
+          _ServerArray=_temp;
+          print(_ServerArray);
         });
         print(_ServerArray[1]);
       }
