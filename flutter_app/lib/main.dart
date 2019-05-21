@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:socket_io/socket_io.dart';
 import './history.dart';
+import 'package:collection/collection.dart';
+
 
 
 void main() {
@@ -307,7 +309,6 @@ class _SliderWidgetState extends State<SliderWidget> {
       label: '${_value.round() / 1000}',
       onChanged: (double value) {
         setState(() => _value = value);
-        //TODO: send _value to server
         toServer("SETSPEED", _value.toString());
       },
     );
@@ -343,7 +344,6 @@ class _OrderWidgetState extends State<OrderWidget> {
           setState(() {
             _defaultArray = _defaultArray.reversed.toList();
           });
-          //TODO: Send new array to server --verify
           toServer("REVERSE");
           //or send defaultArray.toString() to send the model
         },
@@ -456,7 +456,7 @@ class _Mastermind extends MaterialPageRoute<String> {
                   IconButton(
                     icon: Icon(Icons.close),
                     onPressed: () {
-                      Navigator.pop(context);
+                      Navigator.pop(context, "T'es mauvais Jack !!");
                     },
                   )
                 ],
@@ -611,9 +611,9 @@ class MastermindSenderWidget extends StatefulWidget {
 
 class _MastermindSenderWidgetState extends State<MastermindSenderWidget> {
   var _myArray = [false, false, false, false];
-  var _ServerArray = [];
+  var _ServerArray = [true, false, true, false];
   var _history = [<bool>[]];
-
+  /*
   @override
   void initState() {
     // This is the proper place to make the async calls
@@ -634,6 +634,7 @@ class _MastermindSenderWidgetState extends State<MastermindSenderWidget> {
     });
     super.initState();
   }
+  */
 
   @override
   Widget build(BuildContext context) {
@@ -692,9 +693,11 @@ class _MastermindSenderWidgetState extends State<MastermindSenderWidget> {
                   onPressed: () {
                     print("Server Array :" + _ServerArray.toString());
                     print("My Array : " + _myArray.toString());
-                    if ((_ServerArray != null) && (_myArray == _ServerArray)) {
-                      toServerWithData("VERIFIY", _myArray);
+                    if (IterableEquality().equals(_myArray, _ServerArray)) {
+                      toServer("WON");
+                      Navigator.pop(context, "Gagné en "+_history.length.toString()+" manche"+(_history.length>1?"s !":" !"));
                     } else {
+                      toServer("LOST");
                       setState(() {
                         _history.add(new List<bool>.from(_myArray));
                       });
