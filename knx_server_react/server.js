@@ -636,7 +636,7 @@ io.on("connection", function(socket) {
         case "INIT":
           if (reference === "") {
             mode = "simon";
-            console.log("Initialisation du simon..");
+            console.log("Initialisation du simon...");
             reference = [];
             let position = Math.floor(Math.random() * 4) + 1;
             reference.push(position);
