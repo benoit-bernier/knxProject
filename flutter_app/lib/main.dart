@@ -39,7 +39,7 @@ class _MyAppState extends State<MyApp> {
 
 //TODO: get the different status
   Future initialize() async {
-    const uri = 'http://10.0.2.2:3000';
+    const uri = 'http://192.168.1.113:5000';
     socket = await SocketIO.createNewInstance(uri);
     await socket.on(SocketIOEvent.connecting, () async {
       print('connecting');
@@ -217,7 +217,6 @@ class _MyAppState extends State<MyApp> {
     ]);
   }
   initMastermind() async {
-    //print("ta mere la pute");
     await socket.emit("mastermind", [
       {'data':"{\"cmd\": \"INIT\"}"},
     ]);
@@ -587,6 +586,7 @@ class _StateLedsWidgetState extends State<StateLedsWidget> {
   listen() async {
     print("listening");
     await widget.channel.on('state_led', (mData) {
+      print(mData);
       setState(() {
         if (mData['cmd'] == "state_led_1") {
           _led1 = mData['data'] == 1 ? true : false;
@@ -620,8 +620,29 @@ class _MastermindSenderWidgetState extends State<MastermindSenderWidget> {
   var _ServerArray = [];
 
   @override
+  void initState() {
+    // This is the proper place to make the async calls
+    // This way they only get called once
+
+    // During development, if you change this code,
+    // you will need to do a full restart instead of just a hot reload
+
+    // You can't use async/await here,
+    // We can't mark this method as async because of the @override
+    listen().then((result) {
+      // If we need to rebuild the widget with the resulting data,
+      // make sure to use `setState`
+      print("Result : "+result.toString());
+      setState(() {
+        _ServerArray = result;
+      });
+    });
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    listen();
+    //listen();
     return Row(
           children: <Widget>[
             IconButton(
@@ -701,7 +722,7 @@ class _MastermindSenderWidgetState extends State<MastermindSenderWidget> {
     ]);
   }
 
-  listen() async {
+  Future<List<bool>> listen() async {
     print("listening mastermind");
     await widget.channel.on('mastermind', (mData) {
       print(mData);
@@ -709,11 +730,8 @@ class _MastermindSenderWidgetState extends State<MastermindSenderWidget> {
         print("J'y suis !!!");
         var _temp =[];
         mData['data'].toString().replaceAll( '[','').replaceAll(']', '').split(', ').forEach((element) => (element=="true")?_temp.add(true):_temp.add(false));
-        setState(() {
-          _ServerArray=_temp;
-          print(_ServerArray);
-        });
-        print(_ServerArray[1]);
+        print("temp : "+_temp.toString());
+        //return _temp;
       }
       if(mData['cmd'] == "default_message") {
         print(mData['data']);
