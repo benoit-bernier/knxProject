@@ -121,8 +121,7 @@ class Chenillard extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      value: 0,
-      mvalue: 0,
+      value: 500,
       open: false,
       fail: false,
       LED_0: 0,

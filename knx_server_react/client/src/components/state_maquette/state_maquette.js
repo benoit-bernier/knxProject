@@ -81,23 +81,23 @@ class StateMaquette extends Component {
           {this.state.state_maquette ? (
             <p>
               État liaison serveur :{" "}
-              <span style={{ color: "green" }}>connectée</span>
+              <span style={{ color: "green" }}>connecté</span>
             </p>
           ) : (
             <p>
               État liaison serveur :{" "}
-              <span style={{ color: "red" }}>déconnectée</span>
+              <span style={{ color: "red" }}>déconnecté</span>
             </p>
           )}
           {this.state.state_connection ? (
             <p>
               État liaison maquette :{" "}
-              <span style={{ color: "green" }}>connectée</span>
+              <span style={{ color: "green" }}>connecté</span>
             </p>
           ) : (
             <p>
               État liaison maquette :{" "}
-              <span style={{ color: "red" }}>non connectée</span>
+              <span style={{ color: "red" }}>non connecté</span>
             </p>
           )}
         </div>
