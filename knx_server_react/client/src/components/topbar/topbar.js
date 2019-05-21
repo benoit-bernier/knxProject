@@ -7,7 +7,10 @@ import Button from "@material-ui/core/Button";
 import StateMaquette from "../state_maquette/state_maquette";
 import red from "@material-ui/core/colors/red";
 import logo from "./logo.png";
+import { Done } from "@material-ui/icons";
+import { HighlightOff } from "@material-ui/icons";
 import { Link } from "react-router-dom";
+import { socket } from "../../App";
 
 const styles = {
   root: {
@@ -163,6 +166,12 @@ const styles = {
       border: "0",
       color: "white"
     }
+  },
+  connect_green: {
+    color: "green"
+  },
+  connect_red: {
+    color: "red"
   }
 };
 
@@ -174,10 +183,30 @@ class Topbar extends Component {
         onglet_visu: true,
         onglet_game: false,
         onglet_chenillard: false,
-        onglet_about: false
+        onglet_about: false,
+        connect: false
       }
     };
   }
+
+  connection = () => {
+    let myObj = {
+      cmd: "CONNECT"
+    };
+    let myJSON = JSON.stringify(myObj);
+    console.log(myJSON);
+    socket.emit("events", myJSON);
+  };
+
+  disconnection = () => {
+    let myObj = {
+      cmd: "DISCONNECT"
+    };
+    let myJSON = JSON.stringify(myObj);
+    console.log(myJSON);
+    socket.emit("events", myJSON);
+  };
+
   render() {
     const { classes } = this.props;
     return (
@@ -304,6 +333,18 @@ class Topbar extends Component {
                 à propos
               </Button>
             </Link>
+            <Button>
+              <Done
+                className={classes.connect_green}
+                onClick={this.connection}
+              />
+            </Button>
+            <Button>
+              <HighlightOff
+                className={classes.connect_red}
+                onClick={this.disconnection}
+              />
+            </Button>
           </Toolbar>
           <StateMaquette />
         </AppBar>

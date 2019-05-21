@@ -9,7 +9,7 @@ const httpServer = http.createServer(app);
 const io = so.listen(httpServer);
 const port_server = 5000;
 
-let ip_maquette = "192.168.0.6";
+let ip_maquette = "192.168.1.5";
 let port_maquette = 3671;
 
 let connected = false; //connecté à la maquette
@@ -423,7 +423,7 @@ io.on("connection", function(socket) {
           }
           break;
         case "DISCONNECT":
-          if (connected == true) {
+          if (connected) {
             connection.Disconnect();
             clearInterval(mchenillard);
             downLED(connection);
@@ -755,7 +755,7 @@ io.on("connection", function(socket) {
   socket.on("order", function(data) {
     console.log(data);
     mode = "order";
-    if (!connected) {
+    if (connected) {
       input = JSON.parse(data);
       switch (input.cmd) {
         case "INIT":
@@ -840,7 +840,7 @@ io.on("connection", function(socket) {
   socket.on("simon", function(data) {
     console.log(data);
     mode = "simon";
-    if (!connected) {
+    if (connected) {
       input = JSON.parse(data);
       switch (input.cmd) {
         case "INIT":
