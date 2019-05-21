@@ -24,6 +24,7 @@ let reference = ""; //reférence / modèle du jeu
 init();
 
 function init() {
+  connected = false;
   state = 0;
   speed = 500;
   schema = [0, 1, 2, 3];
@@ -304,84 +305,6 @@ io.on("connection", function(socket) {
   myJSON = JSON.stringify(myObj);
   io.sockets.emit("state", myJSON);
 
-  ///////////////////////////////////////////////////////////////////////
-  /*
-  setInterval(function() {
-    myObj = {
-      cmd: "state_led_1",
-      data: 0
-    };
-    myJSON = JSON.stringify(myObj);
-    io.sockets.emit("state_led", myJSON);
-    console.log("LED 1 OFF");
-  }, 7000);
-
-  setInterval(function() {
-    myObj = {
-      cmd: "state_led_1",
-      data: 1
-    };
-    myJSON = JSON.stringify(myObj);
-    io.sockets.emit("state_led", myJSON);
-    console.log("LED 1 ON");
-  }, 10000);
-
-  setInterval(function() {
-    myObj = {
-      cmd: "state_led_2",
-      data: 0
-    };
-    myJSON = JSON.stringify(myObj);
-    io.sockets.emit("state_led", myJSON);
-  }, 12000);
-
-  setInterval(function() {
-    myObj = {
-      cmd: "state_led_2",
-      data: 1
-    };
-    myJSON = JSON.stringify(myObj);
-    io.sockets.emit("state_led", myJSON);
-  }, 7000);
-
-  setInterval(function() {
-    myObj = {
-      cmd: "state_led_3",
-      data: 0
-    };
-    myJSON = JSON.stringify(myObj);
-    io.sockets.emit("state_led", myJSON);
-  }, 5000);
-
-  setInterval(function() {
-    myObj = {
-      cmd: "state_led_3",
-      data: 1
-    };
-    myJSON = JSON.stringify(myObj);
-    io.sockets.emit("state_led", myJSON);
-  }, 4000);
-
-  setInterval(function() {
-    myObj = {
-      cmd: "state_led_4",
-      data: 0
-    };
-    myJSON = JSON.stringify(myObj);
-    io.sockets.emit("state_led", myJSON);
-  }, 10000);
-
-  setInterval(function() {
-    myObj = {
-      cmd: "state_led_4",
-      data: 1
-    };
-    myJSON = JSON.stringify(myObj);
-    io.sockets.emit("state_led", myJSON);
-  }, 7000);
-
-  ///////////////////////////////////////////////////////////////////////
-*/
   socket.on("events", function(data) {
     console.log("========EVENT============");
     try {
@@ -395,8 +318,20 @@ io.on("connection", function(socket) {
         case "CONNECT":
           if (!connected) {
             init();
+            myObj = {
+              cmd: "state_connection",
+              data: connected
+            };
+            myJSON = JSON.stringify(myObj);
+            io.sockets.emit("state", myJSON);
           } else {
             console.log("Serveur déjà connecté à la maquette");
+            myObj = {
+              cmd: "state_connection",
+              data: connected
+            };
+            myJSON = JSON.stringify(myObj);
+            io.sockets.emit("state", myJSON);
           }
           break;
         case "DISCONNECT":
@@ -407,9 +342,22 @@ io.on("connection", function(socket) {
             mchenillard = "";
             connection = "";
             connected = false;
+            myObj = {
+              cmd: "state_connection",
+              data: false
+            };
+            myJSON = JSON.stringify(myObj);
+            io.sockets.emit("state", myJSON);
             console.log("Serveur et maquette déconnecté");
           } else {
             console.log("Pas de maquette appareillée.");
+            connected = false;
+            myObj = {
+              cmd: "state_connection",
+              data: false
+            };
+            myJSON = JSON.stringify(myObj);
+            io.sockets.emit("state", myJSON);
           }
           break;
         case "UP":
@@ -593,10 +541,10 @@ io.on("connection", function(socket) {
                 console.log(value[i]);
                 if (value[i] == 1) {
                   console.log("OK");
-                  blink(i, 2000);
+                  blink(i + 1, 2000);
                 } else {
                   console.log("NOT OK");
-                  blink(i, 600);
+                  blink(i + 1, 600);
                 }
               }
               send_message_client(socket, "verify_order", value, "game");
@@ -690,22 +638,16 @@ process.on("SIGINT", function() {
   if (connected == true) {
     connection.Disconnect();
   }
-  myObj = {
-    cmd: "default_message",
-    data: "Serveur Web déconnecté !"
-  };
-  myJSON = JSON.stringify(myObj);
-  console.log(myJSON);
-  process.exit();
-});
 
-app.get("/api/customers", (req, res) => {
-  const customers = [
-    { id: 1, firstName: "John", lastName: "Doe" },
-    { id: 2, firstName: "Jean", lastName: "Dupont" },
-    { id: 3, firstName: "Pierre", lastName: "Dubois" }
-  ];
-  res.json(customers);
+  setTimeout(function() {
+    myObj = {
+      cmd: "default_message",
+      data: "Serveur Web déconnecté !"
+    };
+    myJSON = JSON.stringify(myObj);
+    console.log(myJSON);
+    process.exit();
+  }, 5000);
 });
 
 app.use("/javascript", express.static(__dirname + "/javascript"));

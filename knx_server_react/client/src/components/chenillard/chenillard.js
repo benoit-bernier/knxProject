@@ -269,11 +269,9 @@ class Chenillard extends Component {
             className={classes.button}
             onClick={this.reset}
           >
-            Reset !
+            YOUR SPEED !
           </Button>
-          <p className={classes.description_text}>
-            Un bug ? Relance la maquette !
-          </p>
+          <p className={classes.description_text}>Choisis ta vitesse !</p>
         </div>
         <Dialog
           disableBackdropClick
