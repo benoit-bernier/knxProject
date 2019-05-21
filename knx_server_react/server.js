@@ -412,7 +412,7 @@ io.on("connection", function(socket) {
           console.log("Set speed : " + input.data);
           let speed_value = parseInt(input.data, 10);
           if (connected && mode == "") {
-            if (speed_value > 5000 || speed_value <= 500) {
+            if (speed_value > 5000 || speed_value < 500) {
               console.log("Impossible de set la speed : " + input.data);
             } else {
               //Ralenti
