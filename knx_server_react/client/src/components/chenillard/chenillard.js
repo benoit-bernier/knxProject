@@ -16,6 +16,7 @@ import InputLabel from "@material-ui/core/InputLabel";
 import Input from "@material-ui/core/Input";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
+import Slider, { defaultValueReducer } from "@material-ui/lab/Slider";
 import { socket } from "../../App";
 
 const Amber = amber[500];
@@ -108,6 +109,11 @@ const styles = {
   fail: {
     color: Red,
     marginLeft: "25px"
+  },
+  slider: {
+    width: "60%",
+    marginLeft: "20%",
+    marginRight: "20%"
   }
 };
 
@@ -115,6 +121,7 @@ class Chenillard extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      value: 500,
       open: false,
       fail: false,
       LED_0: 0,
@@ -123,6 +130,10 @@ class Chenillard extends Component {
       LED_3: 0
     };
   }
+
+  handleChangeSlider = (event, value) => {
+    this.setState({ value });
+  };
 
   handleChange = name => event => {
     this.setState({ [name]: Number(event.target.value) });
@@ -192,13 +203,39 @@ class Chenillard extends Component {
     console.log("CHANGEMENT SCHEMA : " + myJSON);
   };
 
-  reset = () => {
+  changeSpeed = () => {
     let myObj = {
-      cmd: "RESET"
+      cmd: "SETSPEED",
+      data: this.state.value
     };
     let myJSON = JSON.stringify(myObj);
     socket.emit("events", myJSON);
-    console.log("RESET");
+    console.log("SET SPEED : " + myJSON);
+  };
+
+  valueReducer = (rawValue, props, event) => {
+    const { disabled, max, min, step } = props;
+
+    function roundToStep(number) {
+      return Math.round(number / step) * step;
+    }
+
+    if (!disabled && step) {
+      if (rawValue > min && rawValue < max) {
+        if (rawValue === max - step) {
+          // If moving the Slider using arrow keys and value is formerly an maximum edge value
+          return roundToStep(rawValue + step / 2);
+        }
+        if (rawValue === min + step) {
+          // Same for minimum edge value
+          return roundToStep(rawValue - step / 2);
+        }
+        return roundToStep(rawValue);
+      }
+      return rawValue;
+    }
+
+    return defaultValueReducer(rawValue, props, event);
   };
 
   render() {
@@ -241,6 +278,27 @@ class Chenillard extends Component {
             Entrer 1, 2, 3 & 4 pour changer l'ordre des LED
           </p>
         </div>
+        <div className={classes.tuile_green}>
+          <Button
+            variant="outlined"
+            className={classes.button}
+            onClick={this.changeSpeed}
+          >
+            YOUR SPEED !
+          </Button>
+          <Slider
+            value={this.state.value}
+            valueReducer={this.valueReducer}
+            min={500}
+            max={4500}
+            step={100}
+            onChange={this.handleChangeSlider}
+            className={classes.slider}
+          />
+          <p className={classes.description_text}>
+            Choisis ta vitesse : {this.state.value} millisecondes !
+          </p>
+        </div>
         <div className={classes.tuile_purple}>
           <Button
             variant="outlined"
@@ -262,18 +320,6 @@ class Chenillard extends Component {
             Speed Down !
           </Button>
           <p className={classes.description_text}>Ralentis bonhomme !</p>
-        </div>
-        <div className={classes.tuile_green}>
-          <Button
-            variant="outlined"
-            className={classes.button}
-            onClick={this.reset}
-          >
-            Reset !
-          </Button>
-          <p className={classes.description_text}>
-            Un bug ? Relance la maquette !
-          </p>
         </div>
         <Dialog
           disableBackdropClick
