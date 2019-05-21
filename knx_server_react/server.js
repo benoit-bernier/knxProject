@@ -363,7 +363,7 @@ io.on("connection", function(socket) {
         case "UP":
           console.log("Accélération");
           if (connected && mode == "") {
-            if (speed == 0) {
+            if (speed < 500) {
               console.log("La vitesse est au maximum !");
             } else {
               //Accélère
