@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter/rendering.dart';
 import 'package:socket_io/socket_io.dart';
-import 'dart:convert';
+import './history.dart';
+
 
 void main() {
   runApp(MaterialApp(
@@ -611,7 +612,7 @@ class MastermindSenderWidget extends StatefulWidget {
 class _MastermindSenderWidgetState extends State<MastermindSenderWidget> {
   var _myArray = [false, false, false, false];
   var _ServerArray = [];
-  var _history = <Widget>[];
+  var _history = [<bool>[]];
 
   @override
   void initState() {
@@ -638,73 +639,76 @@ class _MastermindSenderWidgetState extends State<MastermindSenderWidget> {
   Widget build(BuildContext context) {
     //listen();
     return Column(
-      children: <Widget>[
-        ListView(children: _history,),
+      children:<Widget>[
+        Expanded(child : History(_history)),
         Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            IconButton(
-                icon: Icon(
-                    _myArray[0] ? Icons.highlight : Icons.lightbulb_outline),
-                onPressed: () {
-                  setState(() {
-                    _myArray[0] = !_myArray[0];
-                  });
-                }),
-            IconButton(
-                icon: Icon(
-                    _myArray[1] ? Icons.highlight : Icons.lightbulb_outline),
-                onPressed: () {
-                  setState(() {
-                    _myArray[1] = !_myArray[1];
-                  });
-                }),
-            IconButton(
-                icon: Icon(
-                    _myArray[2] ? Icons.highlight : Icons.lightbulb_outline),
-                onPressed: () {
-                  setState(() {
-                    _myArray[2] = !_myArray[2];
-                  });
-                }),
-            IconButton(
-                icon: Icon(
-                    _myArray[3] ? Icons.highlight : Icons.lightbulb_outline),
-                onPressed: () {
-                  setState(() {
-                    _myArray[3] = !_myArray[3];
-                  });
-                }),
-            ButtonBar(children: <Widget>[
+            Row(children: <Widget>[
               IconButton(
-                icon: Icon(Icons.autorenew),
-                onPressed: () {
-                  setState(() {
-                    _myArray = [false, false, false, false];
-                  });
-                },
-              ),
-              IconButton(
-                icon: Icon(Icons.send),
-                onPressed: () {
-                  print("Server Array :" + _ServerArray.toString());
-                  print("My Array : " + _myArray.toString());
-                  if ((_ServerArray != null) && (_myArray == _ServerArray)) {
-                    toServerWithData("VERIFIY", _myArray);
-                  } else {
+                  icon: Icon(
+                      _myArray[0] ? Icons.highlight : Icons.lightbulb_outline, size: 48),
+                  onPressed: () {
                     setState(() {
-                      _history.add(ListTile(title: Text(_myArray.toString()),));
+                      _myArray[0] = !_myArray[0];
                     });
-                    Scaffold.of(context).showSnackBar(SnackBar(
-                      content: Text('FAUX'),
-                      action: SnackBarAction(label: 'OK', onPressed: () {}),
-                    ));
-                  }
-                },
-              )
-            ])
-          ],
-        ),
-      ],
+                  }),
+              IconButton(
+                  icon: Icon(
+                      _myArray[1] ? Icons.highlight : Icons.lightbulb_outline, size: 48),
+                  onPressed: () {
+                    setState(() {
+                      _myArray[1] = !_myArray[1];
+                    });
+                  }),
+              IconButton(
+                  icon: Icon(
+                      _myArray[2] ? Icons.highlight : Icons.lightbulb_outline, size: 48),
+                  onPressed: () {
+                    setState(() {
+                      _myArray[2] = !_myArray[2];
+                    });
+                  }),
+              IconButton(
+                  icon: Icon(
+                      _myArray[3] ? Icons.highlight : Icons.lightbulb_outline, size: 48),
+                  onPressed: () {
+                    setState(() {
+                      _myArray[3] = !_myArray[3];
+                    });
+                  }),
+    ],),
+              ButtonBar(children: <Widget>[
+                IconButton(
+                  icon: Icon(Icons.autorenew, size: 48),
+                  onPressed: () {
+                    setState(() {
+                      _myArray = [false, false, false, false];
+                    });
+                  },
+                ),
+                IconButton(
+                  icon: Icon(Icons.send, size: 48),
+                  onPressed: () {
+                    print("Server Array :" + _ServerArray.toString());
+                    print("My Array : " + _myArray.toString());
+                    if ((_ServerArray != null) && (_myArray == _ServerArray)) {
+                      toServerWithData("VERIFIY", _myArray);
+                    } else {
+                      setState(() {
+                        _history.add(new List<bool>.from(_myArray));
+                      });
+                      Scaffold.of(context).showSnackBar(SnackBar(
+                        content: Text('FAUX'),
+                        action: SnackBarAction(label: 'OK', onPressed: () {}),
+                      ));
+                    }
+                  },
+                )
+              ])
+            ],
+          ),
+    ],
     );
   }
 
