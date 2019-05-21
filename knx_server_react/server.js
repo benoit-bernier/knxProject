@@ -60,7 +60,7 @@ function init() {
             if (speed < 500) {
               console.log("Impossible d'accélérer.");
             } else {
-              //Accelere
+              //Accélère
               clearInterval(mchenillard);
               downLED();
               mchenillard = setInterval(function() {
@@ -416,8 +416,9 @@ io.on("connection", function(socket) {
           console.log("Accélération");
           if (connected && mode == "") {
             if (speed == 0) {
+              console.log("La vitesse est au maximum !");
             } else {
-              //Accelere
+              //Accélère
               clearInterval(mchenillard);
               downLED();
               mchenillard = setInterval(function() {
