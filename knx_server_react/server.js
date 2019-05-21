@@ -461,7 +461,7 @@ io.on("connection", function(socket) {
               //Accelere
               clearInterval(mchenillard);
               downLED();
-              mchenillard = nterval(function() {
+              mchenillard = setInterval(function() {
                 chenillard(state);
                 state = (state + 1) % 4;
               }, speed);
