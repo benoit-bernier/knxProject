@@ -736,6 +736,34 @@ process.on("SIGINT", function() {
     connection.Disconnect();
   }
 
+  myObj = {
+    cmd: "state_server",
+    data: false
+  };
+  myJSON = JSON.stringify(myObj);
+  io.sockets.emit("state", myJSON);
+
+  myObj = {
+    cmd: "state_connection",
+    data: connected
+  };
+  myJSON = JSON.stringify(myObj);
+  io.sockets.emit("state", myJSON);
+
+  myObj = {
+    cmd: "state_ip_maquette",
+    data: ip_maquette
+  };
+  myJSON = JSON.stringify(myObj);
+  io.sockets.emit("state", myJSON);
+
+  myObj = {
+    cmd: "state_port_maquette",
+    data: port_maquette
+  };
+  myJSON = JSON.stringify(myObj);
+  io.sockets.emit("state", myJSON);
+
   setTimeout(function() {
     myObj = {
       cmd: "default_message",
