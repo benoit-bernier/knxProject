@@ -5,20 +5,20 @@ import 'package:socket_io/socket_io.dart';
 import './history.dart';
 import 'package:collection/collection.dart';
 
-
-
 void main() {
   runApp(MaterialApp(
       title: 'KNX App',
       theme: new ThemeData(
-        primarySwatch: Colors.pink,
+        primarySwatch: mColor,
       ),
-      //color: Colors.pink,
+      //color: mColor,
       home: MyApp()));
 }
 
 bool isConnected = true;
 bool isListening = false;
+Color mColor = Colors.pink;
+Color mColorAccent = Colors.pinkAccent;
 
 class MyApp extends StatefulWidget {
   @override
@@ -78,48 +78,58 @@ class _MyAppState extends State<MyApp> {
       final _kTabPages = <Widget>[
         Center(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
               PlayPauseWidget(
                 channel: socket,
               ),
-              Text(
-                'Choisis la durée :',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
-              ),
               SliderWidget(
                 channel: socket,
-              ),
-              Text(
-                'Sens de défilement',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
               ),
               OrderWidget(
                 channel: socket,
               ),
-              Text(
-                'Autre',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
-              ),
-              ButtonBar(
-                alignment: MainAxisAlignment.spaceEvenly,
+              Column(
                 children: <Widget>[
-                  RaisedButton(
-                    onPressed: () {
-                      toServer("UP");
-                    },
-                    color: Colors.pink,
-                    child: Text('Accélère'),
-                    padding: EdgeInsets.only(left: 10.0, right: 10.0),
+                  Text(
+                    'Autre',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
                   ),
-                  RaisedButton(
-                      onPressed: () {
-                        toServer("DOWN");
-                      },
-                      child: Text('Ralenti'),
-                      padding: EdgeInsets.only(left: 10.0, right: 10.0)),
+                  ButtonBar(
+                    alignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      RaisedButton.icon(
+                        onPressed: () {
+                          toServer("UP");
+                        },
+                        color: mColor,
+                        icon: Icon(
+                          Icons.add,
+                          color: Colors.white,
+                        ),
+                        label: Text('Accélère',
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white)),
+                      ),
+                      RaisedButton.icon(
+                        onPressed: () {
+                          toServer("DOWN");
+                        },
+                        color: mColor,
+                        icon: Icon(
+                          Icons.remove,
+                          color: Colors.white,
+                        ),
+                        label: Text('Ralenti',
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white)),
+                      )
+                    ],
+                  ),
                 ],
-              ),
+              )
             ],
           ),
         ),
@@ -129,48 +139,102 @@ class _MyAppState extends State<MyApp> {
             // can refer to the Scaffold with Scaffold.of().
             builder: (BuildContext context) {
           return Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
-              Icon(
-                Icons.videogame_asset,
-                size: 64.0,
-                color: Colors.pink,
+              RawMaterialButton(
+                fillColor: mColor,
+                splashColor: Colors.pinkAccent,
+                onPressed: () {
+                  initMastermind();
+                  Navigator.of(context)
+                      .push(_Mastermind(socket))
+                      .then<String>((returnVal) {
+                    quitMastermind();
+                    Scaffold.of(context).showSnackBar(SnackBar(
+                      content: Text('$returnVal'),
+                      action: SnackBarAction(label: 'OK', onPressed: () {}),
+                    ));
+                  });
+                },
+                child: Padding(
+                  padding: EdgeInsets.all(15),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                    Icon(
+                      Icons.casino,
+                      color: Colors.white,
+                    ),
+                    SizedBox(
+                      width: 10.0,
+                    ),
+                    Text(
+                    "Mastermind",
+                    style: TextStyle(color: Colors.white, fontSize: 24),
+                  ),])
+                ),
+                padding: EdgeInsets.only(left: 10.0, right: 10.0),
+                shape: const StadiumBorder(),
               ),
-              RaisedButton(
-                  onPressed: () {
-                    initMastermind();
-                    Navigator.of(context)
-                        .push(_Mastermind(socket))
-                        .then<String>((returnVal) {
-                      quitMastermind();
-                      Scaffold.of(context).showSnackBar(SnackBar(
-                        content: Text('$returnVal'),
-                        action: SnackBarAction(label: 'OK', onPressed: () {}),
-                      ));
-                    });
-                  },
-                  child: Text("Mastermind"),
-                  padding: EdgeInsets.only(left: 10.0, right: 10.0)),
-              RaisedButton(
-                  onPressed: () {
-                    initSimon();
-                    Navigator.of(context)
-                        .push(_Simon())
-                        .then<String>((returnVal) {
-                      quitSimon();
-                      Scaffold.of(context).showSnackBar(SnackBar(
-                        content: Text('$returnVal'),
-                        action: SnackBarAction(label: 'OK', onPressed: () {}),
-                      ));
-                    });
-                  },
-                  child: Text("Simon"),
-                  padding: EdgeInsets.only(left: 10.0, right: 10.0)),
+              RawMaterialButton(
+                fillColor: mColor,
+                splashColor: Colors.pinkAccent,
+                onPressed: () {
+                  initSimon();
+                  Navigator.of(context)
+                      .push(_Simon())
+                      .then<String>((returnVal) {
+                    quitSimon();
+                    Scaffold.of(context).showSnackBar(SnackBar(
+                      content: Text('$returnVal'),
+                      action: SnackBarAction(label: 'OK', onPressed: () {}),
+                    ));
+                  });
+                },
+                child: Padding(
+                    padding: EdgeInsets.all(15),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Icon(
+                          Icons.donut_large,
+                          color: Colors.white,
+                        ),
+                        SizedBox(
+                          width: 10.0,
+                        ),
+                        Text(
+                          "Simon",
+                          style: TextStyle(color: Colors.white, fontSize: 24),
+                        ),
+                      ],
+                    )),
+                padding: EdgeInsets.only(left: 10.0, right: 10.0),
+                shape: const StadiumBorder(),
+              ),
             ],
           );
         })),
         Center(
-          child: _IPInput(),
+          child: Column(children: <Widget>[
+            DropdownButton<Color>(
+              value: mColor,
+              onChanged: ((Color newValue){
+                setState(() {
+                  mColor=newValue;
+                });
+              }),
+              items: [
+                DropdownMenuItem<Color>(value: Colors.blue,child: Text("Bleu"),),
+                DropdownMenuItem<Color>(value: Colors.pink,child: Text("Rose"),),
+                DropdownMenuItem<Color>(value: Colors.green,child: Text("Vert"),),
+                DropdownMenuItem<Color>(value: Colors.purple,child: Text("Violet"),),
+                DropdownMenuItem<Color>(value: Colors.deepOrange,child: Text("Orange"),),
+                DropdownMenuItem<Color>(value: Colors.yellow,child: Text("Ricard"),)
+              ],
+            ),
+            _IPInput(),
+          ],)
         ),
       ];
 
@@ -198,7 +262,7 @@ class _MyAppState extends State<MyApp> {
               length: _kTabs.length,
               child: Scaffold(
                   appBar: AppBar(
-                    backgroundColor: Colors.pink,
+                    backgroundColor: mColor,
                     title: Text("Chenillard App"),
                     actions: <Widget>[
                       ConnectionWidget(
@@ -300,17 +364,25 @@ class _SliderWidgetState extends State<SliderWidget> {
   double _value = 500.0;
   @override
   Widget build(BuildContext context) {
-    return Slider(
-      activeColor: Colors.pink,
-      value: _value,
-      min: 0.0,
-      max: 5000.0,
-      divisions: 10,
-      label: '${_value.round() / 1000}',
-      onChanged: (double value) {
-        setState(() => _value = value);
-        toServer("SETSPEED", _value.toString());
-      },
+    return Column(
+      children: <Widget>[
+        Text(
+          'Choisis la vitesse :',
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+        ),
+        Slider(
+          activeColor: mColor,
+          value: _value,
+          min: 0.0,
+          max: 5000.0,
+          divisions: 10,
+          label: '${_value.round() / 1000}',
+          onChanged: (double value) {
+            setState(() => _value = value);
+            toServer("SETSPEED", _value.toString());
+          },
+        )
+      ],
     );
   }
 
@@ -334,25 +406,33 @@ class _OrderWidgetState extends State<OrderWidget> {
   var _defaultArray = <int>[1, 2, 3, 4];
   @override
   Widget build(BuildContext context) {
-    return Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-      Text(
-        "$_defaultArray",
-        style: TextStyle(fontSize: 24, color: Colors.pink),
-      ),
-      IconButton(
-        onPressed: () {
-          setState(() {
-            _defaultArray = _defaultArray.reversed.toList();
-          });
-          toServer("REVERSE");
-          //or send defaultArray.toString() to send the model
-        },
-        color: Colors.pink,
-        icon: Icon(Icons.autorenew),
-        tooltip: "Inverser le tableau",
-        //padding: EdgeInsets.only(left: 10.0, right: 10.0),
-      ),
-    ]);
+    return Column(
+      children: <Widget>[
+        Text(
+          'Sens de défilement',
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+        ),
+        Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+          Text(
+            "$_defaultArray",
+            style: TextStyle(fontSize: 24, color: mColor),
+          ),
+          IconButton(
+            onPressed: () {
+              setState(() {
+                _defaultArray = _defaultArray.reversed.toList();
+              });
+              toServer("REVERSE");
+              //or send defaultArray.toString() to send the model
+            },
+            color: mColor,
+            icon: Icon(Icons.autorenew),
+            tooltip: "Inverser le tableau",
+            //padding: EdgeInsets.only(left: 10.0, right: 10.0),
+          ),
+        ])
+      ],
+    );
   }
 
   toServer(String mStr) async {
@@ -378,19 +458,19 @@ class _PlayPauseWidgetState extends State<PlayPauseWidget> {
     return Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Text(
+          /*Text(
             "Le chenillard est en route : $_isPlaying",
-            style: TextStyle(fontSize: 24, color: Colors.pink),
-          ),
+            style: TextStyle(fontSize: 24, color: mColor),
+          ),*/
           IconButton(
-            iconSize: 64.0,
+            iconSize: 128.0,
             onPressed: () {
               setState(() {
                 _isPlaying = !_isPlaying;
               });
               toServer('ONOFF');
             },
-            color: Colors.pink,
+            color: mColor,
             icon: Icon(_isPlaying
                 ? Icons.pause_circle_filled
                 : Icons.play_circle_filled),
@@ -461,8 +541,8 @@ class _Mastermind extends MaterialPageRoute<String> {
               ),
               body: Container(
                   child: MastermindSenderWidget(
-                    channel: channel,
-                  )));
+                channel: channel,
+              )));
         });
 }
 
@@ -552,23 +632,23 @@ class _StateLedsWidgetState extends State<StateLedsWidget> {
             children: <Widget>[
               Icon(
                 _led1 ? Icons.highlight : Icons.lightbulb_outline,
-                size: 64.0,
-                color: Colors.pink,
+                size: 100.0,
+                color: mColor,
               ),
               Icon(
                 _led2 ? Icons.highlight : Icons.lightbulb_outline,
-                size: 64.0,
-                color: Colors.pink,
+                size: 100.0,
+                color: mColor,
               ),
               Icon(
                 _led3 ? Icons.highlight : Icons.lightbulb_outline,
-                size: 64.0,
-                color: Colors.pink,
+                size: 100.0,
+                color: mColor,
               ),
               Icon(
                 _led4 ? Icons.highlight : Icons.lightbulb_outline,
-                size: 64.0,
-                color: Colors.pink,
+                size: 100.0,
+                color: mColor,
               ),
             ],
           )),
@@ -638,78 +718,89 @@ class _MastermindSenderWidgetState extends State<MastermindSenderWidget> {
   Widget build(BuildContext context) {
     //listen();
     return Column(
-      children:<Widget>[
-        Expanded(child : History(_history)),
+      children: <Widget>[
+        Expanded(child: History(_history)),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            Row(children: <Widget>[
-              IconButton(
-                  icon: Icon(
-                      _myArray[0] ? Icons.highlight : Icons.lightbulb_outline, size: 48),
-                  onPressed: () {
-                    setState(() {
-                      _myArray[0] = !_myArray[0];
-                    });
-                  }),
-              IconButton(
-                  icon: Icon(
-                      _myArray[1] ? Icons.highlight : Icons.lightbulb_outline, size: 48),
-                  onPressed: () {
-                    setState(() {
-                      _myArray[1] = !_myArray[1];
-                    });
-                  }),
-              IconButton(
-                  icon: Icon(
-                      _myArray[2] ? Icons.highlight : Icons.lightbulb_outline, size: 48),
-                  onPressed: () {
-                    setState(() {
-                      _myArray[2] = !_myArray[2];
-                    });
-                  }),
-              IconButton(
-                  icon: Icon(
-                      _myArray[3] ? Icons.highlight : Icons.lightbulb_outline, size: 48),
-                  onPressed: () {
-                    setState(() {
-                      _myArray[3] = !_myArray[3];
-                    });
-                  }),
-    ],),
-              ButtonBar(children: <Widget>[
+            Row(
+              children: <Widget>[
                 IconButton(
-                  icon: Icon(Icons.autorenew, size: 48),
-                  onPressed: () {
-                    setState(() {
-                      _myArray = [false, false, false, false];
-                    });
-                  },
-                ),
-                IconButton(
-                  icon: Icon(Icons.send, size: 48),
-                  onPressed: () {
-                    print("Server Array :" + _ServerArray.toString());
-                    print("My Array : " + _myArray.toString());
-                    if (IterableEquality().equals(_myArray, _ServerArray)) {
-                      toServer("WON");
-                      Navigator.pop(context, "Gagné en "+_history.length.toString()+" manche"+(_history.length>1?"s !":" !"));
-                    } else {
-                      toServer("LOST");
+                    icon: Icon(
+                        _myArray[0] ? Icons.highlight : Icons.lightbulb_outline,
+                        size: 48),
+                    onPressed: () {
                       setState(() {
-                        _history.add(new List<bool>.from(_myArray));
+                        _myArray[0] = !_myArray[0];
                       });
-                      Scaffold.of(context).showSnackBar(SnackBar(
-                        content: Text('FAUX'),
-                        action: SnackBarAction(label: 'OK', onPressed: () {}),
-                      ));
-                    }
-                  },
-                )
-              ])
-            ],
-          ),
-    ],
+                    }),
+                IconButton(
+                    icon: Icon(
+                        _myArray[1] ? Icons.highlight : Icons.lightbulb_outline,
+                        size: 48),
+                    onPressed: () {
+                      setState(() {
+                        _myArray[1] = !_myArray[1];
+                      });
+                    }),
+                IconButton(
+                    icon: Icon(
+                        _myArray[2] ? Icons.highlight : Icons.lightbulb_outline,
+                        size: 48),
+                    onPressed: () {
+                      setState(() {
+                        _myArray[2] = !_myArray[2];
+                      });
+                    }),
+                IconButton(
+                    icon: Icon(
+                        _myArray[3] ? Icons.highlight : Icons.lightbulb_outline,
+                        size: 48),
+                    onPressed: () {
+                      setState(() {
+                        _myArray[3] = !_myArray[3];
+                      });
+                    }),
+              ],
+            ),
+            ButtonBar(children: <Widget>[
+              IconButton(
+                icon: Icon(Icons.autorenew, size: 48),
+                onPressed: () {
+                  setState(() {
+                    _myArray = [false, false, false, false];
+                  });
+                },
+              ),
+              IconButton(
+                icon: Icon(Icons.send, size: 48),
+                onPressed: () {
+                  print("Server Array :" + _ServerArray.toString());
+                  print("My Array : " + _myArray.toString());
+                  if (IterableEquality().equals(_myArray, _ServerArray)) {
+                    toServer("WON");
+                    Navigator.pop(
+                        context,
+                        "Gagné en " +
+                            _history.length.toString() +
+                            " manche" +
+                            (_history.length > 1 ? "s !" : " !"));
+                  } else {
+                    toServer("LOST");
+                    setState(() {
+                      _history.add(new List<bool>.from(_myArray));
+                    });
+                    Scaffold.of(context).showSnackBar(SnackBar(
+                      content: Text('FAUX'),
+                      action: SnackBarAction(label: 'OK', onPressed: () {}),
+                    ));
+                  }
+                },
+              )
+            ])
+          ],
+        ),
+      ],
     );
   }
 
