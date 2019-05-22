@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter/rendering.dart';
 import 'package:socket_io/socket_io.dart';
-import 'dart:convert';
+import './history.dart';
+import 'package:collection/collection.dart';
+
 
 
 void main() {
   runApp(MaterialApp(
-      title: 'Flutter layout demo',
+      title: 'KNX App',
       theme: new ThemeData(
         primarySwatch: Colors.pink,
       ),
@@ -39,7 +41,7 @@ class _MyAppState extends State<MyApp> {
 
 //TODO: get the different status
   Future initialize() async {
-    const uri = 'http://10.0.2.2:3000';
+    const uri = 'http://192.168.1.113:5000';
     socket = await SocketIO.createNewInstance(uri);
     await socket.on(SocketIOEvent.connecting, () async {
       print('connecting');
@@ -139,7 +141,8 @@ class _MyAppState extends State<MyApp> {
                     initMastermind();
                     Navigator.of(context)
                         .push(_Mastermind(socket))
-                        .then<String>((returnVal) {quitMastermind();
+                        .then<String>((returnVal) {
+                      quitMastermind();
                       Scaffold.of(context).showSnackBar(SnackBar(
                         content: Text('$returnVal'),
                         action: SnackBarAction(label: 'OK', onPressed: () {}),
@@ -154,7 +157,7 @@ class _MyAppState extends State<MyApp> {
                     Navigator.of(context)
                         .push(_Simon())
                         .then<String>((returnVal) {
-                          quitSimon();
+                      quitSimon();
                       Scaffold.of(context).showSnackBar(SnackBar(
                         content: Text('$returnVal'),
                         action: SnackBarAction(label: 'OK', onPressed: () {}),
@@ -216,25 +219,28 @@ class _MyAppState extends State<MyApp> {
       {'data': "{\"cmd\":\"" + mStr + "\"}"},
     ]);
   }
+
   initMastermind() async {
-    //print("ta mere la pute");
     await socket.emit("mastermind", [
-      {'data':"{\"cmd\": \"INIT\"}"},
+      {'data': "{\"cmd\": \"INIT\"}"},
     ]);
   }
+
   quitMastermind() async {
     await socket.emit("mastermind", [
-      {'data':"{\"cmd\": \"STOP\"}"},
+      {'data': "{\"cmd\": \"STOP\"}"},
     ]);
   }
+
   initSimon() async {
     await socket.emit("simon", [
-      {'data':"{\"cmd\": \"INIT\"}"},
+      {'data': "{\"cmd\": \"INIT\"}"},
     ]);
   }
+
   quitSimon() async {
     await socket.emit("simon", [
-      {'data':"{\"cmd\": \"STOP\"}"},
+      {'data': "{\"cmd\": \"STOP\"}"},
     ]);
   }
 }
@@ -303,7 +309,6 @@ class _SliderWidgetState extends State<SliderWidget> {
       label: '${_value.round() / 1000}',
       onChanged: (double value) {
         setState(() => _value = value);
-        //TODO: send _value to server
         toServer("SETSPEED", _value.toString());
       },
     );
@@ -339,7 +344,6 @@ class _OrderWidgetState extends State<OrderWidget> {
           setState(() {
             _defaultArray = _defaultArray.reversed.toList();
           });
-          //TODO: Send new array to server --verify
           toServer("REVERSE");
           //or send defaultArray.toString() to send the model
         },
@@ -384,9 +388,7 @@ class _PlayPauseWidgetState extends State<PlayPauseWidget> {
               setState(() {
                 _isPlaying = !_isPlaying;
               });
-              //TODO: Launch chenillard
               toServer('ONOFF');
-              //toServer('sayHello');
             },
             color: Colors.pink,
             icon: Icon(_isPlaying
@@ -452,20 +454,16 @@ class _Mastermind extends MaterialPageRoute<String> {
                   IconButton(
                     icon: Icon(Icons.close),
                     onPressed: () {
-                      Navigator.pop(context);
+                      Navigator.pop(context, "T'es mauvais Jack !!");
                     },
                   )
                 ],
               ),
-              body:
-                    Align(
-                        alignment: Alignment.bottomCenter,
-                        child:MastermindSenderWidget(
-                          channel: channel,
-                        )
-                    ));
+              body: Container(
+                  child: MastermindSenderWidget(
+                    channel: channel,
+                  )));
         });
-
 }
 
 class _Simon extends MaterialPageRoute<String> {
@@ -485,54 +483,47 @@ class _Simon extends MaterialPageRoute<String> {
               ),
               body: Center(
                   //TODO: Why does it isn't centered???
-                  child: Column(
-                      children: <Widget>[
-                    Text("Nous aurons ici notre jeu"),
-                    ButtonBar(
-                      children: <Widget>[
-                        IconButton(
-                            icon: Icon(Icons.lightbulb_outline),
-                            onPressed: null),
-                        IconButton(
-                            icon: Icon(Icons.lightbulb_outline),
-                            onPressed: null),
-                        IconButton(
-                            icon: Icon(Icons.lightbulb_outline),
-                            onPressed: null),
-                        IconButton(
-                            icon: Icon(Icons.lightbulb_outline),
-                            onPressed: null)
-                      ],
+                  child: Column(children: <Widget>[
+                Text("Nous aurons ici notre jeu"),
+                ButtonBar(
+                  children: <Widget>[
+                    IconButton(
+                        icon: Icon(Icons.lightbulb_outline), onPressed: null),
+                    IconButton(
+                        icon: Icon(Icons.lightbulb_outline), onPressed: null),
+                    IconButton(
+                        icon: Icon(Icons.lightbulb_outline), onPressed: null),
+                    IconButton(
+                        icon: Icon(Icons.lightbulb_outline), onPressed: null)
+                  ],
+                ),
+                ButtonBar(
+                  children: <Widget>[
+                    RaisedButton(
+                      child: Row(
+                        children: <Widget>[
+                          Icon(Icons.cancel),
+                          Text("Annuler"),
+                        ],
+                      ),
+                      onPressed: () {
+                        //Navigator.pop(context, "Gagné !");
+                      },
                     ),
-                    ButtonBar(
-                      children: <Widget>[
-                        RaisedButton(
-                          child: Row(
-                            children: <Widget>[
-                              Icon(Icons.cancel),
-                              Text("Annuler"),
-                            ],
-                          ),
-                          onPressed: () {
-                            //TODO : vider la liste
-                            //Navigator.pop(context, "Gagné !");
-                          },
-                        ),
-                        RaisedButton(
-                          child: Row(
-                            children: <Widget>[
-                              Icon(Icons.send),
-                              Text("Envoyer"),
-                            ],
-                          ),
-                          onPressed: () {
-                            //TODO : envoyer la liste au serveur
-                            //Navigator.pop(context, "Gagné !");
-                          },
-                        ),
-                      ],
-                    )
-                  ])));
+                    RaisedButton(
+                      child: Row(
+                        children: <Widget>[
+                          Icon(Icons.send),
+                          Text("Envoyer"),
+                        ],
+                      ),
+                      onPressed: () {
+                        //Navigator.pop(context, "Gagné !");
+                      },
+                    ),
+                  ],
+                )
+              ])));
         });
 }
 
@@ -587,6 +578,7 @@ class _StateLedsWidgetState extends State<StateLedsWidget> {
   listen() async {
     print("listening");
     await widget.channel.on('state_led', (mData) {
+      print(mData);
       setState(() {
         if (mData['cmd'] == "state_led_1") {
           _led1 = mData['data'] == 1 ? true : false;
@@ -617,72 +609,108 @@ class MastermindSenderWidget extends StatefulWidget {
 
 class _MastermindSenderWidgetState extends State<MastermindSenderWidget> {
   var _myArray = [false, false, false, false];
-  var _ServerArray = [];
+  var _ServerArray = [true, false, true, false];
+  var _history = [<bool>[]];
+  /*
+  @override
+  void initState() {
+    // This is the proper place to make the async calls
+    // This way they only get called once
+
+    // During development, if you change this code,
+    // you will need to do a full restart instead of just a hot reload
+
+    // You can't use async/await here,
+    // We can't mark this method as async because of the @override
+    listen().then((result) {
+      // If we need to rebuild the widget with the resulting data,
+      // make sure to use `setState`
+      print("Result : " + result.toString());
+      setState(() {
+        _ServerArray = result;
+      });
+    });
+    super.initState();
+  }
+  */
 
   @override
   Widget build(BuildContext context) {
-    listen();
-    return Row(
+    //listen();
+    return Column(
+      children:<Widget>[
+        Expanded(child : History(_history)),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            IconButton(
-                icon: Icon(
-                    _myArray[0] ? Icons.highlight : Icons.lightbulb_outline),
-                onPressed: () {
-                  setState(() {
-                    _myArray[0] = !_myArray[0];
-                  });
-                }),
-            IconButton(
-                icon: Icon(
-                    _myArray[1] ? Icons.highlight : Icons.lightbulb_outline),
-                onPressed: () {
-                  setState(() {
-                    _myArray[1] = !_myArray[1];
-                  });
-                }),
-            IconButton(
-                icon: Icon(
-                    _myArray[2] ? Icons.highlight : Icons.lightbulb_outline),
-                onPressed: () {
-                  setState(() {
-                    _myArray[2] = !_myArray[2];
-                  });
-                }),
-            IconButton(
-                icon: Icon(
-                    _myArray[3] ? Icons.highlight : Icons.lightbulb_outline),
-                onPressed: () {
-                  setState(() {
-                    _myArray[3] = !_myArray[3];
-                  });
-                }),
-            ButtonBar(children: <Widget>[
+            Row(children: <Widget>[
               IconButton(
-                icon: Icon(Icons.autorenew),
-                onPressed: () {
-                  setState(() {
-                    _myArray = [false, false, false, false];
-                  });
-                },
-              ),
+                  icon: Icon(
+                      _myArray[0] ? Icons.highlight : Icons.lightbulb_outline, size: 48),
+                  onPressed: () {
+                    setState(() {
+                      _myArray[0] = !_myArray[0];
+                    });
+                  }),
               IconButton(
-                icon: Icon(Icons.send),
-                onPressed: () {
-                  print("Server Array :"+_ServerArray.toString());
-                  print("My Array : "+_myArray.toString());
-                  if((_ServerArray!=null) && (_myArray==_ServerArray)){
-                    toServerWithData("VERIFIY", _myArray);
-                  } else{
-                    Scaffold.of(context).showSnackBar(SnackBar(
-                      content: Text('FAUX'),
-                      action: SnackBarAction(label: 'OK', onPressed: () {}),
-                    ));
-                  }
-                },
-              )
-            ])
-          ],
-        );
+                  icon: Icon(
+                      _myArray[1] ? Icons.highlight : Icons.lightbulb_outline, size: 48),
+                  onPressed: () {
+                    setState(() {
+                      _myArray[1] = !_myArray[1];
+                    });
+                  }),
+              IconButton(
+                  icon: Icon(
+                      _myArray[2] ? Icons.highlight : Icons.lightbulb_outline, size: 48),
+                  onPressed: () {
+                    setState(() {
+                      _myArray[2] = !_myArray[2];
+                    });
+                  }),
+              IconButton(
+                  icon: Icon(
+                      _myArray[3] ? Icons.highlight : Icons.lightbulb_outline, size: 48),
+                  onPressed: () {
+                    setState(() {
+                      _myArray[3] = !_myArray[3];
+                    });
+                  }),
+    ],),
+              ButtonBar(children: <Widget>[
+                IconButton(
+                  icon: Icon(Icons.autorenew, size: 48),
+                  onPressed: () {
+                    setState(() {
+                      _myArray = [false, false, false, false];
+                    });
+                  },
+                ),
+                IconButton(
+                  icon: Icon(Icons.send, size: 48),
+                  onPressed: () {
+                    print("Server Array :" + _ServerArray.toString());
+                    print("My Array : " + _myArray.toString());
+                    if (IterableEquality().equals(_myArray, _ServerArray)) {
+                      toServer("WON");
+                      Navigator.pop(context, "Gagné en "+_history.length.toString()+" manche"+(_history.length>1?"s !":" !"));
+                    } else {
+                      toServer("LOST");
+                      setState(() {
+                        _history.add(new List<bool>.from(_myArray));
+                      });
+                      Scaffold.of(context).showSnackBar(SnackBar(
+                        content: Text('FAUX'),
+                        action: SnackBarAction(label: 'OK', onPressed: () {}),
+                      ));
+                    }
+                  },
+                )
+              ])
+            ],
+          ),
+    ],
+    );
   }
 
   toServer(String mStr) async {
@@ -701,24 +729,26 @@ class _MastermindSenderWidgetState extends State<MastermindSenderWidget> {
     ]);
   }
 
-  listen() async {
+  Future<List<bool>> listen() async {
     print("listening mastermind");
     await widget.channel.on('mastermind', (mData) {
       print(mData);
-      if(mData['cmd'] == "init_mastermind") {
+      if (mData['cmd'] == "init_mastermind") {
         print("J'y suis !!!");
-        var _temp =[];
-        mData['data'].toString().replaceAll( '[','').replaceAll(']', '').split(', ').forEach((element) => (element=="true")?_temp.add(true):_temp.add(false));
-        setState(() {
-          _ServerArray=_temp;
-          print(_ServerArray);
-        });
-        print(_ServerArray[1]);
+        var _temp = [];
+        mData['data']
+            .toString()
+            .replaceAll('[', '')
+            .replaceAll(']', '')
+            .split(', ')
+            .forEach((element) =>
+                (element == "true") ? _temp.add(true) : _temp.add(false));
+        print("temp : " + _temp.toString());
+        //return _temp;
       }
-      if(mData['cmd'] == "default_message") {
+      if (mData['cmd'] == "default_message") {
         print(mData['data']);
       }
-
     });
   }
 }
