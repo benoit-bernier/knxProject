@@ -388,9 +388,7 @@ class _PlayPauseWidgetState extends State<PlayPauseWidget> {
               setState(() {
                 _isPlaying = !_isPlaying;
               });
-              //TODO: Launch chenillard
               toServer('ONOFF');
-              //toServer('sayHello');
             },
             color: Colors.pink,
             icon: Icon(_isPlaying
