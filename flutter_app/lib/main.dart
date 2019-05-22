@@ -10,6 +10,7 @@ void main() {
       title: 'KNX App',
       theme: new ThemeData(
         primarySwatch: mColor,
+        accentColor: mColorAccent,
       ),
       //color: mColor,
       home: MyApp()));
@@ -157,22 +158,21 @@ class _MyAppState extends State<MyApp> {
                   });
                 },
                 child: Padding(
-                  padding: EdgeInsets.all(15),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                    Icon(
-                      Icons.casino,
-                      color: Colors.white,
-                    ),
-                    SizedBox(
-                      width: 10.0,
-                    ),
-                    Text(
-                    "Mastermind",
-                    style: TextStyle(color: Colors.white, fontSize: 24),
-                  ),])
-                ),
+                    padding: EdgeInsets.all(15),
+                    child:
+                        Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
+                      Icon(
+                        Icons.casino,
+                        color: Colors.white,
+                      ),
+                      SizedBox(
+                        width: 10.0,
+                      ),
+                      Text(
+                        "Mastermind",
+                        style: TextStyle(color: Colors.white, fontSize: 24),
+                      ),
+                    ])),
                 padding: EdgeInsets.only(left: 10.0, right: 10.0),
                 shape: const StadiumBorder(),
               ),
@@ -216,26 +216,79 @@ class _MyAppState extends State<MyApp> {
           );
         })),
         Center(
-          child: Column(children: <Widget>[
-            DropdownButton<Color>(
-              value: mColor,
-              onChanged: ((Color newValue){
-                setState(() {
-                  mColor=newValue;
-                });
-              }),
-              items: [
-                DropdownMenuItem<Color>(value: Colors.blue,child: Text("Bleu"),),
-                DropdownMenuItem<Color>(value: Colors.pink,child: Text("Rose"),),
-                DropdownMenuItem<Color>(value: Colors.green,child: Text("Vert"),),
-                DropdownMenuItem<Color>(value: Colors.purple,child: Text("Violet"),),
-                DropdownMenuItem<Color>(value: Colors.deepOrange,child: Text("Orange"),),
-                DropdownMenuItem<Color>(value: Colors.yellow,child: Text("Ricard"),)
-              ],
-            ),
+            child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: <Widget>[
+            Column(children: <Widget>[
+              Text("Couleur du thème :",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24)),
+              DropdownButton<Color>(
+                value: mColor,
+                onChanged: ((Color newValue) {
+                  setState(() {
+                    mColor = newValue;
+                  });
+                }),
+                items: [
+                  DropdownMenuItem<Color>(
+                      value: Colors.blue,
+                      child: Text("Bleu",
+                          style: TextStyle(
+                            fontSize: 24,
+                            color: Colors.blue,
+                            fontWeight: FontWeight.bold,
+                          ))),
+                  DropdownMenuItem<Color>(
+                    value: Colors.pink,
+                    child: Text("Rose",
+                        style: TextStyle(
+                          fontSize: 24,
+                          color: Colors.pink,
+                          fontWeight: FontWeight.bold,
+                        )),
+                  ),
+                  DropdownMenuItem<Color>(
+                    value: Colors.green,
+                    child: Text("Vert",
+                        style: TextStyle(
+                          fontSize: 24,
+                          color: Colors.green,
+                          fontWeight: FontWeight.bold,
+                        )),
+                  ),
+                  DropdownMenuItem<Color>(
+                    value: Colors.purple,
+                    child: Text("Violet",
+                        style: TextStyle(
+                          fontSize: 24,
+                          color: Colors.purple,
+                          fontWeight: FontWeight.bold,
+                        )),
+                  ),
+                  DropdownMenuItem<Color>(
+                    value: Colors.deepOrange,
+                    child: Text("Orange",
+                        style: TextStyle(
+                          fontSize: 24,
+                          color: Colors.deepOrange,
+                          fontWeight: FontWeight.bold,
+                        )),
+                  ),
+                  DropdownMenuItem<Color>(
+                    value: Colors.yellow,
+                    child: Text("Ricard",
+                        style: TextStyle(
+                          fontSize: 24,
+                          color: Colors.yellow,
+                          fontWeight: FontWeight.bold,
+                        )),
+                  )
+                ],
+              ),
+            ]),
             _IPInput(),
-          ],)
-        ),
+          ],
+        )),
       ];
 
       final _kTabs = <Tab>[
@@ -529,6 +582,7 @@ class _Mastermind extends MaterialPageRoute<String> {
           return Scaffold(
               appBar: AppBar(
                 title: Text("Mastermind"),
+                backgroundColor: mColor,
                 elevation: 1.0,
                 actions: <Widget>[
                   IconButton(
@@ -551,6 +605,7 @@ class _Simon extends MaterialPageRoute<String> {
       : super(builder: (BuildContext context) {
           return Scaffold(
               appBar: AppBar(
+                backgroundColor: mColor,
                 title: Text("Simon"),
                 actions: <Widget>[
                   IconButton(
