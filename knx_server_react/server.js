@@ -691,16 +691,8 @@ io.on("connection", function(socket) {
           blink(2, 550);
           blink(3, 550);
           blink(4, 550);
-          blink(1, 550); 
-          blink(2, 550);
-          blink(3, 550);
-          blink(4, 550);
           break;
         case "LOST" :
-          blink(1, 1000); 
-          blink(2, 1000);
-          blink(3, 1000);
-          blink(4, 1000);
           blink(1, 1000); 
           blink(2, 1000);
           blink(3, 1000);
